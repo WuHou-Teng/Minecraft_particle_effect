@@ -1,0 +1,12 @@
+
+JAVA = 1
+BED_ROCK = 2
+
+BLACK = 0
+WHITE = 1
+TRANSP = 2
+
+# 绝对坐标，相对坐标，面朝坐标
+ABS_COORD = 0
+RELA_COORD = 1
+FACE_COORD = 2
