@@ -1,6 +1,7 @@
 import os
 from PIL import Image
 from Const.Other_const import *
+from Motion_diffustion import MotionDifusion
 
 
 class ImageSampling(object):
@@ -38,10 +39,21 @@ class ImageSampling(object):
 
         # TODO 关于粒子运动，准备在这里保留粒子运动的设定
         # motion and diffusion
-        self.motion_diffusion = [0, 0, 0, 0, 1,"force"]
+        self.motion_diffusion = MotionDifusion()
 
-    # TODO transfor 函数待完成。
-    # def transfer
+    # TODO transfer 函数待完成。
+    def transfer(self):
+        if not os.path.exists(self.image_address):
+            return "需要访问的图片不存在"
+        try:
+            self.img = Image.open(self.image_address)
+            self.width = im.size[0]
+            self.height = im.size[1]
+            
+        except:
+            # TODO 不确定这里的打印异常能否正常运行
+            # print(str(Exception))
+            return "需要访问的图片格式不对，或者不存在"
 
     def set_img_to_load(self, img_address):
         self.image_address = img_address
@@ -80,14 +92,12 @@ class ImageSampling(object):
     def set_down_sample(self, down_sample):
         self.down_sample = down_sample
 
-    # def load_image(self):
-    #     try:
-    #         self.img = Image.open(self.image_address)
-    #         self.img_width = self.img[0]
-    #         self.img_width = self.img[1]
-    #         return True
-    #     except FileNotFoundError:
-    #         return False
+    def load_image(self):
+        try:
+            return = Image.open(self.image_address)
+        except FileNotFoundError:
+            # TODO 不确定这里的异常抛出怎么写更好
+            raise()
 
     def calculate_scale(self):
         height_scale = self.height_limit / self.img_height
