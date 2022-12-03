@@ -3,7 +3,7 @@ from PIL import Image
 from Const.Other_const import *
 from Motion_diffustion import MotionDifusion
 
-
+# 再尝试一次
 class ImageSampling(object):
 
     def __init__(self, image='', height_limit=Height_MAX, width_limit=Width_MAX, direction=West_East, align=LEFT_DOWN):
@@ -91,12 +91,12 @@ class ImageSampling(object):
     def set_down_sample(self, down_sample):
         self.down_sample = down_sample
 
-    def load_image(self):
-        try:
-            return = Image.open(self.image_address)
-        except FileNotFoundError:
-            # TODO 不确定这里的异常抛出怎么写更好
-            raise()
+    # def load_image(self):
+    #     try:
+    #         return = Image.open(self.image_address)
+    #     except FileNotFoundError:
+    #         # TODO 不确定这里的异常抛出怎么写更好
+    #         raise()
 
     def calculate_scale(self):
         height_scale = self.height_limit / self.img_height
