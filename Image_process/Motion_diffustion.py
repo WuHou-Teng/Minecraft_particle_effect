@@ -1,6 +1,6 @@
 
 
-class MotionDifusion(object):
+class MotionDiffusion(object):
     FORCE = 'force'
     NORMAL = 'normal'
     VISION = [FORCE, NORMAL]
