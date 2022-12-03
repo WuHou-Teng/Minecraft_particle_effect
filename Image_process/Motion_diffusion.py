@@ -11,7 +11,7 @@ class MotionDiffusion(object):
         self.delta_z = 0
         self.count = 0
         self.speed = 0
-        self.vistion = self.FORCE
+        self.vision = self.FORCE
 
     def set_delta_x(self, delta_x):
         self.delta_x = delta_x
@@ -41,10 +41,10 @@ class MotionDiffusion(object):
         if new_vision not in self.VISION:
             self.vision = self.FORCE
 
-    def set_motion_diffustion(self, motion_diffustion_list):
-        self.delta_x = motion_diffustion_list[0]
-        self.delta_y = motion_diffustion_list[1]
-        self.delta_z = motion_diffustion_list[2]
-        self.count = motion_diffustion_list[3]
-        self.speed = motion_diffustion_list[4]
-        self.vision = motion_diffustion_list[5]
+    def set_motion_diffusion(self, motion_diffusion_list):
+        self.delta_x = motion_diffusion_list[0]
+        self.delta_y = motion_diffusion_list[1]
+        self.delta_z = motion_diffusion_list[2]
+        self.count = motion_diffusion_list[3]
+        self.speed = motion_diffusion_list[4]
+        self.vision = motion_diffusion_list[5]

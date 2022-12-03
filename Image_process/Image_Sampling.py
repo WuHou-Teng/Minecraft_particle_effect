@@ -1,9 +1,9 @@
 import os
 from PIL import Image
 from Const.Other_const import *
-from Motion_diffustion import MotionDifusion
+from Motion_diffusion import MotionDiffusion
 
-# 再尝试一次
+
 class ImageSampling(object):
 
     def __init__(self, image='', height_limit=Height_MAX, width_limit=Width_MAX, direction=West_East, align=LEFT_DOWN):
@@ -38,7 +38,7 @@ class ImageSampling(object):
 
         # TODO 关于粒子运动，准备在这里保留粒子运动的设定
         # motion and diffusion
-        self.motion_diffusion = MotionDifusion()
+        self.motion_diffusion = MotionDiffusion()
 
     # TODO transfer 函数待完成。
     def transfer(self):
@@ -46,8 +46,8 @@ class ImageSampling(object):
             return "需要访问的图片不存在"
         try:
             self.img = Image.open(self.image_address)
-            self.width = im.size[0]
-            self.height = im.size[1]
+            self.img_width = self.img.size[0]
+            self.img_height = self.img.size[1]
 
         except:
             # TODO 不确定这里的打印异常能否正常运行
