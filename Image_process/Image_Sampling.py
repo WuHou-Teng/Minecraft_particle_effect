@@ -2,6 +2,7 @@ import os
 from PIL import Image
 from Const.Other_const import *
 from Motion_diffusion import MotionDiffusion
+from Image_process.ImageAccess import ImageAccess
 
 
 class ImageSampling(object):
@@ -48,6 +49,9 @@ class ImageSampling(object):
             self.img = Image.open(self.image_address)
             self.img_width = self.img.size[0]
             self.img_height = self.img.size[1]
+            for w in range(round(self.img_width/self.down_sample)):
+                for h in range(round(self.img_height/self.down_sample)):
+                    img_data = self.img.getpixel((w * self.down_sample, h * self.down_sample))
 
         except:
             # TODO 不确定这里的打印异常能否正常运行
