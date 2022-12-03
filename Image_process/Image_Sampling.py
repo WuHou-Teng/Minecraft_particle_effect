@@ -14,7 +14,6 @@ class ImageSampling(object):
         self.img_height = 0
 
         # 图片最大大小。默认为100x100
-        # 当固定长宽比时，图片默认为以长的那个边=最大限制，短的那一边和长边等比例缩放。
         self.height_limit = height_limit
         self.width_limit = width_limit
         # 是否固定长宽比
@@ -49,7 +48,7 @@ class ImageSampling(object):
             self.img = Image.open(self.image_address)
             self.width = im.size[0]
             self.height = im.size[1]
-            
+
         except:
             # TODO 不确定这里的打印异常能否正常运行
             # print(str(Exception))
