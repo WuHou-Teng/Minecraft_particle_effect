@@ -40,3 +40,11 @@ class MotionDifusion(object):
         self.vision = new_vision
         if new_vision not in self.VISION:
             self.vision = self.FORCE
+
+    def set_motion_diffustion(self, motion_diffustion_list):
+        self.delta_x = motion_diffustion_list[0]
+        self.delta_y = motion_diffustion_list[1]
+        self.delta_z = motion_diffustion_list[2]
+        self.count = motion_diffustion_list[3]
+        self.speed = motion_diffustion_list[4]
+        self.vision = motion_diffustion_list[5]
