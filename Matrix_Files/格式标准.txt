@@ -4,8 +4,8 @@
 # 二值
 # (如果是二值，则颜色只有0，1，2三种，分别对应，黑，白，透明)
 # delta和speed默认为0， 随机粒子数量count为1
-# particle_color, x,  y,  z, delta_x, delta_y, delta_z, speed, count, force_normal
-  1,             10, 10, 10, 0,       0,       0,       0,     1,     f/n
+#  x,  y,  z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color
+  10, 10, 10, 0,       0,       0,       0,     1,     f/n,          1
 
 # 对于相对坐标 ~x ~y ~z
 # 其中~x 是东+西-，~y是上+下-， ~z是南+北-
@@ -13,8 +13,8 @@
 # 其中^x 是左+右-，^y是上+下-，^z则是前+后-。
 
 #　彩色(尚未决定)
-# x,  y,  z,  particle_color (彩色粒子通过RGB表示）
-10, 10, 10, ff, ff, ff
+#  x,  y,  z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color(R, G, B), color transfer(R,G,B)
+  10, 10, 10, 0,       0,       0,       0,     1,     f/n,          0.05-1, 0-1, 0-1,        0.05-1, 0-1, 0-1
 
 # 生成的一组坐标矩阵应该被放置在相应的文件夹下：
 Matrix_Files

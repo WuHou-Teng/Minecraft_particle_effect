@@ -1,7 +1,7 @@
 import os
 from Const import Particles_Java
 from Const import Particles_bedRock
-from Const.Other_const import *
+from Const.Convertor_consts import *
 
 
 class BinConverter(object):
@@ -144,7 +144,7 @@ class BinConverter(object):
     # 修改对象
     def set_coo_type(self, coo_type):
         self.coo_type = coo_type
-        if coo_type not in self.particle_dict.keys():
+        if coo_type not in self.coo_dict.keys():
             self.coo_type = RELA_COORD
 
     # 修改移动速度倍率

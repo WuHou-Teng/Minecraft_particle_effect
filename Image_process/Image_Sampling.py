@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-from Const.Other_const import *
+from Const.Convertor_consts import *
 from Motion_diffusion import MotionDiffusion
 from Image_process.ImageAccess import ImageAccess
 
@@ -42,7 +42,11 @@ class ImageSampling(object):
         self.motion_diffusion = MotionDiffusion()
 
     # TODO transfer 函数待完成。
-    def transfer(self):
+    def binary_transfer(self):
+        """
+        将图片按照轮廓线转换为相应的坐标矩阵。
+        :return:
+        """
         if not os.path.exists(self.image_address):
             return "需要访问的图片不存在"
         try:
