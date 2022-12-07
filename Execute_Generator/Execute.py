@@ -5,6 +5,7 @@ from Const.Execute_consts import *
 class ExecuteBuilder(object):
     """
     检测执行指令：execute 以及后面跟的所有可能的指令块
+    TODO 未来指令生成器的雏形。
     """
     def __init__(self, modifier=AS, entity="@p"):
         self.base = 'execute'
