@@ -162,6 +162,15 @@ class ColorChannels(object):
         self.set_range_green(green_start, green_end)
         self.set_range_blue(blue_start, blue_end)
 
+    def set_range_equally(self, start, end):
+        """
+        为三个通道添加相同的区域。
+        :param start: 三个通道的开始值
+        :param end: 三个通道的结束值
+        :return:
+        """
+        self.set_range(start, end, start, end, start, end)
+
     # 以下是检测数值是否在区域内。写成三个是为了在程序运行时，节约传递参数的时间。
     def red_range_include(self, val):
         """
@@ -172,7 +181,7 @@ class ColorChannels(object):
             False, if val is not in any ranges of red channel.
         """
         for ranges in self.red_range:
-            if ranges[0] < val < ranges[1]:
+            if ranges[0] <= val <= ranges[1]:
                 return True if not self.flip else False
         return False if not self.flip else True
 
@@ -185,7 +194,7 @@ class ColorChannels(object):
             False, if val is not in any ranges of red channel.
         """
         for ranges in self.green_range:
-            if ranges[0] < val < ranges[1]:
+            if ranges[0] <= val <= ranges[1]:
                 return True if not self.flip else False
         return False if not self.flip else True
 
@@ -198,10 +207,11 @@ class ColorChannels(object):
             False, if val is not in any ranges of red channel.
         """
         for ranges in self.blue_range:
-            if ranges[0] < val < ranges[1]:
+            if ranges[0] <= val <= ranges[1]:
                 return True if not self.flip else False
         return False if not self.flip else True
 
     # 返回自己的类名称
     def get_self_name(self):
         return str(type(self)).split('.')[1][:-3]
+

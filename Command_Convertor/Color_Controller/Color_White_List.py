@@ -35,6 +35,15 @@ class ColorWhiteList(ColorChannels):
         """
         self.blue_range = [(0, 1)]
 
+    def set_default(self):
+        """
+        将所有通道的值设定为默认值。
+        :return:
+        """
+        self.set_red_default()
+        self.set_green_default()
+        self.set_blue_default()
+
     # 如果处于白名单状态下，对任意一个通道的置空，都将导致任何颜色都不能通过检测。
     # 而在黑名单模式下，则意味着允许任何颜色。
     def clear_range_red(self):
@@ -80,6 +89,7 @@ class ColorWhiteList(ColorChannels):
                 self.green_range_include(color_list[1]) and
                 self.blue_range_include(color_list[2])):
             return True
+        return False
 
     # 以下是先前写的一个function，逻辑比较混乱，不确定是否有bug，先放在这里。
     # 收到一个颜色后，判定是否在 白名单内 / 黑名单外
@@ -132,3 +142,4 @@ class ColorWhiteList(ColorChannels):
             return True if count == 3 else False
         else:
             return True
+
