@@ -1,5 +1,5 @@
 import os
-from Convertor.Binary_Convertor import BinConverter
+from Command_Convertor.Homo_Convertor import HomoConverter
 
 
 class McEffectFuncGenerator(object):

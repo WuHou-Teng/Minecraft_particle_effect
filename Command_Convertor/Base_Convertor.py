@@ -2,9 +2,11 @@ import os
 from Const import Particles_Java
 from Const import Particles_bedRock
 from Const.Convertor_consts import *
-from Const.color import *
+from Const.Color import *
 from util.Color_Range_Exception import ColorRangeException
 from Execute_Generator.Execute import ExecuteBuilder
+from Command_Convertor.Color_Controller.Color_Filter_Amp import ColorFilterAmp
+from Command_Convertor.Color_Controller.Color_White_List import ColorWhiteList
 
 
 class Convertor(object):
@@ -15,7 +17,7 @@ class Convertor(object):
     对于实体视角坐标 ^x ^y ^z
     其中^x 是左+右-，^y是上+下-，^z则是前+后-。
      x,  y,  z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color(R, G, B), color transfer(R,G,B)
-    10, 10, 10, 0,       0,       0,       0,     1,     f/n,          0.05-1, 0-1, 0-1,        0.05-1, 0-1, 0-1
+    10, 10, 10, 0,       0,       0,       0,     1,     f/n,          0.001-1, 0-1, 0-1,        0.001-1, 0-1, 0-1
     """
 
     def __init__(self):
@@ -23,14 +25,20 @@ class Convertor(object):
         self.mat_file = ""
         # 指令版本
         self.edition = JAVA  # 生成版本为Java
-        self.particle = Particles_Java.end_rod  # 采用粒子end_rod
-        # TODO, 在Const中添加 颜色——粒子 对应字典， 黑白和彩色个来一套。
-        # self.particle_dict = {"Black": BLACK, "White": WHITE, "Trans": TRANSP}
+        # 这里不写明粒子使用，由子类自行规定
+        # self.particle = Particles_Java.end_rod  # 采用粒子end_rod
+
         # 采用相对坐标
         self.coo_type = RELA_COORD
         # 坐标模式字典
         self.coo_dict = {RELA_COORD: " ~", FACE_COORD: " ^", ABS_COORD: ""}
-        self.default_ignore_color = []  # 即将黑色或者无色粒子视为不存在。
+
+        # 颜色过滤/增幅, 处于设定范围内的颜色，会被增幅或者削弱。详细内容请参考 ColorFilterAmp()
+        # 颜色过滤/增幅器可以添加多个。
+        empty_filter = ColorFilterAmp()
+        self.color_filters = [empty_filter]
+        # 只有三个通道的颜色都处于白名单范围内的粒子坐标会被最终转化为指令放入mcfunction
+        self.color_white_list = ColorWhiteList()
 
         # Execute 指令
         self.use_execute = True
@@ -46,6 +54,11 @@ class Convertor(object):
         self.y_scale = 0.1
         self.z_scale = 0.1
 
+        # TODO 转换时，为粒子添加移动。如果粒子本身delta_xyz不为零，则会将数值直接添加到delta_xyz上
+        self.x_delta = 0
+        self.y_delta = 0
+        self.z_delta = 0
+
         # 转换时，粒子运动范围倍率
         self.motion_multi = 1
 
@@ -59,8 +72,8 @@ class Convertor(object):
         其中~x 是东+西-，~y是上+下-， ~z是南+北-
         对于实体视角坐标 ^x ^y ^z
         其中^x 是左+右-，^y是上+下-，^z则是前+后-。
-         x,  y,  z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color(R, G, B), color transfer(R,G,B)
-        10, 10, 10, 0,       0,       0,       0,     1,     f/n,          0.05-1, 0-1, 0-1,        0.05-1, 0-1, 0-1
+        x, y, z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color(R, G, B), color transfer(R,G,B)
+        1, 1, 1, 0,       0,       0,       0,     1,     f/n,          0.001-1, 0-1, 0-1,        0.001-1, 0-1, 0-1
         :param particle_data: 单个粒子坐标以及颜色
         :return:
             召唤单个粒子的指令
@@ -83,8 +96,8 @@ class Convertor(object):
     def read_mat(self):
         """
         从相应的文件读取位置矩阵
-         x,  y,  z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color(R, G, B), color transfer(R,G,B)
-        10, 10, 10, 0,       0,       0,       0,     1,     f/n,          0.05-1, 0-1, 0-1,        0.05-1, 0-1, 0-1
+        x, y, z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color(R, G, B), color transfer(R,G,B)
+        1, 1, 1, 0,       0,       0,       0,     1,     f/n,          0.05-1, 0-1, 0-1,        0.05-1, 0-1, 0-1
         :return:
             mat_array: 保存了整个矩阵的列表
         """
@@ -115,8 +128,8 @@ class Convertor(object):
         self.z_scale = z
 
     # 修改粒子类型
-    def set_particle(self, particle):
-        self.particle = particle
+    # def set_particle(self, particle):
+    #     self.particle = particle
 
     # 修改坐标相对性
     def set_coo_type(self, coo_type):
@@ -124,8 +137,26 @@ class Convertor(object):
         if coo_type not in self.coo_dict.keys():
             self.coo_type = RELA_COORD
 
+    def add_filter(self, new_color_filter_amp=ColorFilterAmp()):
+        """
+        添加新的滤镜。推荐先设定好滤镜后再添加。
+        :param new_color_filter_amp:
+        """
+        self.color_filters.append(new_color_filter_amp)
+
+    def clear_filters(self):
+        """
+        清除所有已添加的滤镜，程序自动添加一个新的空白滤镜。
+        """
+        self.color_filters = [ColorFilterAmp()]
+
     # 修改移动速度倍率
     def set_speed_multi(self, speed_multi):
+        """
+        修改移动速度倍率，生成移动特效的时候，可能需要根据尺寸调整移动速度。
+        :param speed_multi: 速度倍率调整。
+        :return:
+        """
         self.speed_multi = speed_multi
 
     # 修改粒子运动范围倍率
@@ -135,47 +166,6 @@ class Convertor(object):
     # 使用execute与否
     def execute_switch(self, true_or_false):
         self.use_execute = true_or_false
-
-    # 设定忽视颜色
-    def set_default_ignore_color(self, range_begin, range_end=None):
-        """
-        设定在转化为粒子特效时，忽略的颜色区间。
-        该区间应该是由 [r_1, g_1, b_1] 与 [r_2, g_2, b_2] 的两个列表或元组组成。
-        其中 r_1<=r_2, g_1<=g_2, b_1<=b_2
-        :param range_begin: 忽略颜色区间的开始 [r_1, g_1, b_1]
-        :param range_end: 忽略颜色区间的结尾 [r_2, g_2, b_2]
-        :return:
-        """
-        if range_end is None:
-            range_end = range_begin
-        for i in range(3):
-            if range_begin[i] > range_end[i]:
-                raise ColorRangeException(self.get_self_name() + ", set_default_ignore_color")
-        color_range = [[range_begin[0], range_end[0]], [range_begin[1], range_end[1]], [range_begin[2], range_end[2]]]
-        self.default_ignore_color.append(color_range)
-
-    def empty_default_ignore_color(self):
-        """
-        清空忽略颜色列表
-        :return:
-        """
-        self.default_ignore_color = []
-
-    # 检测所给颜色是否在忽略颜色区间范围内
-    def ignore_color(self, color_list):
-        """
-        检测要转换的粒子的颜色是否在忽略颜色范围内。
-        :param color_list: [r, g, b] r, g, b ∈ [0,1]
-        :return:
-        """
-        for color_range in self.default_ignore_color:
-            if color_list[0] < color_range[0][0] or color_list[0] > color_range[0][1]:
-                return False
-            if color_list[1] < color_range[1][0] or color_list[1] > color_range[1][1]:
-                return False
-            if color_list[2] < color_range[2][0] or color_list[2] > color_range[2][1]:
-                return False
-        return True
 
     # 返回自己的类名称
     def get_self_name(self):
