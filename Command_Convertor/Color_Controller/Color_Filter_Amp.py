@@ -53,17 +53,17 @@ class ColorFilterAmp(ColorChannels):
 
     # 这里之前是写有原本关于range设定的类，现全部转移到父类，ColorChannels里面
 
-    # 将处于忽略范围内的颜色通道设定为最小值。
+    # 为处于范围内的颜色通道添加滤镜
     def filter_amp_the_color(self, color_list):
         """
-        检测要转换的粒子任意通道的颜色是否在忽略颜色范围内，如果是，则直接将该通道设定为最小值。
+        检测要转换的粒子任意通道的颜色是否在相应范围内，如果是，则为该通道的颜色添加滤镜
         :param color_list: [r, g, b], r, g, b ∈ [0,1]
         :return:
             color_list: 经过滤镜后的颜色。
         """
 
         # 红色通道
-        if not self.red_range_include(color_list[0]):
+        if self.red_range_include(color_list[0]):
             color_list[0] = color_list[0] * (1 + self.filter_amp_ratio_red)
             # 只有红色通道一定要保证数值最低不低于0.001
             if color_list < 0.001:
@@ -80,7 +80,7 @@ class ColorFilterAmp(ColorChannels):
         #             color_list[0] = 1
 
         # 绿色通道
-        if not self.green_range_include(color_list[1]):
+        if self.green_range_include(color_list[1]):
             color_list[1] = color_list[1] * (1 + self.filter_amp_ratio_green)
             if color_list[1] > 1:
                 color_list[1] = 1
@@ -91,7 +91,7 @@ class ColorFilterAmp(ColorChannels):
         #             color_list[1] = 1
 
         # 蓝色通道
-        if not self.blue_range_include(color_list[2]):
+        if self.blue_range_include(color_list[2]):
             color_list[2] = color_list[2] * (1 + self.filter_amp_ratio_blue)
             if color_list[2] > 1:
                 color_list[2] = 1
