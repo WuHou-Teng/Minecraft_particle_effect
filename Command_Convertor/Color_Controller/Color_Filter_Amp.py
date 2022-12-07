@@ -1,13 +1,15 @@
+from Command_Convertor.Color_Controller.Color_Channels import ColorChannels
 from util.Color_Range_Exception import ColorRangeException
 from util.Filter_Amp_Ratio_Exception import FilterAmpRatioException
 from Const.Convertor_consts import *
 
 
-class ColorFilterAmp(object):
+class ColorFilterAmp(ColorChannels):
     """
-    颜色滤镜。用于对特定通道的颜色进行过滤。
+    颜色滤镜。用于对特定通道的颜色进行过滤 或者 增强
     """
     def __init__(self):
+        super(ColorFilterAmp, self).__init__()
         self.red_range = []
         self.green_range = []
         self.blue_range = []
@@ -49,145 +51,10 @@ class ColorFilterAmp(object):
             raise FilterAmpRatioException(self.get_self_name() + "set_filter_amp_ratio_blue", "ratio = " + str(ratio))
         self.filter_amp_ratio_blue = ratio
 
-    def add_filter_red(self, red_start, red_end):
-        """
-        添加 red 通道滤镜。
-        red_start, red_end ∈ (0.001, 1) 且 red_start <= red_end
-        :param red_start: 开始值
-        :param red_end: 结束值
-        :return:
-        """
-        if red_start < 0.001 or red_start > 1:
-            raise ColorRangeException(self.get_self_name() + ".set_filter_red()", "red_start = " + str(red_start))
-        if red_end < 0.001 or red_end > 1:
-            raise ColorRangeException(self.get_self_name() + ".set_filter_red()", "red_end = " + str(red_end))
-        if red_start > red_end:
-            raise ColorRangeException(self.get_self_name() + ".set_filter_red()", 
-                                      "red_start = " + str(red_start) + " > " "red_end = " + str(red_end))
-        self.red_range.append((red_start, red_end))
-        
-    def add_filter_green(self, green_start, green_end):
-        """
-        添加 green 通道滤镜。
-        green_start, green_end ∈ (0, 1) 且 green_start <= green_end
-        :param green_start: 开始值
-        :param green_end: 结束值
-        :return:
-        """
-        if green_start < 0 or green_start > 1:
-            raise ColorRangeException(self.get_self_name() + ".set_filter_green()", "green_start = " + str(green_start))
-        if green_end < 0 or green_end > 1:
-            raise ColorRangeException(self.get_self_name() + ".set_filter_green()", "green_end = " + str(green_end))
-        if green_start > green_end:
-            raise ColorRangeException(self.get_self_name() + ".set_filter_green()", 
-                                      "green_start = " + str(green_start) + " > " "green_end = " + str(green_end))
-        self.green_range.append((green_start, green_end))
-        
-    def add_filter_blue(self, blue_start, blue_end):
-        """
-        添加 blue 通道滤镜。
-        blue_start, blue_end ∈ (0, 1) 且 blue_start <= blue_end
-        :param blue_start: 开始值
-        :param blue_end: 结束值
-        :return:
-        """
-        if blue_start < 0 or blue_start > 1:
-            raise ColorRangeException(self.get_self_name() + ".set_filter_blue()", "blue_start = " + str(blue_start))
-        if blue_end < 0 or blue_end > 1:
-            raise ColorRangeException(self.get_self_name() + ".set_filter_blue()", "blue_end = " + str(blue_end))
-        if blue_start > blue_end:
-            raise ColorRangeException(self.get_self_name() + ".set_filter_blue()",
-                                      "blue_start = " + str(blue_start) + " > " "blue_end = " + str(blue_end))
-        self.blue_range.append((blue_start, blue_end))
-
-    def set_filter_red(self, red_start, red_end):
-        """
-        设定 red 通道滤镜。
-        red_start, red_end ∈ (0.001, 1) 且 red_start <= red_end
-        :param red_start: 开始值
-        :param red_end: 结束值
-        :return:
-        """
-        self.clear_filter_red()
-        self.add_filter_red(red_start, red_end)
-
-    def set_filter_green(self, green_start, green_end):
-        """
-        设定 green 通道滤镜
-        green_start, green_end ∈ (0, 1) 且 green_start <= green_end
-        :param green_start: 开始值
-        :param green_end: 结束值
-        :return:
-        """
-        self.clear_filter_green()
-        self.add_filter_green(green_start, green_end)
-
-    def set_filter_blue(self, blue_start, blue_end):
-        """
-        设定 blue 通道滤镜
-        blue_start, blue_end ∈ (0, 1) 且 blue_start <= blue_end
-        :param blue_start: 开始值
-        :param blue_end: 结束值
-        :return:
-        """
-        self.clear_filter_blue()
-        self.add_filter_blue(blue_start, blue_end)
-
-    def clear_filter_red(self):
-        self.red_range = []
-
-    def clear_filter_green(self):
-        self.green_range = []
-
-    def clear_filter_blue(self):
-        self.blue_range = []
-
-    def clear_filter(self):
-        self.red_range = []
-        self.green_range = []
-        self.blue_range = []
-
-    def add_filter(self, red_start=0, red_end=0, green_start=0, green_end=0, blue_start=0, blue_end=0):
-        """
-        一次性添加三个通道的滤镜。
-        :param red_start: red 通道开始值
-        :param red_end: red 通道结束值
-        :param green_start: green 通道开始值
-        :param green_end: green 通道结束值
-        :param blue_start: blue 通道开始值
-        :param blue_end: blue 通道结束值
-        :return:
-        """
-        self.add_filter_red(red_start, red_end)
-        self.add_filter_green(green_start, green_end)
-        self.add_filter_blue(blue_start, blue_end)
-
-    def add_filter_equally(self, start, end):
-        """
-        为三个通道添加相同的滤镜
-        :param start: 三个通道的开始值
-        :param end: 三个通道的结束值
-        :return:
-        """
-        self.add_filter(start, end, start, end, start, end)
-
-    def set_filter(self, red_start=0, red_end=0, green_start=0, green_end=0, blue_start=0, blue_end=0):
-        """
-        一次性设定三个通道的滤镜。
-        :param red_start: red 通道开始值
-        :param red_end: red 通道结束值
-        :param green_start: green 通道开始值
-        :param green_end: green 通道结束值
-        :param blue_start: blue 通道开始值
-        :param blue_end: blue 通道结束值
-        :return:
-        """
-        self.set_filter_red(red_start, red_end)
-        self.set_filter_green(green_start, green_end)
-        self.set_filter_blue(blue_start, blue_end)
+    # 这里之前是写有原本关于range设定的类，现全部转移到父类，ColorChannels里面
 
     # 将处于忽略范围内的颜色通道设定为最小值。
-    def filter_the_color(self, color_list):
+    def filter_amp_the_color(self, color_list):
         """
         检测要转换的粒子任意通道的颜色是否在忽略颜色范围内，如果是，则直接将该通道设定为最小值。
         :param color_list: [r, g, b], r, g, b ∈ [0,1]
@@ -195,26 +62,42 @@ class ColorFilterAmp(object):
             color_list: 经过滤镜后的颜色。
         """
 
-        for filters in self.red_range:
-            if color_list[0] < filters[0] or color_list[0] > filters[1]:
-                color_list[0] = color_list[0] * (1 + self.filter_amp_ratio_red)
-                # 只有红色通道一定要保证数值最低不低于0.001
-                if color_list < 0.001:
-                    color_list[0] = 0.001
-                if color_list[0] > 1:
-                    color_list[0] = 1
-        for filters in self.green_range:
-            if color_list[1] < filters[0] or color_list[1] > filters[1]:
-                color_list[1] = color_list[1] * (1 + self.filter_amp_ratio_green)
-                if color_list[1] > 1:
-                    color_list[1] = 1
-        for filters in self.blue_range:
-            if color_list[2] < filters[0] or color_list[2] > filters[1]:
-                color_list[2] = color_list[2] * (1 + self.filter_amp_ratio_blue)
-                if color_list[2] > 1:
-                    color_list[2] = 1
-        return color_list
+        # 红色通道
+        if not self.red_range_include(color_list[0]):
+            color_list[0] = color_list[0] * (1 + self.filter_amp_ratio_red)
+            # 只有红色通道一定要保证数值最低不低于0.001
+            if color_list < 0.001:
+                color_list[0] = 0.001
+            if color_list[0] > 1:
+                color_list[0] = 1
+        # for ranges in self.red_range:
+        #     if color_list[0] < ranges[0] or color_list[0] > ranges[1]:
+        #         color_list[0] = color_list[0] * (1 + self.filter_amp_ratio_red)
+        #         # 只有红色通道一定要保证数值最低不低于0.001
+        #         if color_list < 0.001:
+        #             color_list[0] = 0.001
+        #         if color_list[0] > 1:
+        #             color_list[0] = 1
 
-    # 返回自己的类名称
-    def get_self_name(self):
-        return str(type(self)).split('.')[1][:-3]
+        # 绿色通道
+        if not self.green_range_include(color_list[1]):
+            color_list[1] = color_list[1] * (1 + self.filter_amp_ratio_green)
+            if color_list[1] > 1:
+                color_list[1] = 1
+        # for ranges in self.green_range:
+        #     if color_list[1] < ranges[0] or color_list[1] > ranges[1]:
+        #         color_list[1] = color_list[1] * (1 + self.filter_amp_ratio_green)
+        #         if color_list[1] > 1:
+        #             color_list[1] = 1
+
+        # 蓝色通道
+        if not self.blue_range_include(color_list[2]):
+            color_list[2] = color_list[2] * (1 + self.filter_amp_ratio_blue)
+            if color_list[2] > 1:
+                color_list[2] = 1
+        # for ranges in self.blue_range:
+        #     if color_list[2] < ranges[0] or color_list[2] > ranges[1]:
+        #         color_list[2] = color_list[2] * (1 + self.filter_amp_ratio_blue)
+        #         if color_list[2] > 1:
+        #             color_list[2] = 1
+        return color_list
