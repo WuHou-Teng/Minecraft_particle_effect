@@ -13,6 +13,7 @@ class ScaleController(ControllerBase):
         self.z_scale = 1
         # 缩放中心点，[x, y, z]
         # 如果是二维图片，推荐将旋转中心点设在图片的二维平面上。
+        # TODO 以后最好设计一个保留一个物体整体空间坐标的类，并且能正确反馈物体的各项属性，包括大小，边界外切立方体坐标。
         self.scale_centre = [0, 0, 0]
 
     def set_x_scale(self, new_x_scale):
@@ -36,9 +37,13 @@ class ScaleController(ControllerBase):
         self.y_scale = new_y_scale
         self.z_scale = new_z_scale
 
+    def clear_scale(self):
+        self.x_scale = 1
+        self.y_scale = 1
+        self.z_scale = 1
+
     def set_scale_centre(self, new_scale_centre):
         """
-        TODO 以后最好设计一个保留一个物体整体空间坐标的类，并且能正确反馈物体的各项属性，包括大小，边界外切立方体坐标。
         设定缩放中心。
         :param new_scale_centre: 新的缩放中心点。如果是二维图片，推荐将缩放中心点设定在图片上。
         :return:
@@ -63,6 +68,7 @@ class ScaleController(ControllerBase):
         继承自 ControllerBase，输入完整粒子信息后，对其修改，并返回。
         :param particle: [x, y, z, d_x, d_y, d_z, speed, count, force_normal, R, G, B, TR, TG, TB, type]
         :return:
+            particle: 经过处理后的粒子数据。
         """
         x_new, y_new, z_new = self.apply_scale(self.scale_centre[0], self.scale_centre[1], self.scale_centre[2])
         particle[0] = x_new
