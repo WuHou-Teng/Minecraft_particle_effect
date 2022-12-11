@@ -1,4 +1,4 @@
-from Command_Convertor.Controllers.Controller_Interface import ControllerBase
+from Controllers import ControllerBase
 
 
 class ScaleController(ControllerBase):

@@ -16,7 +16,7 @@ class Convertor(object):
 
     def __init__(self):
         # 要转换的矩阵文件
-        self.mat_file = ""
+        self.mat_file = None
         # 指令版本
         self.edition = JAVA  # 生成版本为Java
         # 这里不写明粒子使用，由子类自行规定
@@ -25,7 +25,7 @@ class Convertor(object):
         # 采用相对坐标
         self.coo_type = RELA_COORD
         # 坐标模式字典
-        self.coo_dict = {RELA_COORD: " ~", FACE_COORD: " ^", ABS_COORD: ""}
+        self.coo_dict = {RELA_COORD: " ~", FACE_COORD: " ^", ABS_COORD: " "}
 
         # Execute 指令
         self.use_execute = True
@@ -72,20 +72,21 @@ class Convertor(object):
             mat_array: 保存了整个矩阵的列表
         """
         mat_array = []
-        with open(self.mat_file, "r") as mat:
-            mat_data = mat.readlines()
-            for particles in mat_data:
-                print(particles)
-                if len(particles) > 0 and particles[0] != "#":
-                    particles_info = particles.strip().split(',')
-                    if len(particles_info) > 10:
-                        for i in range(len(particles_info)):
+        if self.mat_file is not None:
+            with open(self.mat_file, "r") as mat:
+                mat_data = mat.readlines()
+                for particles in mat_data:
+                    print(particles)
+                    if len(particles) > 0 and particles[0] != "#":
+                        particles_info = particles.strip().split(',')
+                        if len(particles_info) > 10:
+                            for i in range(len(particles_info)):
 
-                            particles_info[i] = particles_info[i].strip()
-                        # 将粒子信息的数据格式进行修改。
-                        particles_info = self.alert_particle_format(particles_info)
-                        mat_array.append(particles_info)
-            mat.close()
+                                particles_info[i] = particles_info[i].strip()
+                            # 将粒子信息的数据格式进行修改。
+                            particles_info = self.alert_particle_format(particles_info)
+                            mat_array.append(particles_info)
+                mat.close()
         return mat_array
 
     def alert_particle_format(self, particle):

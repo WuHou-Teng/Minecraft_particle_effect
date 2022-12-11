@@ -1,5 +1,5 @@
 from util.Color_Range_Exception import ColorRangeException
-from Command_Convertor.Controllers.Controller_Interface import ControllerBase
+from Controllers import ControllerBase
 
 
 class ColorController(ControllerBase):

@@ -1,4 +1,4 @@
-from Command_Convertor.Controllers.Color_Controller.Color_Controller import ColorController
+from Controllers.Color_Controller.Color_Controller import ColorController
 
 
 class ColorWhiteList(ColorController):

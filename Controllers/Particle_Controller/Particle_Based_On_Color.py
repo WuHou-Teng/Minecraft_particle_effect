@@ -1,4 +1,4 @@
-from Command_Convertor.Controllers.Particle_Controller.Particle_Controller import ParticleController
+from Controllers.Particle_Controller.Particle_Controller import ParticleController
 
 
 class ParticleOfColor(ParticleController):

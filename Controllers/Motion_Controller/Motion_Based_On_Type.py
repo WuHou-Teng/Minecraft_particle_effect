@@ -1,4 +1,4 @@
-from Command_Convertor.Controllers.Motion_Controller.Motion_Controller import MotionController
+from Controllers.Motion_Controller import MotionController
 
 
 # 探讨移动与不同粒子类型的相关性
