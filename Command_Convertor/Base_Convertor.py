@@ -1,12 +1,6 @@
-import os
-from Const import Particles_Java
-from Const import Particles_bedRock
 from Const.Convertor_consts import *
-from Const.Color import *
-from util.Color_Range_Exception import ColorRangeException
 from Execute_Generator.Execute import ExecuteBuilder
-from Command_Convertor.Color_Controller.Color_Filter_Amp import ColorFilterAmp
-from Command_Convertor.Color_Controller.Color_White_List import ColorWhiteList
+from Command_Convertor.ControllerBox import ControllerToolBox
 
 
 class Convertor(object):
@@ -16,8 +10,8 @@ class Convertor(object):
     其中~x 是东+西-，~y是上+下-， ~z是南+北-
     对于实体视角坐标 ^x ^y ^z
     其中^x 是左+右-，^y是上+下-，^z则是前+后-。
-     x,  y,  z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color(R, G, B), color transfer(R,G,B)
-    10, 10, 10, 0,       0,       0,       0,     1,     f/n,          0.001-1, 0-1, 0-1,        0.001-1, 0-1, 0-1
+    x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type
+    1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined)
     """
 
     def __init__(self):
@@ -33,37 +27,13 @@ class Convertor(object):
         # 坐标模式字典
         self.coo_dict = {RELA_COORD: " ~", FACE_COORD: " ^", ABS_COORD: ""}
 
-        # 颜色过滤/增幅, 处于设定范围内的颜色，会被增幅或者削弱。详细内容请参考 ColorFilterAmp()
-        # 颜色过滤/增幅器可以添加多个。
-        empty_filter = ColorFilterAmp()
-        self.color_filters = [empty_filter]
-        # 只有三个通道的颜色都处于白名单范围内的粒子坐标会被最终转化为指令放入mcfunction
-        self.color_white_list = ColorWhiteList()
-
         # Execute 指令
         self.use_execute = True
         self.execute_header = ExecuteBuilder()
 
-        # 转换时，三个方向的偏移量。
-        self.x_shift = 0
-        self.y_shift = 0
-        self.z_shift = 0
-
-        # 转换时，坐标间隔缩放倍率
-        self.x_scale = 0.1
-        self.y_scale = 0.1
-        self.z_scale = 0.1
-
-        # TODO 转换时，为粒子添加移动。如果粒子本身delta_xyz不为零，则会将数值直接添加到delta_xyz上
-        self.x_delta = 0
-        self.y_delta = 0
-        self.z_delta = 0
-
-        # 转换时，粒子运动范围倍率
-        self.motion_multi = 1
-
-        # 转换时，可能需要同样更改移动速度。
-        self.speed_multi = 1
+        # 变换: 添加控制器。可以自定义一系列对矩阵的修改。
+        # 注意，控制器的特点是逐个对粒子进行变换，不关注整体。因此，其效果不如自定义函数那样强大，仅可以机械化的进行简单的变换。
+        self.controller = ControllerToolBox()
 
     def coordinate_convertor(self, particle_data):
         """
@@ -72,8 +42,8 @@ class Convertor(object):
         其中~x 是东+西-，~y是上+下-， ~z是南+北-
         对于实体视角坐标 ^x ^y ^z
         其中^x 是左+右-，^y是上+下-，^z则是前+后-。
-        x, y, z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color(R, G, B), color transfer(R,G,B)
-        1, 1, 1, 0,       0,       0,       0,     1,     f/n,          0.001-1, 0-1, 0-1,        0.001-1, 0-1, 0-1
+        x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type
+        1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined)
         :param particle_data: 单个粒子坐标以及颜色
         :return:
             召唤单个粒子的指令
@@ -96,8 +66,8 @@ class Convertor(object):
     def read_mat(self):
         """
         从相应的文件读取位置矩阵
-        x, y, z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color(R, G, B), color transfer(R,G,B)
-        1, 1, 1, 0,       0,       0,       0,     1,     f/n,          0.05-1, 0-1, 0-1,        0.05-1, 0-1, 0-1
+        x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type
+        1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined)
         :return:
             mat_array: 保存了整个矩阵的列表
         """
@@ -110,58 +80,48 @@ class Convertor(object):
                     particles_info = particles.strip().split(',')
                     if len(particles_info) > 10:
                         for i in range(len(particles_info)):
+
                             particles_info[i] = particles_info[i].strip()
+                        # 将粒子信息的数据格式进行修改。
+                        particles_info = self.alert_particle_format(particles_info)
                         mat_array.append(particles_info)
             mat.close()
         return mat_array
 
-    # 修改shift
-    def set_shift(self, x, z, y):
-        self.x_shift = x
-        self.z_shift = y
-        self.y_shift = z
+    def alert_particle_format(self, particle):
+        """
+        修改粒子信息列表内元素的数据格式。
+        :param particle: 粒子信息列表,
+            ['x', 'y', 'z', 'd_x', 'd_y', 'd_z', 'speed', 'count',
+            'force_normal', 'R', 'G', 'B', 'TR', 'TG', 'TB', 'type']
+        :return:
+            particle: 经过修改的粒子信息列表: 将必要的数据修改为数字
+            [x, y, z, d_x, d_y, d_z, speed, count, 'force_normal', R, G, B, TR, TG, TB, 'type']
+        """
+        particle[0] = float(particle[0])  # 坐标
+        particle[1] = float(particle[1])
+        particle[2] = float(particle[2])
+        particle[3] = float(particle[3])  # 移动坐标
+        particle[4] = float(particle[4])
+        particle[5] = float(particle[5])
+        particle[6] = float(particle[6])  # 速度
+        particle[7] = int(particle[7])    # 数量
 
-    # 修改缩放
-    def set_scale(self, x, y, z):
-        self.x_scale = x
-        self.y_scale = y
-        self.z_scale = z
+        particle[9] = float(particle[9])    # R
+        particle[10] = float(particle[10])  # G
+        particle[11] = float(particle[11])  # B
 
-    # 修改粒子类型
-    # def set_particle(self, particle):
-    #     self.particle = particle
+        particle[12] = float(particle[12])  # TR
+        particle[13] = float(particle[13])  # TG
+        particle[14] = float(particle[14])  # TB
+
+        return particle
 
     # 修改坐标相对性
     def set_coo_type(self, coo_type):
         self.coo_type = coo_type
         if coo_type not in self.coo_dict.keys():
             self.coo_type = RELA_COORD
-
-    def add_filter(self, new_color_filter_amp=ColorFilterAmp()):
-        """
-        添加新的滤镜。推荐先设定好滤镜后再添加。
-        :param new_color_filter_amp:
-        """
-        self.color_filters.append(new_color_filter_amp)
-
-    def clear_filters(self):
-        """
-        清除所有已添加的滤镜，程序自动添加一个新的空白滤镜。
-        """
-        self.color_filters = [ColorFilterAmp()]
-
-    # 修改移动速度倍率
-    def set_speed_multi(self, speed_multi):
-        """
-        修改移动速度倍率，生成移动特效的时候，可能需要根据尺寸调整移动速度。
-        :param speed_multi: 速度倍率调整。
-        :return:
-        """
-        self.speed_multi = speed_multi
-
-    # 修改粒子运动范围倍率
-    def set_motion_multi(self, motion_multi):
-        self.motion_multi = motion_multi
 
     # 使用execute与否
     def execute_switch(self, true_or_false):
