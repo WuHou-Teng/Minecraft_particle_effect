@@ -1,7 +1,7 @@
-from Command_Convertor.Color_Controller.Color_Channels import ColorChannels
+from Command_Convertor.Controllers.Color_Controller.Color_Controller import ColorController
 
 
-class ColorWhiteList(ColorChannels):
+class ColorWhiteList(ColorController):
     """
     颜色白名单。只有处于白名单区域内的颜色会被转换器考虑，并最终转换为mc指令。
     注意，是三个通道的颜色全部位于白名单范围内，才会被认为是允许的颜色。
@@ -90,6 +90,20 @@ class ColorWhiteList(ColorChannels):
                 self.blue_range_include(color_list[2])):
             return True
         return False
+
+    def process(self, particle):
+        """
+        继承自 ControllerBase，输入完整粒子信息后，对其修改，并返回
+        :param particle: [x, y, z, d_x, d_y, d_z, speed, count, force_normal, R, G, B, TR, TG, TB, type]
+        :return:
+            particle: 经过处理后的粒子数据。
+                    （WhiteList不会对粒子数据进行修改，只会判断是否符合，）
+                    （如果是，则返回原本的粒子。如果不是，则返回 None。）
+        """
+        if self.accept_color([particle[9], particle[10], particle[11]]):
+            return particle
+        else:
+            return None
 
     # 以下是先前写的一个function，逻辑比较混乱，不确定是否有bug，先放在这里。
     # 收到一个颜色后，判定是否在 白名单内 / 黑名单外

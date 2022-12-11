@@ -1,6 +1,6 @@
 
 
-class Controller(object):
+class ControllerBase(object):
     """
     所有 Controller类的函数接口。
     所有 Controller本质上都是在转换器将粒子矩阵转换前，对粒子信息的处理。

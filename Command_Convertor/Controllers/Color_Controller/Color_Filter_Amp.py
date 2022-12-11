@@ -1,10 +1,9 @@
-from Command_Convertor.Color_Controller.Color_Channels import ColorChannels
-from util.Color_Range_Exception import ColorRangeException
+from Command_Convertor.Controllers.Color_Controller.Color_Controller import ColorController
 from util.Filter_Amp_Ratio_Exception import FilterAmpRatioException
-from Const.Convertor_consts import *
+from Command_Convertor.Controllers.Color_Controller.Color_Controller_Const import *
 
 
-class ColorFilterAmp(ColorChannels):
+class ColorFilterAmp(ColorController):
     """
     颜色滤镜。用于对特定通道的颜色进行过滤 或者 增强
     """
@@ -101,3 +100,18 @@ class ColorFilterAmp(ColorChannels):
         #         if color_list[2] > 1:
         #             color_list[2] = 1
         return color_list
+
+    def process(self, particle):
+        """
+        继承自 ControllerBase，输入完整粒子信息后，对其修改，并返回。
+        :param particle: [x, y, z, d_x, d_y, d_z, speed, count, force_normal, R, G, B, TR, TG, TB, type]
+        :return:
+            particle: 经过处理后的粒子数据。
+        """
+        color_list = self.filter_amp_the_color([particle[9], particle[10], particle[11]])
+        particle[9] = color_list[0]
+        particle[10] = color_list[1]
+        particle[11] = color_list[2]
+        return particle
+
+

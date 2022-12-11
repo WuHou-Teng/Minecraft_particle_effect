@@ -1,9 +1,11 @@
 from util.Color_Range_Exception import ColorRangeException
+from Command_Convertor.Controllers.Controller_Interface import ControllerBase
 
 
-class ColorChannels(object):
+class ColorController(ControllerBase):
 
     def __init__(self):
+        super(ColorController, self).__init__()
         self.red_range = []
         self.green_range = []
         self.blue_range = []
@@ -214,4 +216,5 @@ class ColorChannels(object):
     # 返回自己的类名称
     def get_self_name(self):
         return str(type(self)).split('.')[1][:-3]
+
 
