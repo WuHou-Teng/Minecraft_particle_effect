@@ -1,11 +1,11 @@
-from Controllers import ControllerBase
+from Controllers.Controller_Interface import ControllerBase
 # 方位控制器
-from Controllers import ScaleController
-from Controllers import RotateController
+from Controllers.Location_Controller.Scale_Controller import ScaleController
+from Controllers.Location_Controller.Rotate_Controller import RotateController
 from Controllers.Location_Controller.Shift_Controller import ShiftController
 # 颜色控制器
-from Controllers.Color_Controller import ColorWhiteList
-from Controllers.Color_Controller import ColorFilterAmp
+from Controllers.Color_Controller.Color_White_List import ColorWhiteList
+from Controllers.Color_Controller.Color_Filter_Amp import ColorFilterAmp
 # 其余控制器还未完善，因此暂不添加。
 
 

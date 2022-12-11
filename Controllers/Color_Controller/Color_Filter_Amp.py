@@ -1,5 +1,6 @@
 from Controllers.Color_Controller.Color_Controller import ColorController
 from util.Filter_Amp_Ratio_Exception import FilterAmpRatioException
+from Controllers.Color_Controller.Color_Controller_Const import *
 
 
 class ColorFilterAmp(ColorController):

@@ -1,5 +1,5 @@
 import math
-from Controllers import ControllerBase
+from Controllers.Controller_Interface import ControllerBase
 
 
 class RotateController(ControllerBase):

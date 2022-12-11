@@ -1,4 +1,4 @@
-from Controllers import ControllerBase
+from Controllers.Controller_Interface import ControllerBase
 
 
 # 粒子运动本身就是多维度属性，包括粒子移动的距离，以及移动的速度，以及扩散粒子数量。这里默认粒子无扩散。
