@@ -1,3 +1,4 @@
+import copy
 
 
 class MatrixAccesser(object):
@@ -11,6 +12,9 @@ class MatrixAccesser(object):
         self.mat_file = matrix_file_name
         # 直接读取粒子矩阵文件
         self.mat_array = self.read_mat()
+
+    def get_mat_array(self):
+        return copy.deepcopy(self.mat_array)
 
     def set_mat_file(self, matrix_file_name):
         self.mat_file = matrix_file_name
@@ -29,7 +33,7 @@ class MatrixAccesser(object):
             with open(self.mat_file, "r") as mat:
                 mat_data = mat.readlines()
                 for particles in mat_data:
-                    print(particles)
+                    # print(particles)
                     if len(particles) > 0 and particles[0] != "#":
                         particles_info = particles.strip().split(',')
                         if len(particles_info) > 10:

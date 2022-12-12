@@ -5,12 +5,12 @@ class ScaleController(ControllerBase):
     """
     缩放控制器
     """
-    def __init__(self):
+    def __init__(self, x_scale=1, y_scale=1, z_scale=1):
         super(ScaleController, self).__init__()
         # 转换时，坐标间隔缩放倍率
-        self.x_scale = 1
-        self.y_scale = 1
-        self.z_scale = 1
+        self.x_scale = x_scale
+        self.y_scale = y_scale
+        self.z_scale = z_scale
         # 缩放中心点，[x, y, z]
         # 如果是二维图片，推荐将旋转中心点设在图片的二维平面上。
         # TODO 以后最好设计一个保留一个物体整体空间坐标的类，并且能正确反馈物体的各项属性，包括大小，边界外切立方体坐标。

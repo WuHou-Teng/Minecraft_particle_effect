@@ -1,6 +1,6 @@
 from Command_Access.Execute_Generator.Execute import ExecuteBuilder
 from Matrix_Access.Controllers.ControllerBox import ControllerToolBox
-from Matrix_Access.Matrix_Generator import MatrixGenerator
+from Matrix_Access.Matrix_Accesser import MatrixAccesser
 from Command_Access.Const.Convertor_consts import *
 
 
@@ -34,10 +34,16 @@ class Convertor(object):
 
         # 变换: 添加控制器。可以自定义一系列对矩阵的修改。
         # 注意，控制器的特点是逐个对粒子进行变换，不关注整体。因此，其效果不如自定义函数那样强大，仅可以机械化的进行简单的变换。
+        # 再次注意，ControllerToolBox不具有写入matrix的功能，
+        # 在convertor中可以直接调用ControllerToolBox进行转换，但是此后，转换得到的粒子矩阵不会被保留。
         self.controller = ControllerToolBox()
 
-        # TODO 矩阵生成器，可以考虑在调用Controller列表后，将经过转换的矩阵保存到相应文件。
-        self.matrix_write = MatrixGenerator()
+        # 矩阵读取器
+        self.matrix_access = None
+
+    def set_mat_file(self, new_mat_file):
+        self.mat_file = new_mat_file
+        self.matrix_access = MatrixAccesser(self.mat_file)
 
     def coordinate_convertor(self, particle_data):
         """
@@ -63,64 +69,6 @@ class Convertor(object):
                   后面会写入相应的.mcfunction文件
         """
         pass
-
-    def set_mat_file(self, new_mat_file):
-        self.mat_file = new_mat_file
-
-    def read_mat(self):
-        """
-        从相应的文件读取位置矩阵
-        x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type
-        1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined)
-        :return:
-            mat_array: 保存了整个矩阵的列表
-        """
-        mat_array = []
-        if self.mat_file is not None:
-            with open(self.mat_file, "r") as mat:
-                mat_data = mat.readlines()
-                for particles in mat_data:
-                    print(particles)
-                    if len(particles) > 0 and particles[0] != "#":
-                        particles_info = particles.strip().split(',')
-                        if len(particles_info) > 10:
-                            for i in range(len(particles_info)):
-
-                                particles_info[i] = particles_info[i].strip()
-                            # 将粒子信息的数据格式进行修改。
-                            particles_info = self.alert_particle_format(particles_info)
-                            mat_array.append(particles_info)
-                mat.close()
-        return mat_array
-
-    def alert_particle_format(self, particle):
-        """
-        修改粒子信息列表内元素的数据格式。
-        :param particle: 粒子信息列表,
-            ['x', 'y', 'z', 'd_x', 'd_y', 'd_z', 'speed', 'count',
-            'force_normal', 'R', 'G', 'B', 'TR', 'TG', 'TB', 'type']
-        :return:
-            particle: 经过修改的粒子信息列表: 将必要的数据修改为数字
-            [x, y, z, d_x, d_y, d_z, speed, count, 'force_normal', R, G, B, TR, TG, TB, 'type']
-        """
-        particle[0] = float(particle[0])  # 坐标
-        particle[1] = float(particle[1])
-        particle[2] = float(particle[2])
-        particle[3] = float(particle[3])  # 移动坐标
-        particle[4] = float(particle[4])
-        particle[5] = float(particle[5])
-        particle[6] = float(particle[6])  # 速度
-        particle[7] = int(particle[7])    # 数量
-
-        particle[9] = float(particle[9])    # R
-        particle[10] = float(particle[10])  # G
-        particle[11] = float(particle[11])  # B
-
-        particle[12] = float(particle[12])  # TR
-        particle[13] = float(particle[13])  # TG
-        particle[14] = float(particle[14])  # TB
-
-        return particle
 
     # 修改坐标相对性
     def set_coo_type(self, coo_type):

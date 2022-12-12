@@ -3,10 +3,12 @@
 AT = "at"
 AS = "as"
 FACING = "facing"
+FACING_ENTITY = "facing entity"
 ALIGN = "align"
 ANCHORED = "anchored"  # <eyes/feet>
 IN = 'in'  # 维度
 ROTATED = "rotated"
+ROTATED_AS = "rotated as"
 POSITIONED = "positioned"
 POSITIONED_AS = "positioned as"
 
@@ -25,4 +27,14 @@ RANDOM_PLAYER = "@r"
 # 条件子命令修饰符
 IF = "if"
 UNLESS = "unless"
+
+# 条件子命令跟随
+BLOCK = "block"
+ENTITY = "entity"
+SCORE = "score"
+PREDICATE = "predicate"
+DATA_BLOCK = "data block"
+DATA_ENTITY = "data entity"
+DATA_STORAGE = "data storage"
+
 

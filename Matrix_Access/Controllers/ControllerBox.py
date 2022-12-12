@@ -64,29 +64,29 @@ class ControllerToolBox(object):
 
     # ___________________________以下是方便程序设计，封装的控制器添加函数。————————————————————————————-
 
-    def new_scale_controller(self):
+    def new_scale_controller(self, x_scale=1, y_scale=1, z_scale=1):
         """
         创建新的 ScaleController 控制器。不会添加到列表，而是直接返回。
         :return:
             新的 ScaleController
         """
-        return ScaleController()
+        return ScaleController(x_scale, y_scale, z_scale)
 
-    def new_shift_controller(self):
+    def new_shift_controller(self, x_shift=0, y_shift=0, z_shift=0):
         """
         创建新的 ShiftController 控制器。不会添加到列表，而是直接返回。
         :return:
             新的 ShiftController
         """
-        return ShiftController()
+        return ShiftController(x_shift, y_shift, z_shift)
 
-    def new_rotate_controller(self):
+    def new_rotate_controller(self, x_angle=0, y_angle=0, z_angle=0):
         """
         创建新的 RotateController 控制器。不会添加到列表，而是直接返回。
         :return:
             新的 RotateController
         """
-        return RotateController()
+        return RotateController(x_angle, y_angle, z_angle)
 
     def new_color_filter_amp_controller(self):
         """

@@ -7,7 +7,7 @@ class ExecuteBuilder(object):
     检测执行指令：execute 以及后面跟的所有可能的指令块
     TODO 未来指令生成器的雏形。
     """
-    def __init__(self, modifier=AS, entity="@p"):
+    def __init__(self, modifier=AS, entity=NEAREST_PLAYER):
         self.base = 'execute'
         # 条件子命令，if 或者 unless, 默认不启用
         self.child = None
@@ -27,9 +27,17 @@ class ExecuteBuilder(object):
         # ]
         self.condition = ConditionBuilder()
 
+    def set_modifier(self, modifier):
+        self.modifier = modifier
+
+    def set_entity(self, entity):
+        self.entity = entity
+
     def to_string(self):
         if self.child is None:
             if not self.condition.has_condition():
                 return self.base + " " + self.modifier + " " + self.entity + " run "
             else:
                 return self.base + " " + self.modifier + " " + self.entity + self.condition.to_string() + " run "
+        else:
+            pass

@@ -1,5 +1,7 @@
 from Command_Access.Const import Particles_Java
 from Command_Access.Command_Convertor.Base_Convertor import Convertor
+from Command_Access.Const.Convertor_consts import *
+from math import pi
 
 
 class HomoConverter(Convertor):
@@ -16,9 +18,11 @@ class HomoConverter(Convertor):
 
     def __init__(self):
         super(HomoConverter, self).__init__()
-        # 单色转换器,只使用一种粒子。所以直接规定。
+        # 单色转换器,可以只使用一种粒子。所以允许直接规定。
+        # 该参数如果不为None，则强制使用规定的粒子类型。如果为None，则采用矩阵中提供的粒子类型。
+        self.force_particle = None
+        # end_rod是27号粒子。
         # 双色转换器交给Color_dict_Convertor处理。
-        self.particle = Particles_Java.end_rod  # 采用粒子end_rod
 
     def coordinate_convertor(self, particle_data):
         """
@@ -38,27 +42,39 @@ class HomoConverter(Convertor):
         particle_data = self.controller.apply_processing(particle_data)
         # 将所有的类型全部改为字符串。
         for i in range(len(particle_data)):
-            particle_data[i] = str(particle_data[i])
+            if type(particle_data[i]) is float or type(particle_data[i]) is int:
+                particle_data[i] = str(round(particle_data[i], 5))
         # 使用 ~ 还是 ^ 还是单纯的绝对坐标
         front_sign = self.coo_dict.get(self.coo_type)
         # force 还是 normal
-        f_n = "force" if particle_data[9].strip() == "f" else "normal"
+        f_n = "force" if particle_data[8].strip() == "f" else "normal"
+        particle = Particles_Java.particle_dict.get(int(particle_data[-1])).strip()
 
         # 开始翻译
         coord_str = (front_sign + particle_data[0] + front_sign + particle_data[1] + front_sign + particle_data[2] +
-                     " " + particle_data[3] + " " + particle_data[4] + " " + particle_data[5] + particle_data)
-        coord_str = (front_sign + str(round(int(particle_data[1]) * self.x_scale, 2) + self.x_shift) +
-                     front_sign + str(round(int(particle_data[2]) * self.y_scale, 2) + self.y_shift) +
-                     front_sign + str(round(int(particle_data[3]) * self.z_scale, 2) + self.z_shift) +
-                     " " + str(round(int(particle_data[4]) * self.motion_multi)) +
-                     " " + str(round(int(particle_data[5]) * self.motion_multi)) +
-                     " " + str(round(int(particle_data[6]) * self.motion_multi)) +
-                     " " + str(round(int(particle_data[7]) * self.speed_multi)) +
-                     " " + particle_data[8] + " " + f_n)
+                     " " + particle_data[3] + " " + particle_data[4] + " " + particle_data[5] + " " + particle_data[6] +
+                     " " + particle_data[7] + " " + f_n)
+        # coord_str = (front_sign + str(round(int(particle_data[1]) * self.x_scale, 2) + self.x_shift) +
+        #              front_sign + str(round(int(particle_data[2]) * self.y_scale, 2) + self.y_shift) +
+        #              front_sign + str(round(int(particle_data[3]) * self.z_scale, 2) + self.z_shift) +
+        #              " " + str(round(int(particle_data[4]) * self.motion_multi)) +
+        #              " " + str(round(int(particle_data[5]) * self.motion_multi)) +
+        #              " " + str(round(int(particle_data[6]) * self.motion_multi)) +
+        #              " " + str(round(int(particle_data[7]) * self.speed_multi)) +
+        #              " " + particle_data[8] + " " + f_n)
 
         if self.edition is JAVA:
-            return ("execute " + self.modifier + " " + self.entity + " run particle " + self.particle.strip() +
-                    coord_str + "\n")
+            if self.use_execute:
+                if self.force_particle is not None:
+                    return self.execute_header.to_string() + "particle " + self.force_particle + coord_str + "\n"
+                else:
+
+                    return self.execute_header.to_string() + "particle " + particle + coord_str + "\n"
+            else:
+                if self.force_particle is not None:
+                    return "particle " + self.force_particle + coord_str + "\n"
+                else:
+                    return "particle " + particle + coord_str + "\n"
         else:
             # 基岩版的暂时搁置
             pass
@@ -71,24 +87,49 @@ class HomoConverter(Convertor):
             funcs: 转换好的一整个func的字符串形式，
                   后面会写入相应的.mcfunction文件
         """
-        funcs = ""
+        functions = ""
         for data in matrix:
-            if data[0] in self.color_filter:
-                continue
-            funcs += self.coordinate_convertor(data)
-        return funcs
+            functions += self.coordinate_convertor(data)
+        return functions
 
     # 修改粒子类型
-    def set_particle(self, particle):
-        self.particle = particle
+    def set_forced_particle(self, particle):
+        self.force_particle = particle
+
+
+class Cube(object):
+
+    def __init__(self):
+        self.convertor = HomoConverter()
+        self.work_place = "E:\\work\\Interesting_things\\python_test\\Mc_Effect\\Mc_Partical_effect_Repo\\"
+        self.mat_address = "Matrix_Access\\Matrix_Files\\Square_effect\\"
+        self.mat_file = "cube.csv"
+        self.convertor.set_mat_file(self.work_place + self.mat_address + self.mat_file)
+
+    def cube_rotate(self, x_angle, y_angle, z_angle):
+        # 添加旋转控制器。
+        rotate_cont = self.convertor.controller.new_rotate_controller(x_angle, y_angle, z_angle)
+        # 修改旋转中心会出bug？？？
+        # rotate_cont.set_rotate_centre([0, 1.5, 0])
+        self.convertor.controller.controller_box_add(rotate_cont)
+        self.convertor.controller.controller_box_add(self.convertor.controller.new_shift_controller(0, 2, 0))
+        result = self.convertor.mat_convertor(self.convertor.matrix_access.get_mat_array())
+        self.convertor.controller.clear_controller_box()
+        return result
 
 
 if __name__ == "__main__":
-    convertor = HomoConverter()
-    mat_file_address = "E:\work\Interesting_things\python_test\Mc_Effect\Mc_Partical_effect_Repo\Matrix_Files\Square_effect\square.txt"
-    convertor.set_shift(0, 3, 0)
-    convertor.set_scale(0.5, 0.5, 0.5)
-    convertor.set_particle(Particles_Java.falling_water)
-    convertor.set_modifier(AS)
-    func = convertor.mat_convertor(convertor.read_mat(mat_file_address))
-    print(func)
+    func = []
+    cube = Cube()
+    x_range = 2
+    y_range = 1
+    z_range = 1
+    # 这里尝试运行的时候出现了意料之外的bug。
+    for x_a in range(0, x_range):
+        for y_a in range(0, y_range):
+            for z_a in range(0, z_range):
+                func.append(cube.cube_rotate(x_a*pi/36, y_a*pi/36, z_a*pi/36))
+                func.append("_____________________")
+
+    for each_func in func:
+        print(each_func)
