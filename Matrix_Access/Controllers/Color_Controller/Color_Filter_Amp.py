@@ -7,11 +7,11 @@ class ColorFilterAmp(ColorController):
     """
     颜色滤镜。用于对特定通道的颜色进行过滤 或者 增强
     """
-    def __init__(self):
-        super(ColorFilterAmp, self).__init__()
-        self.red_range = []
-        self.green_range = []
-        self.blue_range = []
+    def __init__(self, red_range=None, green_range=None, blue_range=None):
+        super(ColorFilterAmp, self).__init__(red_range, green_range, blue_range)
+        # self.red_range = []
+        # self.green_range = []
+        # self.blue_range = []
         # 过滤/增幅倍率。值在-1到255之间。
         # 如果值小于0，则对相应通道相应范围内的值进行过滤。
         # 如果值大于1，则对相应通道相应范围内的值进行过增幅。

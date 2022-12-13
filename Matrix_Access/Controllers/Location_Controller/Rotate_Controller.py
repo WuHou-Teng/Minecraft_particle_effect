@@ -6,15 +6,16 @@ class RotateController(ControllerBase):
     """
     对粒子的坐标进行旋转变化
     """
-    def __init__(self, x_angle=0, y_angle=0, z_angle=0):
+    def __init__(self, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
         super(RotateController, self).__init__()
         # 转换时，各方向上的旋转角度。采用弧度单位。
+
         self.x_angle = x_angle
         self.y_angle = y_angle
         self.z_angle = z_angle
         # 旋转中心点
         # TODO 这里同样需要：以后最好设计一个保留一个物体整体空间坐标的类，并且能正确反馈物体的各项属性，包括大小，边界外切立方体坐标。
-        self.rotate_centre = [0, 0, 0]
+        self.rotate_centre = rotate_centre if rotate_centre is not None else [0, 0, 0]
 
     def set_x_angle(self, x_angle):
         self.x_angle = x_angle
@@ -65,7 +66,7 @@ class RotateController(ControllerBase):
         """
         # 因为以x轴旋转，所以x坐标不变。
         new_x = x
-        print("y: " + str(y) + "  rot:" + str(self.rotate_centre))
+        # print("y: " + str(y) + "  rot:" + str(self.rotate_centre))
         dy = y - self.rotate_centre[1]
         dz = z - self.rotate_centre[2]
         # 求原本的角度, 其中，y视为纵轴，z视为横轴。

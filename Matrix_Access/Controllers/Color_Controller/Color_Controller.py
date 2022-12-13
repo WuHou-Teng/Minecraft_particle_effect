@@ -4,11 +4,11 @@ from Matrix_Access.Controllers.Controller_Interface import ControllerBase
 
 class ColorController(ControllerBase):
 
-    def __init__(self):
+    def __init__(self, red_range=None, green_range=None, blue_range=None):
         super(ColorController, self).__init__()
-        self.red_range = []
-        self.green_range = []
-        self.blue_range = []
+        self.red_range = red_range if red_range is not None else []
+        self.green_range = green_range if green_range is not None else []
+        self.blue_range = blue_range if blue_range is not None else []
 
         # 翻转已添加的range
         self.flip = False

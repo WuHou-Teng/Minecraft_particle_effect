@@ -7,12 +7,12 @@ class ColorWhiteList(ColorController):
     注意，是三个通道的颜色全部位于白名单范围内，才会被认为是允许的颜色。
     """
 
-    def __init__(self):
+    def __init__(self, red_range=None, green_range=None, blue_range=None):
         super(ColorWhiteList, self).__init__()
         # 默认白名单为接受所有颜色。
-        self.red_range = [(0.001, 1)]
-        self.green_range = [(0, 1)]
-        self.blue_range = [(0, 1)]
+        self.red_range = red_range if red_range is not None else [(0.001, 1)]
+        self.green_range = green_range if green_range is not None else [(0, 1)]
+        self.blue_range = blue_range if blue_range is not None else [(0, 1)]
 
     def set_red_default(self):
         """
