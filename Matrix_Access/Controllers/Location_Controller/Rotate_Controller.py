@@ -71,14 +71,34 @@ class RotateController(ControllerBase):
         dz = z - self.rotate_centre[2]
         # 求原本的角度, 其中，y视为纵轴，z视为横轴。
         if dz == 0:
-            angle = math.pi/2
+            if dy >= 0:
+                angle = math.pi/2
+            else:
+                angle = -math.pi/2
         else:
             angle = math.atan(dy / dz)
+            # 由于tan左右对称，且优先取夹角。所以角度默认出现在第一四象限，需要手动判定二三象限。
+            # if dy > 0 and dz < 0:
+            #     # 第二象限，所以要从第四象限翻转过来，需要增加180度。
+            #     angle += math.pi
+            # if dy < 0 and dz < 0:
+            #     # 第三象限，所以要从第一象限翻转过来，需要增加180度。
+            #     angle += math.pi
+            if dz < 0:
+                # 二三象限都是增加180度，因此只需要判断横轴是否为负。
+                angle += math.pi
+        # print("angle is: " + str(angle / math.pi) + "Π")
+        # print("shift is: " + str(self.x_angle / math.pi) + "Π")
+        # print("new_angle is: " + str((angle+self.x_angle)/math.pi) + "Π")
         # 求模
         dyz = math.pow(dy*dy + dz*dz, 0.5)
         # 计算新的y和z的坐标。
-        new_y = self.rotate_centre[1] + math.sin(self.x_angle + angle) * dyz
         new_z = self.rotate_centre[2] + math.cos(self.x_angle + angle) * dyz
+        new_y = self.rotate_centre[1] + math.sin(self.x_angle + angle) * dyz
+        # print("y 坐标从 " + str(x) + " 到 " + str(new_y))
+        # print("z 坐标从 " + str(z) + " 到 " + str(new_z))
+        # print("点从(" + str(z) + ", " + str(y) + ") 移动到" + "(" + str(new_z) + ", " + str(new_y) + ")")
+        # print("————————————————————————————————————————")
         return new_x, new_y, new_z
 
     def apply_rotate_z(self, x, y, z):
@@ -96,14 +116,28 @@ class RotateController(ControllerBase):
         dx = x - self.rotate_centre[0]
         # 求原本的角度, 其中，y视为纵轴，x视为横轴。
         if dx == 0:
-            angle = math.pi/2
+            if dy >= 0:
+                angle = math.pi/2
+            else:
+                angle = -math.pi/2
         else:
             angle = math.atan(dy / dx)
+            # 由于tan左右对称，且优先取夹角。所以角度默认出现在第一四象限，需要手动判定二三象限。
+            # if dy > 0 and dx < 0:
+            #     # 第二象限，所以要从第四象限翻转过来，需要增加180度。
+            #     angle += math.pi
+            # if dy < 0 and dx < 0:
+            #     # 第三象限，所以要从第一象限翻转过来，需要增加180度。
+            #     angle += math.pi
+            if dx < 0:
+                angle += math.pi
+
         # 求模
         dyx = math.pow(dy*dy + dx*dx, 0.5)
         # 计算新的y和z的坐标。
         new_y = self.rotate_centre[1] + math.sin(self.z_angle + angle) * dyx
         new_x = self.rotate_centre[0] + math.cos(self.z_angle + angle) * dyx
+
         return new_x, new_y, new_z
 
     def apply_rotate_y(self, x, y, z):
@@ -125,9 +159,21 @@ class RotateController(ControllerBase):
         # str(self.rotate_centre[2]) + " = " + str(dz))
         # 求原本的角度, 其中，z视为纵轴，x视为横轴。
         if dx == 0:
-            angle = math.pi/2
+            if dz >= 0:
+                angle = math.pi/2
+            else:
+                angle = -math.pi/2
         else:
             angle = math.atan(dz / dx)
+            # 由于tan左右对称，且优先取夹角。所以角度默认出现在第一四象限，需要手动判定二三象限。
+            # if dz > 0 and dx < 0:
+            #     # 第二象限，所以要从第四象限翻转过来，需要增加180度。
+            #     angle += math.pi
+            # if dz < 0 and dx < 0:
+            #     # 第三象限，所以要从第一象限翻转过来，需要增加180度。
+            #     angle += math.pi
+            if dx < 0:
+                angle += math.pi
 
         # print("angle is: " + str(angle/math.pi) + "Π")
 
