@@ -1,13 +1,13 @@
 import os
 
 
-class McEffectFuncGenerator(object):
+class ParticleEffectFuncGenerator(object):
     """
     粒子特效文件夹生成器。
     """
 
     # 考虑到未来可能要把很多个基础特效组合起来，变成复合特效。
-    def __init__(self, new_effect_name, data_pack_address, matrix_addresses_list, frame_time_interval):
+    def __init__(self, new_effect_name="", data_pack_address="", matrix_addresses_list=""):
         """
         初始化
         :param new_effect_name: 新特效名称
@@ -24,7 +24,7 @@ class McEffectFuncGenerator(object):
         self.matrix_addresses_list = matrix_addresses_list
         # 每帧之间的时间间隔（tick）（可调）
         # mc 一秒 = 20 tick
-        self.frame_time_interval = frame_time_interval
+        # self.frame_time_interval = frame_time_interval
         # 新的特效名称
         self.effect_name = new_effect_name
 

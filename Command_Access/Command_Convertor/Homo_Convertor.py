@@ -1,7 +1,10 @@
-from Command_Access.Const import Particles_Java
-from Command_Access.Command_Convertor.Base_Convertor import Convertor
-from Command_Access.Const.Convertor_consts import *
+import os
 from math import pi
+
+from Command_Access.Command_Convertor.Base_Convertor import Convertor
+from Command_Access.Const import Particles_Java
+from Command_Access.Const.Convertor_consts import *
+from Command_Access.DataPack_IO.Function_Writer import FunctionWriter
 
 
 class HomoConverter(Convertor):
@@ -54,14 +57,6 @@ class HomoConverter(Convertor):
         coord_str = (front_sign + particle_data[0] + front_sign + particle_data[1] + front_sign + particle_data[2] +
                      " " + particle_data[3] + " " + particle_data[4] + " " + particle_data[5] + " " + particle_data[6] +
                      " " + particle_data[7] + " " + f_n)
-        # coord_str = (front_sign + str(round(int(particle_data[1]) * self.x_scale, 2) + self.x_shift) +
-        #              front_sign + str(round(int(particle_data[2]) * self.y_scale, 2) + self.y_shift) +
-        #              front_sign + str(round(int(particle_data[3]) * self.z_scale, 2) + self.z_shift) +
-        #              " " + str(round(int(particle_data[4]) * self.motion_multi)) +
-        #              " " + str(round(int(particle_data[5]) * self.motion_multi)) +
-        #              " " + str(round(int(particle_data[6]) * self.motion_multi)) +
-        #              " " + str(round(int(particle_data[7]) * self.speed_multi)) +
-        #              " " + particle_data[8] + " " + f_n)
 
         if self.edition is JAVA:
             if self.use_execute:
@@ -87,9 +82,9 @@ class HomoConverter(Convertor):
             funcs: 转换好的一整个func的字符串形式，
                   后面会写入相应的.mcfunction文件
         """
-        functions = ""
+        functions = []
         for data in matrix:
-            functions += self.coordinate_convertor(data)
+            functions.append(self.coordinate_convertor(data))
         return functions
 
     # 修改粒子类型
@@ -97,6 +92,7 @@ class HomoConverter(Convertor):
         self.force_particle = particle
 
 
+# 用于方便测试的临时类。
 class Cube(object):
 
     def __init__(self):
@@ -106,30 +102,65 @@ class Cube(object):
         self.mat_file = "cube.csv"
         self.convertor.set_mat_file(self.work_place + self.mat_address + self.mat_file)
 
-    def cube_rotate(self, x_angle, y_angle, z_angle):
+    def cube_rotate(self, x_angle, y_angle, z_angle, rotate_centre, x_shift, y_shift, z_shift):
         # 添加旋转控制器。
-        rotate_cont = self.convertor.controller.new_rotate_controller(x_angle, y_angle, z_angle)
+        rotate_cont = self.convertor.controller.new_rotate_controller(x_angle, y_angle, z_angle, rotate_centre)
         # 修改旋转中心会出bug？？？
         # rotate_cont.set_rotate_centre([0, 1.5, 0])
         self.convertor.controller.controller_box_add(rotate_cont)
-        self.convertor.controller.controller_box_add(self.convertor.controller.new_shift_controller(0, 2, 0))
+        # 添加位移控制器。
+        self.convertor.controller.controller_box_add(
+            self.convertor.controller.new_shift_controller(x_shift, y_shift, z_shift)
+        )
+
         result = self.convertor.mat_convertor(self.convertor.matrix_access.get_mat_array())
         self.convertor.controller.clear_controller_box()
         return result
 
 
 if __name__ == "__main__":
-    func = []
+    game_address = "E:\\Play_game\\mc\\1.18.2KuaYueII 乙烯\\1.18.2KuaYueII"
+    data_pack_address = os.path.join(game_address, ".minecraft\\saves\\新的世界 (1)\\datapacks\\partical_effect")
+    name_space = "square_effect"
+    function_name = "3d_rottest"
+    func_writer = FunctionWriter(data_pack_address, name_space)
+    # func_file = func_writer.new_func("3d_rotating")
     cube = Cube()
-    x_range = 2
+    x_range = 73
     y_range = 1
     z_range = 1
-    # 这里尝试运行的时候出现了意料之外的bug。
-    for x_a in range(0, x_range):
+    # print("\n")
+    # func_writer.write_func(function_name, cube.cube_rotate(15 * pi / 36, 0, 0, [0, 0, 0], 0, 2, 0))
+    # func_writer.add_func(function_name, cube.cube_rotate(16 * pi / 36, 0, 0, [0, 0, 0], 2, 2, 0))
+    # func_writer.write_func(function_name, cube.cube_rotate(17 * pi / 36, 0, 0, [0, 0, 0], 4, 2, 0))
+    # print("\n")
+    # func_writer.add_func(function_name, cube.cube_rotate(18 * pi / 36, 0, 0, [0, 0, 0], 6, 2, 0))
+    # print("\n")
+    # func_writer.add_func(function_name, cube.cube_rotate(19 * pi / 36, 0, 0, [0, 0, 0], 8, 2, 0))
+    # print("\n")
+    # func_writer.add_func(function_name, cube.cube_rotate(20 * pi / 36, 0, 0, [0, 0, 0], 10, 2, 0))  # 从这里出的问题。
+    # print("\n")
+    # func_writer.add_func(function_name, cube.cube_rotate(21 * pi / 36, 0, 0, [0, 0, 0], 12, 2, 0))
+    # func_writer.add_func(function_name, cube.cube_rotate(22 * pi / 36, 0, 0, [0, 0, 0], 14, 2, 0))
+    # func_writer.add_func(function_name, cube.cube_rotate(23 * pi / 36, 0, 0, [0, 0, 0], 16, 2, 0))
+    # func_writer.add_func(function_name, cube.cube_rotate(24 * pi / 36, 0, 0, [0, 0, 0], 18, 2, 0))
+    func_writer.write_func("3d_rotating",
+                           cube.cube_rotate(0 * pi / 36, 0 * pi / 36, 0 * pi / 36, [1.5, 10, 1.5], -1, -5, -1))
+    for x_a in range(1, x_range):
         for y_a in range(0, y_range):
             for z_a in range(0, z_range):
-                func.append(cube.cube_rotate(x_a*pi/36, y_a*pi/36, z_a*pi/36))
-                func.append("_____________________")
+                func_writer.add_func("3d_rotating",
+                                     cube.cube_rotate(x_a * pi / 36, y_a * pi / 36, z_a * pi / 36, [1.5, 10, 1.5],
+                                                      - 1, -5 + y_a - 1, z_a - 1))
 
-    for each_func in func:
-        print(each_func)
+# x_range = 1
+# y_range = 73
+# z_range = 1
+# func_writer.write_func("3d_rotating",
+#                        cube.cube_rotate(0 * pi / 36, 0 * pi / 36, 0 * pi / 36, [1.5, 1.5, 1.5], 0, -5, 0))
+# for x_a in range(1, x_range):
+#     for y_a in range(0, y_range):
+#         for z_a in range(0, z_range):
+#             func_writer.add_func("3d_rotating",
+#                                  cube.cube_rotate(x_a * pi / 36, y_a * pi / 36, z_a * pi / 36, [0, 1.5, 1.5], x_a,
+#                                                   -5, 0))

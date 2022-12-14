@@ -14,6 +14,7 @@ class MatrixAccesser(object):
         self.mat_array = self.read_mat()
 
     def get_mat_array(self):
+        # 注意，返回内容一定是deep copy
         return copy.deepcopy(self.mat_array)
 
     def set_mat_file(self, matrix_file_name):
