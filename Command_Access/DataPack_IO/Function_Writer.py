@@ -1,4 +1,5 @@
 import os
+import time
 
 
 class FunctionWriter(object):
@@ -33,18 +34,19 @@ class FunctionWriter(object):
 
     def new_func(self, func_name):
         """
-        创建新的.mcfunction文件
+        创建新的.mcfunction文件，或者在文件已经存在的情况下，清空文件内容。
         :param func_name: 文件名
         :return:
-            文件是否创建成功 。如果创建失败，则可能是func已存在。
+            创建的文件的完整地址。
         """
         func_address = self.func_address(func_name)
-        if not os.path.exists(func_address):
-            new_file = open(func_address, 'w')
-            new_file.close()
-            return func_address
-        else:
-            return False
+        new_file = open(func_address, 'w')
+        new_file.write("# This function created by 「Bubble」\n")
+        new_file.close()
+        return func_address
+        # if not os.path.exists(func_address):
+        # else:
+        #     return False
 
     def write_func(self, func_name, func_content):
         """
@@ -67,8 +69,6 @@ class FunctionWriter(object):
             for each_line in func_content:
                 func_file.write(each_line)
             func_file.close()
-
-
 
 
 
