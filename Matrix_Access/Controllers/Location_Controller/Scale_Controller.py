@@ -70,7 +70,7 @@ class ScaleController(ControllerBase):
         :return:
             particle: 经过处理后的粒子数据。
         """
-        x_new, y_new, z_new = self.apply_scale(self.scale_centre[0], self.scale_centre[1], self.scale_centre[2])
+        x_new, y_new, z_new = self.apply_scale(particle[0], particle[1], particle[2])
         particle[0] = x_new
         particle[1] = y_new
         particle[2] = z_new
