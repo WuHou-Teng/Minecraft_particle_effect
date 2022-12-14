@@ -28,7 +28,7 @@ class RotateController(ControllerBase):
 
     def set_rotate_angle(self, x_angle, y_angle, z_angle):
         """
-        设定不同方向上的旋转角度，数字为正则【顺时针旋转】，数字为负则【逆时针旋转】
+        设定不同方向上的旋转角度，数字为正则【逆时针旋转】，数字为负则【顺时针旋转】
         :param x_angle: 以x轴为旋转轴，旋转的角度，采用弧度单位
         :param y_angle: 以y轴为旋转轴，旋转的角度，采用弧度单位
         :param z_angle: 以z轴为旋转轴，旋转的角度，采用弧度单位
@@ -131,12 +131,12 @@ class RotateController(ControllerBase):
             #     angle += math.pi
             if dx < 0:
                 angle += math.pi
-
         # 求模
         dyx = math.pow(dy*dy + dx*dx, 0.5)
         # 计算新的y和z的坐标。
-        new_y = self.rotate_centre[1] + math.sin(self.z_angle + angle) * dyx
-        new_x = self.rotate_centre[0] + math.cos(self.z_angle + angle) * dyx
+        # 因为坐标轴在z方向上看，x轴是左边为正，右边为负，因此会导致z轴的旋转为随着z增大呈顺时针旋转，因此翻转 z_angle。
+        new_y = self.rotate_centre[1] + math.sin(-self.z_angle + angle) * dyx
+        new_x = self.rotate_centre[0] + math.cos(-self.z_angle + angle) * dyx
 
         return new_x, new_y, new_z
 
