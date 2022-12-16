@@ -1,5 +1,5 @@
 from Matrix_Access.Controllers.Controller_Interface import ControllerBase
-from Matrix_Access.Controllers.Motion_Controller.Motion_Controller_Consts import *
+from Matrix_Access.Controllers.Motion_Control.Motion_Controller_Consts import *
 
 
 # 粒子运动本身就是多维度属性，包括粒子移动的距离，以及移动的速度，以及扩散粒子数量。这里默认粒子无扩散。

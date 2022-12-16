@@ -1,7 +1,7 @@
 from PIL import Image
 # Settings:
 # 打开图片
-im = Image.open('E:\work\Interesting_things\python_test\Mc_Effect\pics\\try2.png')
+im = Image.open('E:\\work\\Interesting_things\\python_test\\Mc_Effect\\pics\\try2.png')
 # 获取图片长宽
 width, height = im.size[0], im.size[1]
 # 下采样率

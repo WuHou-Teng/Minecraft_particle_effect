@@ -1,4 +1,4 @@
-from Matrix_Access.Controllers.Color_Controller.Color_Controller import ColorController
+from Matrix_Access.Controllers.Color_Control.Color_Controller import ColorController
 
 
 class ColorWhiteList(ColorController):

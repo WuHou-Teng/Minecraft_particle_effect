@@ -1,11 +1,11 @@
 from Matrix_Access.Controllers.Controller_Interface import ControllerBase
 # 方位控制器
-from Matrix_Access.Controllers.Location_Controller.Scale_Controller import ScaleController
-from Matrix_Access.Controllers.Location_Controller.Rotate_Controller import RotateController
-from Matrix_Access.Controllers.Location_Controller.Shift_Controller import ShiftController
+from Matrix_Access.Controllers.Location_Control.Scale_Controller import ScaleController
+from Matrix_Access.Controllers.Location_Control.Rotate_Controller import RotateController
+from Matrix_Access.Controllers.Location_Control.Shift_Controller import ShiftController
 # 颜色控制器
-from Matrix_Access.Controllers.Color_Controller.Color_White_List import ColorWhiteList
-from Matrix_Access.Controllers.Color_Controller.Color_Filter_Amp import ColorFilterAmp
+from Matrix_Access.Controllers.Color_Control.Color_White_List import ColorWhiteList
+from Matrix_Access.Controllers.Color_Control.Color_Filter_Amp import ColorFilterAmp
 # 其余控制器还未完善，因此暂不添加。
 
 

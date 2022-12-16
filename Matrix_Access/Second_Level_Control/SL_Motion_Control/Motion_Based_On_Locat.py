@@ -1,4 +1,4 @@
-from Matrix_Access.Controllers.Motion_Controller.Motion_Controller import MotionController
+from Matrix_Access.Controllers.Motion_Control.Motion_Controller import MotionController
 
 
 # 探讨移动与不同粒子位置的相关性

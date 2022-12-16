@@ -1,4 +1,4 @@
-from Matrix_Access.Controllers.Particle_Controller.Particle_Controller import ParticleController
+from Matrix_Access.Controllers.Particle_Control.Particle_Controller import ParticleController
 
 
 class ParticleOfLocat(ParticleController):

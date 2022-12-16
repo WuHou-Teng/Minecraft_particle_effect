@@ -97,17 +97,24 @@ class Cube(object):
 
     def __init__(self):
         self.convertor = HomoConverter()
+        self.convertor.execute_header.set_modifier("at")
         self.work_place = "E:\\work\\Interesting_things\\python_test\\Mc_Effect\\Mc_Partical_effect_Repo\\"
         self.mat_address = "Matrix_Access\\Matrix_Files\\Square_effect\\"
         self.mat_file = "cube.csv"
         self.convertor.set_mat_file(self.work_place + self.mat_address + self.mat_file)
 
-    def cube_rotate(self, x_angle, y_angle, z_angle, rotate_centre, x_shift, y_shift, z_shift):
+    def cube_rotate(self, x_angle, y_angle, z_angle, rotate_centre,
+                    x_shift, y_shift, z_shift,
+                    x_scale, y_scale, z_scale, scale_centre):
         # 添加旋转控制器。
-        rotate_cont = self.convertor.controller.new_rotate_controller(x_angle, y_angle, z_angle, rotate_centre)
-        # 修改旋转中心会出bug？？？
-        # rotate_cont.set_rotate_centre([0, 1.5, 0])
-        self.convertor.controller.controller_box_add(rotate_cont)
+        self.convertor.controller.controller_box_add(
+            self.convertor.controller.new_rotate_controller(x_angle, y_angle, z_angle, rotate_centre))
+
+        # 添加缩放控制器
+        self.convertor.controller.controller_box_add(
+            self.convertor.controller.new_scale_controller(x_scale, y_scale, z_scale, scale_centre)
+        )
+
         # 添加位移控制器。
         self.convertor.controller.controller_box_add(
             self.convertor.controller.new_shift_controller(x_shift, y_shift, z_shift)
@@ -126,41 +133,17 @@ if __name__ == "__main__":
     func_writer = FunctionWriter(data_pack_address, name_space)
     # func_file = func_writer.new_func("3d_rotating")
     cube = Cube()
+    #
+    func_file = func_writer.new_func("3d_rotating")
     x_range = 73
     y_range = 1
     z_range = 1
-    # print("\n")
-    # func_writer.write_func(function_name, cube.cube_rotate(15 * pi / 36, 0, 0, [0, 0, 0], 0, 2, 0))
-    # func_writer.add_func(function_name, cube.cube_rotate(16 * pi / 36, 0, 0, [0, 0, 0], 2, 2, 0))
-    # func_writer.write_func(function_name, cube.cube_rotate(17 * pi / 36, 0, 0, [0, 0, 0], 4, 2, 0))
-    # print("\n")
-    # func_writer.add_func(function_name, cube.cube_rotate(18 * pi / 36, 0, 0, [0, 0, 0], 6, 2, 0))
-    # print("\n")
-    # func_writer.add_func(function_name, cube.cube_rotate(19 * pi / 36, 0, 0, [0, 0, 0], 8, 2, 0))
-    # print("\n")
-    # func_writer.add_func(function_name, cube.cube_rotate(20 * pi / 36, 0, 0, [0, 0, 0], 10, 2, 0))  # 从这里出的问题。
-    # print("\n")
-    # func_writer.add_func(function_name, cube.cube_rotate(21 * pi / 36, 0, 0, [0, 0, 0], 12, 2, 0))
-    # func_writer.add_func(function_name, cube.cube_rotate(22 * pi / 36, 0, 0, [0, 0, 0], 14, 2, 0))
-    # func_writer.add_func(function_name, cube.cube_rotate(23 * pi / 36, 0, 0, [0, 0, 0], 16, 2, 0))
-    # func_writer.add_func(function_name, cube.cube_rotate(24 * pi / 36, 0, 0, [0, 0, 0], 18, 2, 0))
-    func_writer.write_func("3d_rotating",
-                           cube.cube_rotate(0 * pi / 36, 0 * pi / 36, 0 * pi / 36, [1.5, 10, 1.5], -1, -5, -1))
-    for x_a in range(1, x_range):
+    # func_writer.write_func("3d_rotating",
+    #                        cube.cube_rotate(0 * pi / 36, 0 * pi / 36, 0 * pi / 36, [1.5, 1.5, 1.5], -1, -5, -1))
+    for x_a in range(0, x_range):
         for y_a in range(0, y_range):
             for z_a in range(0, z_range):
                 func_writer.add_func("3d_rotating",
-                                     cube.cube_rotate(x_a * pi / 36, y_a * pi / 36, z_a * pi / 36, [1.5, 10, 1.5],
-                                                      - 1, -5 + y_a - 1, z_a - 1))
-
-# x_range = 1
-# y_range = 73
-# z_range = 1
-# func_writer.write_func("3d_rotating",
-#                        cube.cube_rotate(0 * pi / 36, 0 * pi / 36, 0 * pi / 36, [1.5, 1.5, 1.5], 0, -5, 0))
-# for x_a in range(1, x_range):
-#     for y_a in range(0, y_range):
-#         for z_a in range(0, z_range):
-#             func_writer.add_func("3d_rotating",
-#                                  cube.cube_rotate(x_a * pi / 36, y_a * pi / 36, z_a * pi / 36, [0, 1.5, 1.5], x_a,
-#                                                   -5, 0))
+                                     cube.cube_rotate(x_a * pi / 36, y_a * pi / 36, z_a * pi / 36, [1.5, 1.5, 1.5],
+                                                      x_a - 1, -5 + y_a - 1, z_a - 1,
+                                                      0.3, 5-x_a/5, 5-x_a/5, [1.5, 1.5, 1.5]))
