@@ -1,6 +1,7 @@
 import os
 from PIL import Image
 from Motion_diffusion import MotionDiffusion
+from Source_Access.Const.Image_Process_Const import *
 
 
 class ImageSampling(object):

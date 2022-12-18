@@ -1,5 +1,6 @@
 import cv2 as cv
-import imutils
+
+# import imutils
 
 
 class WuHouCV(object):
