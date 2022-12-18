@@ -87,18 +87,11 @@ class RotateController(ControllerBase):
             if dz < 0:
                 # 二三象限都是增加180度，因此只需要判断横轴是否为负。
                 angle += math.pi
-        # print("angle is: " + str(angle / math.pi) + "Π")
-        # print("shift is: " + str(self.x_angle / math.pi) + "Π")
-        # print("new_angle is: " + str((angle+self.x_angle)/math.pi) + "Π")
         # 求模
         dyz = math.pow(dy*dy + dz*dz, 0.5)
         # 计算新的y和z的坐标。
         new_z = self.rotate_centre[2] + math.cos(self.x_angle + angle) * dyz
         new_y = self.rotate_centre[1] + math.sin(self.x_angle + angle) * dyz
-        # print("y 坐标从 " + str(x) + " 到 " + str(new_y))
-        # print("z 坐标从 " + str(z) + " 到 " + str(new_z))
-        # print("点从(" + str(z) + ", " + str(y) + ") 移动到" + "(" + str(new_z) + ", " + str(new_y) + ")")
-        # print("————————————————————————————————————————")
         return new_x, new_y, new_z
 
     def apply_rotate_z(self, x, y, z):
@@ -153,11 +146,6 @@ class RotateController(ControllerBase):
         new_y = y
         dz = z - self.rotate_centre[2]
         dx = x - self.rotate_centre[0]
-        # print("dx = x - " + "rotate_centre[0]" + " = " + str(x) + " - " +
-        # str(self.rotate_centre[0]) + " = " + str(dx))
-        # print("dz = z - " + "rotate_centre[2]" + " = " + str(z) + " - " +
-        # str(self.rotate_centre[2]) + " = " + str(dz))
-        # 求原本的角度, 其中，z视为纵轴，x视为横轴。
         if dx == 0:
             if dz >= 0:
                 angle = math.pi/2
@@ -182,10 +170,6 @@ class RotateController(ControllerBase):
         # 计算新的y和z的坐标。
         new_z = self.rotate_centre[2] + math.sin(self.y_angle + angle) * dzx
         new_x = self.rotate_centre[0] + math.cos(self.y_angle + angle) * dzx
-        # print("x 坐标从 " + str(x) + " 到 " + str(new_x))
-        # print("z 坐标从 " + str(z) + " 到 " + str(new_z))
-        # print("点从(" + str(x) + ", " + str(z) + ") 移动到" + "(" + str(new_x) + ", " + str(new_z) + ")")
-        # print("————————————————————————————————————————")
         return new_x, new_y, new_z
 
     def process(self, particle):
