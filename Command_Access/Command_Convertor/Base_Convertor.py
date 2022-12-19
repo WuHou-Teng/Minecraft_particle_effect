@@ -6,10 +6,10 @@ from Command_Access.Const.Convertor_consts import *
 
 class Convertor(object):
     """
-    将坐标矩阵转换为粒子的基础类
-    对于相对坐标 ~x ~y ~z
-    其中~x 是东+西-，~y是上+下-， ~z是南+北-
-    对于实体视角坐标 ^x ^y ^z
+    将坐标矩阵转换为粒子的基础类，
+    对于相对坐标 ~x ~y ~z，
+    其中~x 是东+西-，~y是上+下-， ~z是南+北-，
+    对于实体视角坐标 ^x ^y ^z，
     其中^x 是左+右-，^y是上+下-，^z则是前+后-。
     x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type
     1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined)

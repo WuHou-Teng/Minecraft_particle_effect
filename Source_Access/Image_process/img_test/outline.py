@@ -1,9 +1,12 @@
 import cv2 as cv
 import os
+import numpy as np
 from matplotlib import pyplot as plt
 
-image_name = "try3.jpg"
-address = "E:\work\Interesting_things\python_test\Mc_Effect\pics"
+# TODO 老实说，这个代码的效果非常糟糕。或许可以考虑先弱化除黑色以外的所有颜色。然后再转灰度。
+
+image_name = "hum.jpg"
+address = "C:\Wuhou\study\python_test\Mc_Effect\pics"
 # img = cv.imread(os.path.join(address, image_name), 0)
 
 # laplacian = cv.Laplacian(img, cv.CV_64F)
@@ -19,6 +22,11 @@ address = "E:\work\Interesting_things\python_test\Mc_Effect\pics"
 # plt.title('Sobel_Y'), plt.xticks([]), plt.yticks([])
 # plt.show()
 
+def stand_div(a, b, c):
+    average = a + b + c
+    sd = ((a-average)**2 + (b-average)**2 + (c-average)**2)**0.5
+    return sd
+
 # 读取原图
 Src = cv.imread(os.path.join(address, image_name))
 print(Src.shape)
@@ -26,6 +34,15 @@ print(Src.shape)
 # Src = cv.resize(Src, (600, 500))
 # 显示图片， 标题为“Src”
 cv.imshow("Src", Src)
+sd_threshould = 50
+for row in Src:
+    for points in row:
+        if stand_div(points[0], points[1], points[2]) > sd_threshould:
+            # 考虑到三个颜色通道标准差太大，尝试降低标准差，然后转灰度，再寻找轮廓。
+            pass
+
+cv.imshow("Src", Src)
+
 # 转为灰度图
 dst = cv.cvtColor(Src, cv.COLOR_BGR2GRAY)
 # cv.imshow("input", Src)
@@ -57,7 +74,19 @@ ret, thresh = cv.threshold(dst, 127, 255, cv.THRESH_BINARY)
 # 参数5：thickness：画出轮廓线条的粗细
 contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_NONE)
 
-result = cv.drawContours(Src, contours, -1, (0, 0, 255), 2)
+# 创建新的白色背景
+new_pic = np.zeros(np.shape(Src))
+for column in new_pic:
+    for points in column:
+        points[0] = 255
+        points[1] = 255
+        points[2] = 255
+
+
+result = cv.drawContours(new_pic, contours, -1, (0, 0, 0), 2)
 cv.imshow("result", result)
 cv.waitKey(0)
 cv.destroyAllWindows()
+
+
+
