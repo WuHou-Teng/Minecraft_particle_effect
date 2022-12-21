@@ -1,4 +1,4 @@
-from Matrix_Access.Controllers.ControllerBox import ControllerToolBox
+from Matrix_Access.Controllers.Controller_Box import ControllerToolBox
 
 
 class MatrixGenerator(object):

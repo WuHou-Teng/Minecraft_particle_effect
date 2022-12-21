@@ -17,13 +17,6 @@ OVERWORLD = "overworld"
 NETHER = "the_nether"
 END = "the_end"
 
-# Entity
-ALL_PLAYER = "@a"
-NEAREST_PLAYER = "@p"
-CURRENT_ENTITY = "@s"
-ALL_ENTITY = "@e"
-RANDOM_PLAYER = "@r"
-
 # 条件子命令修饰符
 IF = "if"
 UNLESS = "unless"

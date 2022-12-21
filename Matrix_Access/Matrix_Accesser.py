@@ -24,8 +24,8 @@ class MatrixAccesser(object):
     def read_mat(self):
         """
         从相应的文件读取位置矩阵
-        x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type
-        1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined)
+        x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick)
+        1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  0
         :return:
             mat_array: 保存了整个矩阵的列表
         """
@@ -52,10 +52,10 @@ class MatrixAccesser(object):
         修改粒子信息列表内元素的数据格式。
         :param particle: 粒子信息列表,
             ['x', 'y', 'z', 'd_x', 'd_y', 'd_z', 'speed', 'count',
-            'force_normal', 'R', 'G', 'B', 'TR', 'TG', 'TB', 'type']
+            'force_normal', 'R', 'G', 'B', 'TR', 'TG', 'TB', 'type', 'delay']
         :return:
             particle: 经过修改的粒子信息列表: 将必要的数据修改为数字
-            [x, y, z, d_x, d_y, d_z, speed, count, 'force_normal', R, G, B, TR, TG, TB, 'type']
+            [x, y, z, d_x, d_y, d_z, speed, count, 'force_normal', R, G, B, TR, TG, TB, 'type', 'delay']
         """
         particle[0] = float(particle[0])  # 坐标
         particle[1] = float(particle[1])
@@ -74,6 +74,10 @@ class MatrixAccesser(object):
         particle[13] = float(particle[13])  # TG
         particle[14] = float(particle[14])  # TB
 
+        particle[15] = int(particle[15])    # 粒子种类
+
+        particle[16] = int(particle[16])    # 延时tick数
+
         return particle
 
     # TODO 需要考虑计算的参数如下：
@@ -87,4 +91,5 @@ class MatrixAccesser(object):
     # 矩阵外接圆
     #   圆心坐标
     #   圆的半径
+    # 矩阵中所有粒子可能的延时时间。做一个列表，并返回。
 

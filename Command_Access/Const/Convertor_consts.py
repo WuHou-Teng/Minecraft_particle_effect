@@ -38,6 +38,10 @@ GREEN_MAX = 1
 BLUE_MIN = 0
 BLUE_MAX = 1
 
+# 延时相关
+SCHEDULE = 0
+CLOUD = 1
+
 
 
 

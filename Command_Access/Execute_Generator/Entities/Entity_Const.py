@@ -6,7 +6,7 @@ ARMOR_STAND = "minecraft:armor_stand"
 BOAT = "minecraft:boat"
 
 # 体积云
-MINECLOUD = "minecloud"
+AREA_EFFECT_CLOUD = "minecraft:area_effect_cloud"
 
 
 

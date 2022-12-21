@@ -5,13 +5,14 @@ from Command_Access.Command_Convertor.Base_Convertor import Convertor
 from Command_Access.Const import Particles_Java
 from Command_Access.Const.Convertor_consts import *
 from Command_Access.DataPack_IO.Function_Writer import FunctionWriter
+from Command_Access.Execute_Generator.Execute_consts import *
 
 
 class HomoConverter(Convertor):
     """
     二值转换器，只能识别黑白，产生黑白特效。
-    x, y, z, delta_x, delta_y, delta_z, speed, count, force_normal, particle_color(R, G, B), color transfer(R,G,B)
-    1, 1, 1, 0,       0,       0,       0,     1,     f/n,          0.001-1, 0-1, 0-1,        0.001-1, 0-1, 0-1
+    x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick)
+    1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  0
 
     # 对于相对坐标 ~x ~y ~z
     # 其中~x 是东+西-，~y是上+下-， ~z是南+北-
@@ -34,8 +35,8 @@ class HomoConverter(Convertor):
         其中~x 是东+西-，~y是上+下-， ~z是南+北-
         对于实体视角坐标 ^x ^y ^z
         其中^x 是左+右-，^y是上+下-，^z则是前+后-。
-        x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type
-        1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined)
+        x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick)
+        1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  0
         :param particle_data: 单个粒子坐标以及颜色
         :return:
             召唤单个粒子的指令
@@ -48,19 +49,34 @@ class HomoConverter(Convertor):
             if type(particle_data[i]) is float or type(particle_data[i]) is int:
                 particle_data[i] = str(round(particle_data[i], 5))
         # 使用 ~ 还是 ^ 还是单纯的绝对坐标
-        front_sign = self.coo_dict.get(self.coo_type)
+        x_sign = self.coo_dict.get(self.coo_type[0])
+        y_sign = self.coo_dict.get(self.coo_type[1])
+        z_sign = self.coo_dict.get(self.coo_type[2])
         # force 还是 normal
         f_n = "force" if particle_data[8].strip() == "f" else "normal"
-        particle = Particles_Java.particle_dict.get(int(particle_data[-1])).strip()
+        particle = Particles_Java.particle_dict.get(particle_data[15]).strip()
+
+        # 是否考虑延时设定:
+        if self.use_delay:
+            if self.timer_type is CLOUD:
+                # TODO 修改ExecuteBuilder，为ExecuteLayer。execute指令是可以分层叠加的。可以叠很多层条件判定。
+                pass
+
+        # 如果使用execute，则提前准备好:
+        if self.use_execute:
+            if self.use_delay:
+                pass
 
         # 开始翻译
-        coord_str = (front_sign + particle_data[0] + front_sign + particle_data[1] + front_sign + particle_data[2] +
+        coord_str = (x_sign + particle_data[0] + y_sign + particle_data[1] + z_sign + particle_data[2] +
                      " " + particle_data[3] + " " + particle_data[4] + " " + particle_data[5] + " " + particle_data[6] +
                      " " + particle_data[7] + " " + f_n)
 
         if self.edition is JAVA:
+
             if self.use_execute:
                 if self.force_particle is not None:
+
                     return self.execute_header.to_string() + "particle " + self.force_particle + coord_str + "\n"
                 else:
 
@@ -97,8 +113,8 @@ class Cube(object):
 
     def __init__(self):
         self.convertor = HomoConverter()
-        self.convertor.execute_header.set_modifier("at")
-        self.work_place = "E:\\work\\Interesting_things\\python_test\\Mc_Effect\\Mc_Partical_effect_Repo\\"
+        self.convertor.execute_header.set_modifier(AS)
+        self.work_place = "C:\\Wuhou\\study\\python_test\\Mc_Effect\\Mc_Partical_effect_Repo\\"
         self.mat_address = "Matrix_Access\\Matrix_Files\\Square_effect\\"
         self.mat_file = "cube.csv"
         self.convertor.set_mat_file(self.work_place + self.mat_address + self.mat_file)
@@ -126,7 +142,8 @@ class Cube(object):
 
 
 if __name__ == "__main__":
-    game_address = "E:\\Play_game\\mc\\1.18.2KuaYueII 乙烯\\1.18.2KuaYueII"
+    # ".minecraft\saves\新的世界 (1)\datapacks\partical_effect\data\square_effect\functions"
+    game_address = "E:\\game\\mc\\1.18.2KuaYueII\\1.18.2KuaYueII"
     data_pack_address = os.path.join(game_address, ".minecraft\\saves\\新的世界 (1)\\datapacks\\partical_effect")
     name_space = "square_effect"
     function_name = "3d_rottest"

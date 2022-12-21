@@ -41,7 +41,7 @@ class FunctionWriter(object):
         """
         func_address = self.func_address(func_name)
         new_file = open(func_address, 'w')
-        new_file.write("# This function created by 「Bubble」\n")
+        new_file.write("# This function created by [Bubble]\n")
         new_file.close()
         return func_address
         # if not os.path.exists(func_address):

@@ -1,4 +1,14 @@
 from Command_Access.Execute_Generator.Selector.Selector_Const import *
+from Command_Access.Execute_Generator.Selector.Selectors import *
+
+
+class TargetSelectorBox(object):
+    """
+    参考 ControllerToolBox, 为所有Selectors编写添加函数。方便用户调用
+    """
+    def __init__(self):
+        self.selector_list = []
+
 
 
 class TargetSelector(object):
@@ -89,8 +99,10 @@ class TargetSelector(object):
         self.limit = limit
         self.sort = sort
 
-        # 实体标签信息，通过添加一个实体nbt一次性添加。
+        # 实体标签信息，通过添加一个实体nbt一次性添加。是一个列表，包含多段字符串
         self.entity_NBT = entity_NBT
+
+        self.condition = []
 
     def add_entity_info(self, entity_NBT):
         """
