@@ -9,8 +9,8 @@ class TargetSelector(object):
     该类是创建/添加条件限制的基类。
     """
     def __init__(self, entity_mark=ALL_ENTITY, location=None, distance=None, vol_space=None,
-                 scores=None, tag=None, team=None, entity_type=None, family=None, predicate=None,
-                 x_rotation=None, y_rotation=None, entity_NBT=None, limit=None, sort=None):
+                 scores=None, tag=None, team=None, name=None, entity_type=None, family=None,
+                 predicate=None, x_rotation=None, y_rotation=None, entity_NBT=None, limit=None, sort=None):
         """
 
         :param entity_mark: @a: 所有玩家
@@ -42,6 +42,10 @@ class TargetSelector(object):
                      [team=!<某队伍>] — 选择所有不属队伍“某队伍”的目标。
                      [team=] — 选择所有不属于任何队伍的目标。
                      [team=!] — 选择所有属于任意队伍的目标。
+
+        :param name:实体名称
+                    [name=<某名称>] — 选择所有名字为“某名称”的目标。
+                    [name=!<某名称>] — 选择所有名字不为“某名称”的目标。
 
         :param entity_type: [type=<实体类型>] — 选择所有特定的实体类型的目标。
                             [type=!<实体类型>] — 选择所有不是特定的实体类型的目标。
@@ -75,6 +79,7 @@ class TargetSelector(object):
         self.scores = scores
         self.tag = tag
         self.team = team
+        self.name = name
         self.entity_type = entity_type
         self.family = family
         self.predicate = predicate
