@@ -126,7 +126,7 @@ class EntityBuilder(object):
         """
         self.tag_dict[key] = value
 
-    def to_sting(self):
+    def to_string(self):
         """
         将自身的属性写成nbt值。
         其中，如果属性为 None, 则默认忽略。所以可以通过有限的设定属性，来获得有限的nbt。
