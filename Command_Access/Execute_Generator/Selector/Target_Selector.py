@@ -1,5 +1,6 @@
 from Command_Access.Execute_Generator.Selector.Selector_Const import *
-from Command_Access.Execute_Generator.Selector.Selectors import *
+from Command_Access.Execute_Generator.Selector import Selectors
+from Command_Access.Execute_Generator.Entities import Entity
 
 
 class TargetSelectorBox(object):
@@ -7,10 +8,75 @@ class TargetSelectorBox(object):
     参考 ControllerToolBox, 为所有Selectors编写添加函数。方便用户调用
     """
     def __init__(self):
+        self.entity_mark = NEAREST_PLAYER
         self.selector_list = []
 
+    def add_tag(self, selector):
+        assert selector.__class__.__base__ == Selectors
+        self.selector_list.append(selector.to_string())
+
+    def add_entity_nbt(self, entity):
+        assert entity.__class__.__base__ == Entity
+        self.selector_list.append(entity.to_string())
+
+    def to_string(self):
+        selector_string = self.entity_mark + "["
+        for selectors in self.selector_list:
+            selector_string += selectors
+        return selector_string + "]"
+
+    def location(self, x=0, y=0, z=0,
+                 x_coo_type=RELA_COORD, y_coo_type=RELA_COORD, z_coo_type=RELA_COORD):
+        return Selectors.Location(x, y, z, x_coo_type, y_coo_type, z_coo_type)
+
+    def distance(self, max_distance=0, min_distance=0, use_range=True):
+        return Selectors.Distance(max_distance, min_distance, use_range)
+
+    def vol_space(self, dx=0, dy=0, dz=0):
+        return Selectors.VolSpace(dx, dy, dz)
+
+    def score(self, score_name=None, score_min_value=None, score_max_value=None, use_range=None):
+        score_select = Selectors.Scores()
+        if score_name is not None and score_min_value is not None and score_max_value is not None:
+            if use_range is None:
+                use_range = False
+            score_select.add_score(score_name, score_min_value, score_max_value, use_range)
+        return score_select
+
+    def tag(self, tag, flip=False):
+        return Selectors.Tag(tag, flip)
+
+    def team(self, team, flip=False):
+        return Selectors.Team(team, flip)
+
+    def name(self, name, flip=False):
+        return Selectors.Name(name, flip)
+
+    def entity_type(self, type_id=None, flip=None):
+        type_select = Selectors.EntityType()
+        if type_id is not None:
+            if flip is None:
+                flip = False
+            type_select.add_type_judge(type_id, flip)
+        return type_select
+
+    def family(self, family_type, flip=False):
+        return Selectors.Family(family_type, flip)
+
+    def predicate(self, name_space_id, flip=False):
+        return Selectors.Predicate(name_space_id, flip)
+
+    def x_rotation(self, small_angle=-90, big_angle=90, use_range=True):
+        return Selectors.XRotation(small_angle, big_angle, use_range)
+
+    def y_rotation(self, small_angle=-180, big_angle=180, use_range=True):
+        return Selectors.YRotation(small_angle, big_angle, use_range)
+
+    def limit_sort(self, limit=1, sort=NEAREST):
+        return Selectors.LimitSort(limit, sort)
 
 
+# ————————————————————以下类弃用，改用上面的。————————————————————————
 class TargetSelector(object):
     """
     在execute指令中，对象后往往需要添加相应的描述限制。
