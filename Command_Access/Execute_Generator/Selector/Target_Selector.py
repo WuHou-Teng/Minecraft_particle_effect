@@ -7,22 +7,37 @@ class TargetSelectorBox(object):
     """
     参考 ControllerToolBox, 为所有Selectors编写添加函数。方便用户调用
     """
-    def __init__(self):
-        self.entity_mark = NEAREST_PLAYER
+    def __init__(self, entity_mark=NEAREST_PLAYER, entity=None):
+        self.entity_mark = entity_mark
+        self.entity = entity
         self.selector_list = []
 
     def add_tag(self, selector):
         assert selector.__class__.__base__ == Selectors
         self.selector_list.append(selector.to_string())
 
-    def add_entity_nbt(self, entity):
-        assert entity.__class__.__base__ == Entity
-        self.selector_list.append(entity.to_string())
+    def add_entity(self, entity):
+        """
+        添加实体 nbt信息。
+        :param entity: 是实体类或者是实体类的子类。
+        :return:
+        """
+        # assert entity.__class__.__base__ == Entity
+        self.entity = entity
+        self.selector_list.append(entity.to_string_select())
 
     def to_string(self):
+        """
+        将所有的选择器tag转换为一句可以直接放入execute的选择器语句。
+        每次调用 to_string 都会重新向entity请求一次 to_string_select(), 因此可以做到更新entity数据。
+        :return:
+            selector_string = [type=...,distance=...] 等。
+        """
         selector_string = self.entity_mark + "["
         for selectors in self.selector_list:
             selector_string += selectors
+        if self.entity is not None:
+            selector_string += self.entity.to_string_select()
         return selector_string + "]"
 
     def location(self, x=0, y=0, z=0,

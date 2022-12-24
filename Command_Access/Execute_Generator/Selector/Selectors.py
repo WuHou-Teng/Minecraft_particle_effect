@@ -4,7 +4,7 @@ from Command_Access.Execute_Generator.Selector.Selector_Const import *
 class Selectors(object):
     """
     选择器标签 的 实体基类。
-    TODO 部分选择器可能是float类，回头再看看，要做区分。
+
     """
 
     def __init__(self):
