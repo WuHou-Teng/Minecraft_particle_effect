@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import os
 
-image_name = "try3.jpg"
-address = "E:\work\Interesting_things\python_test\Mc_Effect\pics"
+image_name = "swinsuit.jpg"
+address = "C:\\Wuhou\\study\\python_test\\Mc_Effect\\pics"
 img = Image.open(os.path.join(address, image_name))
 # img.convert("L").show()
 imagedata = img.getpixel((10, 10))
