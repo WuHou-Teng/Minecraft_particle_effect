@@ -31,3 +31,9 @@ DATA_ENTITY = "data entity"
 DATA_STORAGE = "data storage"
 
 
+# Entity_Mark
+ALL_PLAYER = "@a"
+NEAREST_PLAYER = "@p"
+CURRENT_ENTITY = "@s"
+ALL_ENTITY = "@e"
+RANDOM_PLAYER = "@r"

@@ -44,7 +44,7 @@ class EntityBuilder(object):
         :param UUID: 实体的UUID，用4个32位整数表示，按从高位到低位的顺序存储。
         """
         # 实体自身种类设定为None。因为该类是基类。
-        self.type = None
+        self.entity_type = None
 
         self.Air = Air
         self.CustomName = CustomName
@@ -67,9 +67,28 @@ class EntityBuilder(object):
         self.UUID = UUID
 
         # 创建字典，将所有的标签塞进去。
-        # TODO 增加一个词典是有意义的。方便传递数据，以及遍历。不过，可能要考虑，是否应该直接将原始数据丢尽dict，还是处理后丢尽dict。
+        # 增加一个词典是有意义的。方便传递数据，以及遍历。不过，可能要考虑，是否应该直接将原始数据丢尽dict，还是处理后丢尽dict。
         self.tag_dict = {}
-        self.update_self_value()
+
+        self.update_value("Air", self.Air)
+        self.update_value("CustomName", self.CustomName)
+        self.update_value("CustomNameVisible", self.CustomNameVisible)
+        self.update_value("FallDistance", self.FallDistance)
+        self.update_value("Fire", self.Fire)
+        self.update_value("Glowing", self.Glowing)
+        self.update_value("HasVisualFire", self.HasVisualFire)
+        self.update_value("Invulnerable", self.Invulnerable)
+        self.update_value("Motion", self.Motion)
+        self.update_value("NoGravity", self.NoGravity)
+        self.update_value("OnGround", self.OnGround)
+        self.update_value("Passengers", self.Passengers)
+        self.update_value("PortalCooldown", self.PortalCooldown)
+        self.update_value("Pos", self.Pos)
+        self.update_value("Rotation", self.Rotation)
+        self.update_value("Silent", self.Silent)
+        self.update_value("Tags", self.Tags)
+        self.update_value("TicksFrozen", self.TicksFrozen)
+        self.update_value("UUID", self.UUID)
 
     def update_self_value(self):
         self.update_value("Air", self.Air)
@@ -126,14 +145,40 @@ class EntityBuilder(object):
         """
         self.tag_dict[key] = value
 
-    def to_string(self):
+    def to_string_nbt(self):
         """
         将自身的属性写成nbt值。
         其中，如果属性为 None, 则默认忽略。所以可以通过有限的设定属性，来获得有限的nbt。
         :return:
+            nbt: 包含自身属性的nbt字符串
         """
         pass
 
+    def to_string_select_nbt(self):
+        """
+        将自身的属性转化为方便execute指令调用的形式
+        :returns:
+            nbt: 包含自身属性的nbt字符串
+            entity: 自身的类型id
+        """
+        pass
 
+    def to_string_select(self):
+        """
+        直接转化为一段选择器字符串。
+        :return:
+            selector: 选择器字符串。
+        """
+        pass
 
+    def to_string_summon_nbt(self):
+        """直接将自身转化为方便summon指令调用的形式。"""
+        pass
+
+    def to_string_summon(self):
+        """
+        直接转换为summon指令
+        :return:
+        """
+        pass
 

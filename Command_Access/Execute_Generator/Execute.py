@@ -1,4 +1,4 @@
-from Command_Access.Execute_Generator.Selector.Target_Selector import TargetSelector
+from Command_Access.Execute_Generator.Selector.Target_Selector import TargetSelectorBox
 from Command_Access.Execute_Generator.Execute_consts import *
 
 
@@ -8,89 +8,73 @@ class ExecuteLayer(object):
     由 ExecuteBuilder 组装后统一转换为字符串并输出。
     """
 
-    def __init__(self, modifier=AS, entity_mark=NEAREST_PLAYER, tags=None):
+    def __init__(self, modifier=AS, selector=None):
         self.base = 'execute'
-        # 条件子命令，if 或者 unless, 默认不启用
+        # TODO 条件子命令，if 或者 unless, 默认不启用，这个东西是另一个区域，还未完善。
         self.child = None
 
         # 方位/身份 修饰符，默认为 as
         # as at facing align anchored
         self.modifier = modifier
 
-        # 确定目标实体, 默认值为最近玩家
-        # @a @p @r @e @s
-        self.entity = entity_mark
-
-        # 特殊判定条件
-        # 例如 [
-        # 	nbt={Inventory:[{Slot:103b, Count:1b, tag:{Tags:["Core_of_Ifrit"]}}]},
-        # 	nbt={Inventory:[{Slot:-106b, Count:1b, tag:{Tags:["meteor_fall"]}}]}
-        # ]
-        self.condition = TargetSelector()
+        # 实体选择器,例如:
+        # @e[type=minecraft:sheep,nbt={}]
+        self.selector = selector
+        if selector is None:
+            self.selector = TargetSelectorBox(entity_mark=NEAREST_PLAYER)
 
     def set_modifier(self, modifier):
         self.modifier = modifier
 
-    def set_entity(self, entity):
-        self.entity = entity
+    def set_selector(self, selector):
+        self.selector = selector
 
     def to_string(self):
         if self.child is None:
-            if not self.condition.has_condition():
-                return self.base + " " + self.modifier + " " + self.entity + " run "
-            else:
-                return self.base + " " + self.modifier + " " + self.entity + self.condition.to_string() + " run "
+            return f'{self.base} {self.modifier} {self.selector.to_string()} run '
         else:
             pass
 
 
-class ExecuteBuilderNew(object):
+class ExecuteBuilder(object):
     """
     将不同层的layer组合起来，再统一输出。
     """
     def __init__(self):
         self.layer = []
 
-    def add_layer(self, modifier=AS, entity=NEAREST_PLAYER):
+    def add_layer(self, execute_layer):
+        self.layer.append(execute_layer)
 
-
-
-class ExecuteBuilder(object):
-    """
-    检测执行指令：execute 以及后面跟的所有可能的指令块
-    TODO 未来指令生成器的雏形。
-    """
-    def __init__(self, modifier=AS, entity=NEAREST_PLAYER):
-        self.base = 'execute'
-        # 条件子命令，if 或者 unless, 默认不启用
-        self.child = None
-
-        # 方位/身份 修饰符，默认为 as
-        # as at facing align anchored
-        self.modifier = modifier
-
-        # 确定目标实体, 默认值为最近玩家
-        # @a @p @r @e @s
-        self.entity = entity
-
-        # 特殊判定条件
-        # 例如 [
-        # 	nbt={Inventory:[{Slot:103b, Count:1b, tag:{Tags:["Core_of_Ifrit"]}}]},
-        # 	nbt={Inventory:[{Slot:-106b, Count:1b, tag:{Tags:["meteor_fall"]}}]}
-        # ]
-        self.condition = TargetSelector()
-
-    def set_modifier(self, modifier):
-        self.modifier = modifier
-
-    def set_entity(self, entity):
-        self.entity = entity
+    def new_layer(self, modifier=AS, selector=None):
+        return ExecuteLayer(modifier, selector)
 
     def to_string(self):
-        if self.child is None:
-            if not self.condition.has_condition():
-                return self.base + " " + self.modifier + " " + self.entity + " run "
-            else:
-                return self.base + " " + self.modifier + " " + self.entity + self.condition.to_string() + " run "
-        else:
-            pass
+        """
+        将所有的execute层叠加为一整句指令。如果没有layer，则返回”“
+        :return:
+        """
+        execute_sentence = ""
+        for layers in self.layer:
+            execute_sentence += layers.to_string()
+        return execute_sentence
+
+
+if __name__ == "__main__":
+    from Command_Access.Execute_Generator.Entities.Area_Effect_Cloud import CloudTimer
+    # execute 指令 创建工具
+    execute_builder = ExecuteBuilder()
+    # 计时器实体
+    timer_e = CloudTimer("wuhou", Age=0, Duration=200)
+    # 实体选择器
+    selector_box = TargetSelectorBox(ALL_ENTITY, timer_e)
+    # execute 层
+    execute_layer = ExecuteLayer(AS, selector_box)
+    execute_layer2 = ExecuteLayer(AS)
+    # 将execute 层添加到execute创建器中
+    execute_builder.add_layer(execute_layer)
+    execute_builder.add_layer(execute_layer2)
+
+    print(execute_builder.to_string())
+
+
