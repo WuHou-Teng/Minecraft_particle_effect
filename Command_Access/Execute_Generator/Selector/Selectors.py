@@ -329,3 +329,10 @@ class LimitSort(Selectors):
 
     def to_string(self):
         return f"limit={self.limit},sort={self.sort},"
+
+
+class NewClass(LimitSort, XRotation, YRotation, Predicate):
+    
+    def __init__(self):
+        super().__init__()
+

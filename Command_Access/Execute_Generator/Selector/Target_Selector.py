@@ -16,20 +16,23 @@ class TargetSelectorBox(object):
         assert selector.__class__.__base__ == Selectors
         self.selector_list.append(selector.to_string())
 
-    def add_entity(self, entity):
+    def set_entity(self, entity):
         """
-        添加实体 nbt信息。
+        添加实体, 后续 to_string()会向实体请求 nbt 信息方便execute锁定实体对象。
         :param entity: 是实体类或者是实体类的子类。
         :return:
         """
         # assert entity.__class__.__base__ == Entity
         self.entity = entity
-        self.selector_list.append(entity.to_string_select())
+        # self.selector_list.append(entity.to_string_select())
 
     def to_string(self):
         """
         将所有的选择器tag转换为一句可以直接放入execute的选择器语句。
         每次调用 to_string 都会重新向entity请求一次 to_string_select(), 因此可以做到更新entity数据。
+        注：另外，如果想要控制实体的 to_string_select()不返回部分tag，只要将实体的那一项tag直接设定为 None.
+        # TODO 其实我觉得这里在未来，将所有的tag都写成tag后，还是最好加一个白名单作为过滤器。
+        # 否则通过将实体的某一项设定为 None来避免实体 to_string_select()不返回相应tag的操作还是隐式了。
         :return:
             selector_string = [type=...,distance=...] 等。
         """
@@ -187,7 +190,6 @@ class TargetSelector(object):
 
     def add_entity_info(self, entity_NBT):
         """
-        TODO 添加一个实体所包含的所有信息。
         :param entity_NBT: <dictionary>
         """
         self.entity_NBT = entity_NBT
@@ -198,7 +200,6 @@ class TargetSelector(object):
         :return:
             self.condition: 已有的条件列表
         """
-        # TODO
         return self.condition
 
     def to_string(self):

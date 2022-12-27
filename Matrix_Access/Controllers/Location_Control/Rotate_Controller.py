@@ -1,4 +1,5 @@
 import math
+import numpy as np
 from Matrix_Access.Controllers.Controller_Interface import ControllerBase
 
 
@@ -6,25 +7,31 @@ class RotateController(ControllerBase):
     """
     对粒子的坐标进行旋转变化
     """
-    def __init__(self, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
-        super(RotateController, self).__init__()
-        # 转换时，各方向上的旋转角度。采用弧度单位。
 
-        self.x_angle = x_angle
-        self.y_angle = y_angle
-        self.z_angle = z_angle
+    def __init__(self, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
+        """
+        :param x_angle: x轴旋转角度，默认单位采用度数。
+        :param y_angle: y轴旋转角度
+        :param z_angle: z轴旋转角度
+        :param rotate_centre: 旋转中心
+        """
+        super(RotateController, self).__init__()
+
+        self.x_angle = math.radians(x_angle)
+        self.y_angle = math.radians(y_angle)
+        self.z_angle = math.radians(z_angle)
         # 旋转中心点
         # TODO 这里同样需要：以后最好设计一个保留一个物体整体空间坐标的类，并且能正确反馈物体的各项属性，包括大小，边界外切立方体坐标。
         self.rotate_centre = rotate_centre if rotate_centre is not None else [0, 0, 0]
 
     def set_x_angle(self, x_angle):
-        self.x_angle = x_angle
+        self.x_angle = math.radians(x_angle)
 
     def set_y_angle(self, y_angle):
-        self.y_angle = y_angle
+        self.y_angle = math.radians(y_angle)
 
     def set_z_angle(self, z_angle):
-        self.z_angle = z_angle
+        self.z_angle = math.radians(z_angle)
 
     def set_rotate_angle(self, x_angle, y_angle, z_angle):
         """
@@ -34,9 +41,9 @@ class RotateController(ControllerBase):
         :param z_angle: 以z轴为旋转轴，旋转的角度，采用弧度单位
         :return:
         """
-        self.x_angle = x_angle
-        self.y_angle = y_angle
-        self.z_angle = z_angle
+        self.x_angle = math.radians(x_angle)
+        self.y_angle = math.radians(y_angle)
+        self.z_angle = math.radians(z_angle)
 
     def clear_angle(self):
         """
@@ -72,9 +79,9 @@ class RotateController(ControllerBase):
         # 求原本的角度, 其中，y视为纵轴，z视为横轴。
         if dz == 0:
             if dy >= 0:
-                angle = math.pi/2
+                angle = math.pi / 2
             else:
-                angle = -math.pi/2
+                angle = -math.pi / 2
         else:
             angle = math.atan(dy / dz)
             # 由于tan左右对称，且优先取夹角。所以角度默认出现在第一四象限，需要手动判定二三象限。
@@ -88,7 +95,7 @@ class RotateController(ControllerBase):
                 # 二三象限都是增加180度，因此只需要判断横轴是否为负。
                 angle += math.pi
         # 求模
-        dyz = math.pow(dy*dy + dz*dz, 0.5)
+        dyz = math.pow(dy * dy + dz * dz, 0.5)
         # 计算新的y和z的坐标。
         new_z = self.rotate_centre[2] + math.cos(self.x_angle + angle) * dyz
         new_y = self.rotate_centre[1] + math.sin(self.x_angle + angle) * dyz
@@ -110,9 +117,9 @@ class RotateController(ControllerBase):
         # 求原本的角度, 其中，y视为纵轴，x视为横轴。
         if dx == 0:
             if dy >= 0:
-                angle = math.pi/2
+                angle = math.pi / 2
             else:
-                angle = -math.pi/2
+                angle = -math.pi / 2
         else:
             angle = math.atan(dy / dx)
             # 由于tan左右对称，且优先取夹角。所以角度默认出现在第一四象限，需要手动判定二三象限。
@@ -125,7 +132,7 @@ class RotateController(ControllerBase):
             if dx < 0:
                 angle += math.pi
         # 求模
-        dyx = math.pow(dy*dy + dx*dx, 0.5)
+        dyx = math.pow(dy * dy + dx * dx, 0.5)
         # 计算新的y和z的坐标。
         # 因为坐标轴在z方向上看，x轴是左边为正，右边为负，因此会导致z轴的旋转为随着z增大呈顺时针旋转，因此翻转 z_angle。
         new_y = self.rotate_centre[1] + math.sin(-self.z_angle + angle) * dyx
@@ -148,9 +155,9 @@ class RotateController(ControllerBase):
         dx = x - self.rotate_centre[0]
         if dx == 0:
             if dz >= 0:
-                angle = math.pi/2
+                angle = math.pi / 2
             else:
-                angle = -math.pi/2
+                angle = -math.pi / 2
         else:
             angle = math.atan(dz / dx)
             # 由于tan左右对称，且优先取夹角。所以角度默认出现在第一四象限，需要手动判定二三象限。
@@ -166,7 +173,7 @@ class RotateController(ControllerBase):
         # print("angle is: " + str(angle/math.pi) + "Π")
 
         # 求模
-        dzx = math.pow(dx*dx + dz*dz, 0.5)
+        dzx = math.pow(dx * dx + dz * dz, 0.5)
         # 计算新的y和z的坐标。
         new_z = self.rotate_centre[2] + math.sin(self.y_angle + angle) * dzx
         new_x = self.rotate_centre[0] + math.cos(self.y_angle + angle) * dzx
@@ -191,4 +198,35 @@ class RotateController(ControllerBase):
         particle[2] = z_new
         return particle
 
+    def rotate_matrix(self, u, v, w, angle, x, y, z):
+        """
+        旋转矩阵，直接计算物体按照uvw规定的轴旋转。
+        :param u: x轴向量，调整向量长度，就可以调整旋转轴的角度。
+        :param v: y轴向量
+        :param w: z轴向量
+        :param angle: 旋转角度
+        :param x: 原坐标x
+        :param y: 原坐标y
+        :param z: 原坐标z
+        :return:
+        """
+        angle_rad = math.radians(angle)
+        nx = x - self.rotate_centre[0]
+        ny = y - self.rotate_centre[1]
+        nz = z - self.rotate_centre[2]
+        rm = np.array([[math.cos(angle_rad) + (1 - math.cos(angle_rad)) * u ** 2,
+                        (1 - math.cos(angle_rad)) * u * v - math.sin(angle_rad) * w,
+                        (1 - math.cos(angle_rad)) * u * w + math.sin(angle_rad) * v],
 
+                       [(1 - math.cos(angle_rad)) * u * v + math.sin(angle_rad) * w,
+                        math.cos(angle_rad) + (1 - math.cos(angle_rad)) * v ** 2,
+                        (1 - math.cos(angle_rad)) * v * w - math.sin(angle_rad) * u],
+
+                       [(1 - math.cos(angle_rad)) * u * w - math.sin(angle_rad) * v,
+                        (1 - math.cos(angle_rad)) * w * v + math.sin(angle_rad) * u,
+                        math.cos(angle_rad) + (1 - math.cos(angle_rad)) * w ** 2]])
+
+        pm = np.transpose(np.array([[nx, ny, nz]]))
+        fm = np.dot(rm, pm)
+        rx, ry, rz = round(fm[0][0], 4), round(fm[1][0], 4), round(fm[2][0], 4)
+        return rx + self.rotate_centre[0], ry + self.rotate_centre[1], rz + self.rotate_centre[2]

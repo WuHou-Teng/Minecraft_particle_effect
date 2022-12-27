@@ -1,4 +1,22 @@
 import os
+from Command_Access.Command_Convertor.Homo_Convertor import HomoConverter
+from Command_Access.Command_Convertor.Color_Convertor import ColorConvertor
+from Command_Access.Execute_Generator.Execute import ExecuteBuilder, ExecuteLayer
+from Command_Access.Execute_Generator.Entities.Area_Effect_Cloud import AreaEffectCloud, CloudTimer
+from Command_Access.Execute_Generator.Entities.Player import PlayerEntity
+from Command_Access.Execute_Generator.Entities.Boat import BoatEntity
+from Command_Access.Execute_Generator.Entities.Armor_Stand import ArmorStandEntity
+from Command_Access.Execute_Generator.Selector.Target_Selector import TargetSelector
+from Matrix_Access.Matrix_Accesser import MatrixAccesser
+from Matrix_Access.Controllers.Controller_Box import ControllerToolBox
+
+
+class PEFuncGenerator(object):
+    """
+    新的粒子特效生成器。
+    """
+    def __init__(self):
+        pass
 
 
 class ParticleEffectFuncGenerator(object):

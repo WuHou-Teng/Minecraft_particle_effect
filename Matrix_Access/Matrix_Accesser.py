@@ -81,7 +81,7 @@ class MatrixAccesser(object):
         return particle
 
     # TODO 需要考虑计算的参数如下：
-    # 个方向极点坐标
+    # 各方向极点坐标
     #   x方向数值最小，最大的点
     #   y方向数值最小，最大的点
     #   z方向数值最小，最大的点
