@@ -1,14 +1,15 @@
-from Command_Access.Execute_Generator.Selector.Target_Selector import TargetSelectorBox
+from Command_Access.Command_Generator.Selector.Selector_Const import NEAREST_PLAYER
+from Command_Access.Command_Generator.Selector.Target_Selector import TargetSelector
+from util.Box import Box
 
-# TODO 这里回去后记得改个名字。TargetSelectorBox 改成 TargetSelector
-# Selectors 文件名，改成SelectorTags
 
-class TargetSelectorBoxBox(object):
+class TargetSelectorBox(Box):
     """
     用来储存创建好的选择器。
     之后要放入ExecuteLayer才能作为指令写入funtion。
     """
     def __init__(self):
+        super().__init__()
         self.selector_dict = {}
 
     def add_target_selector(self, target_selector):
@@ -16,7 +17,8 @@ class TargetSelectorBoxBox(object):
         添加TargetSelector实例
         :param target_selector: 添加新的Target_selector实例。必须是TargetSelector类
         """
-        self.selector_dict[target_selector.get_name] = target_selector
+        self.selector_dict[target_selector.get_name()] = target_selector
+        return target_selector.get_name()
 
     def get_target_selector(self, index_name):
         """
@@ -32,6 +34,17 @@ class TargetSelectorBoxBox(object):
         """
         返回盒子中包含的所有target_selector的index_name
         """
-        return self.selector_dict.keys()
+        return list(self.selector_dict.keys())
 
+    def get_object_list(self):
+        return self.get_target_selector_list()
+
+    def add_object(self, new_object):
+        return self.add_target_selector(new_object)
+
+    def get_object(self, index_name):
+        return self.get_target_selector(index_name)
+
+    def new_target_selector(self, index_name=None, entity_mark=NEAREST_PLAYER, entity=None):
+        self.add_target_selector(TargetSelector(index_name, entity_mark, entity))
 

@@ -1,14 +1,14 @@
-from Command_Access.Execute_Generator.Selector.Selector_Const import *
-from Command_Access.Execute_Generator.Selector import Selectors
-from Command_Access.Execute_Generator.Entities import Entity
+from Command_Access.Command_Generator.Selector.Selector_Const import *
+from Command_Access.Command_Generator.Selector import Selector_Tags
+from Command_Access.Command_Generator.Entities import Entity
 
 
-class TargetSelectorBox(object):
+class TargetSelector(object):
     """
     参考 ControllerToolBox, 为所有Selectors编写添加函数。方便用户调用
     """
-    def __init__(self, index_name, entity_mark=NEAREST_PLAYER, entity=None):
-        self.index_name = index_name
+    def __init__(self, index_name=None, entity_mark=NEAREST_PLAYER, entity=None):
+        self.index_name = index_name if index_name is not None else self.to_string()
         self.entity_mark = entity_mark
         self.entity = entity
         self.selector_list = []
@@ -17,7 +17,7 @@ class TargetSelectorBox(object):
         return self.index_name
 
     def add_tag(self, selector):
-        assert selector.__class__.__base__ == Selectors
+        assert selector.__class__.__base__ == Selector_Tags
         self.selector_list.append(selector.to_string())
 
     def set_entity(self, entity):
@@ -49,16 +49,16 @@ class TargetSelectorBox(object):
 
     def location(self, x=0, y=0, z=0,
                  x_coo_type=RELA_COORD, y_coo_type=RELA_COORD, z_coo_type=RELA_COORD):
-        return Selectors.Location(x, y, z, x_coo_type, y_coo_type, z_coo_type)
+        return Selector_Tags.Location(x, y, z, x_coo_type, y_coo_type, z_coo_type)
 
     def distance(self, max_distance=0, min_distance=0, use_range=True):
-        return Selectors.Distance(max_distance, min_distance, use_range)
+        return Selector_Tags.Distance(max_distance, min_distance, use_range)
 
     def vol_space(self, dx=0, dy=0, dz=0):
-        return Selectors.VolSpace(dx, dy, dz)
+        return Selector_Tags.VolSpace(dx, dy, dz)
 
     def score(self, score_name=None, score_min_value=None, score_max_value=None, use_range=None):
-        score_select = Selectors.Scores()
+        score_select = Selector_Tags.Scores()
         if score_name is not None and score_min_value is not None and score_max_value is not None:
             if use_range is None:
                 use_range = False
@@ -66,16 +66,16 @@ class TargetSelectorBox(object):
         return score_select
 
     def tag(self, tag, flip=False):
-        return Selectors.Tag(tag, flip)
+        return Selector_Tags.Tag(tag, flip)
 
     def team(self, team, flip=False):
-        return Selectors.Team(team, flip)
+        return Selector_Tags.Team(team, flip)
 
     def name(self, name, flip=False):
-        return Selectors.Name(name, flip)
+        return Selector_Tags.Name(name, flip)
 
     def entity_type(self, type_id=None, flip=None):
-        type_select = Selectors.EntityType()
+        type_select = Selector_Tags.EntityType()
         if type_id is not None:
             if flip is None:
                 flip = False
@@ -83,23 +83,23 @@ class TargetSelectorBox(object):
         return type_select
 
     def family(self, family_type, flip=False):
-        return Selectors.Family(family_type, flip)
+        return Selector_Tags.Family(family_type, flip)
 
     def predicate(self, name_space_id, flip=False):
-        return Selectors.Predicate(name_space_id, flip)
+        return Selector_Tags.Predicate(name_space_id, flip)
 
     def x_rotation(self, small_angle=-90, big_angle=90, use_range=True):
-        return Selectors.XRotation(small_angle, big_angle, use_range)
+        return Selector_Tags.XRotation(small_angle, big_angle, use_range)
 
     def y_rotation(self, small_angle=-180, big_angle=180, use_range=True):
-        return Selectors.YRotation(small_angle, big_angle, use_range)
+        return Selector_Tags.YRotation(small_angle, big_angle, use_range)
 
     def limit_sort(self, limit=1, sort=NEAREST):
-        return Selectors.LimitSort(limit, sort)
+        return Selector_Tags.LimitSort(limit, sort)
 
 
 # ————————————————————以下类弃用，改用上面的。————————————————————————
-class TargetSelector(object):
+class _TargetSelector(object):
     """
     在execute指令中，对象后往往需要添加相应的描述限制。
     例如 execute as @e[type=minecraft:item, distance=0..5, nbt={Item:{id:"minecraft:blaze_powder"}, OnGround:1b}] run...
