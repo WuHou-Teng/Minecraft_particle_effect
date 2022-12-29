@@ -7,10 +7,14 @@ class TargetSelectorBox(object):
     """
     参考 ControllerToolBox, 为所有Selectors编写添加函数。方便用户调用
     """
-    def __init__(self, entity_mark=NEAREST_PLAYER, entity=None):
+    def __init__(self, index_name, entity_mark=NEAREST_PLAYER, entity=None):
+        self.index_name = index_name
         self.entity_mark = entity_mark
         self.entity = entity
         self.selector_list = []
+
+    def get_name(self):
+        return self.index_name
 
     def add_tag(self, selector):
         assert selector.__class__.__base__ == Selectors

@@ -4,7 +4,7 @@ class EntityBuilder(object):
     """
     mc实体的抽象类，包含部分实体通用标签。
     """
-    def __init__(self, Air=None, CustomName=None, CustomNameVisible=None, FallDistance=None,
+    def __init__(self, index_name, Air=None, CustomName=None, CustomNameVisible=None, FallDistance=None,
                  Fire=None, Glowing=None, HasVisualFire=None, Invulnerable=None, Motion=None,
                  NoGravity=None, OnGround=None, Passengers=None, PortalCooldown=None, Pos=None,
                  Rotation=None, Silent=None, Tags=None, TicksFrozen=None, UUID=None):
@@ -43,6 +43,8 @@ class EntityBuilder(object):
         :param TicksFrozen: 实体的冷冻时间，不小于0。当实体在细雪中时每刻增加1，离开细雪则每刻减少2。可能不存在。
         :param UUID: 实体的UUID，用4个32位整数表示，按从高位到低位的顺序存储。
         """
+        # 程序内允许额外自定义一个实体名字，和mc指令无关。方便用户查找
+        self.index_name = index_name
         # 实体自身种类设定为None。因为该类是基类。
         self.entity_type = None
 
@@ -135,6 +137,9 @@ class EntityBuilder(object):
         self.TicksFrozen = None
         self.UUID = None
         self.update_self_value()
+
+    def get_name(self):
+        return self.index_name
 
     def update_value(self, key, value):
         """

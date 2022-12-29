@@ -1,13 +1,16 @@
 import os
+# ok
 from Command_Access.Command_Convertor.Homo_Convertor import HomoConverter
+# 尚未完成
 from Command_Access.Command_Convertor.Color_Convertor import ColorConvertor
+# ok
 from Command_Access.Execute_Generator.Execute import ExecuteBuilder, ExecuteLayer
-from Command_Access.Execute_Generator.Entities.Area_Effect_Cloud import AreaEffectCloud, CloudTimer
-from Command_Access.Execute_Generator.Entities.Player import PlayerEntity
-from Command_Access.Execute_Generator.Entities.Boat import BoatEntity
-from Command_Access.Execute_Generator.Entities.Armor_Stand import ArmorStandEntity
-from Command_Access.Execute_Generator.Selector.Target_Selector import TargetSelector
+from Command_Access.Execute_Generator.Entities.Entity_Box import EntityBox
+# ok
+from Command_Access.Execute_Generator.Selector.Target_Selector_Box import TargetSelectorBoxBox
+# 尚未完成
 from Matrix_Access.Matrix_Accesser import MatrixAccesser
+# 尚未完成
 from Matrix_Access.Controllers.Controller_Box import ControllerToolBox
 
 
@@ -15,8 +18,15 @@ class PEFuncGenerator(object):
     """
     新的粒子特效生成器。
     """
-    def __init__(self):
-        pass
+    def __init__(self, new_effect_name):
+        self.effect_name = new_effect_name
+        # 初始化实体盒子
+        self.entity_box = EntityBox()
+        # 初始化执行生成器
+        self.execute_builder = ExecuteBuilder()
+        
+
+    def 
 
 
 class ParticleEffectFuncGenerator(object):
