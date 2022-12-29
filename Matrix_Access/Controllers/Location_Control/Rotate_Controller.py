@@ -8,14 +8,14 @@ class RotateController(ControllerBase):
     对粒子的坐标进行旋转变化
     """
 
-    def __init__(self, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
+    def __init__(self, index_name=None, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
         """
         :param x_angle: x轴旋转角度，默认单位采用度数。
         :param y_angle: y轴旋转角度
         :param z_angle: z轴旋转角度
         :param rotate_centre: 旋转中心
         """
-        super(RotateController, self).__init__()
+        super(RotateController, self).__init__(index_name)
 
         self.x_angle = math.radians(x_angle)
         self.y_angle = math.radians(y_angle)

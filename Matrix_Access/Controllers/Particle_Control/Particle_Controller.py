@@ -13,8 +13,8 @@ class ParticleController(ControllerBase):
         * 根据空间位置解析
             —— 自定义不同空间位置对应不同的粒子类型。
     """
-    def __init__(self):
-        super(ParticleController, self).__init__()
+    def __init__(self, index_name=None):
+        super(ParticleController, self).__init__(index_name)
         # 粒子词典，可以根据输入的内容，反馈相应的粒子类型。
         self.particle_dict = None
 

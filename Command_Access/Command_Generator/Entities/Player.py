@@ -1,4 +1,4 @@
-from Command_Access.Execute_Generator.Entities.Entity import EntityBuilder
+from Command_Access.Command_Generator.Entities.Entity import EntityBuilder
 # 用于创建，并描述玩家实体。
 
 

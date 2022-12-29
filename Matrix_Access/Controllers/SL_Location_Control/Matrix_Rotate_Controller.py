@@ -5,7 +5,7 @@ from Matrix_Access.Controllers.Controller_Interface import ControllerBase
 
 class MatrixRotateController(ControllerBase):
 
-    def __init__(self, angle=0, u=0, v=0, w=0, rotate_centre=None):
+    def __init__(self, index_name=None, angle=0, u=0, v=0, w=0, rotate_centre=None):
         """
         :param angle: 默认输入为角度。
         :param u:
@@ -13,7 +13,7 @@ class MatrixRotateController(ControllerBase):
         :param w:
         :param rotate_centre:
         """
-        super().__init__()
+        super().__init__(index_name)
         self.angle = math.radians(angle)
         self.x_vector = u
         self.y_vector = v

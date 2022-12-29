@@ -5,8 +5,8 @@ class ScaleController(ControllerBase):
     """
     缩放控制器
     """
-    def __init__(self, x_scale=1, y_scale=1, z_scale=1, scale_centre=None):
-        super(ScaleController, self).__init__()
+    def __init__(self, index_name=None, x_scale=1, y_scale=1, z_scale=1, scale_centre=None):
+        super(ScaleController, self).__init__(index_name)
         # 转换时，坐标间隔缩放倍率
         self.x_scale = x_scale
         self.y_scale = y_scale

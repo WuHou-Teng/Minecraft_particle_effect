@@ -3,33 +3,71 @@ import os
 from Command_Access.Command_Convertor.Homo_Convertor import HomoConverter
 # 尚未完成
 from Command_Access.Command_Convertor.Color_Convertor import ColorConvertor
-# ok
-from Command_Access.Execute_Generator.Execute import ExecuteBuilder, ExecuteLayer
-from Command_Access.Execute_Generator.Entities.Entity_Box import EntityBox
-# ok
-from Command_Access.Execute_Generator.Selector.Target_Selector_Box import TargetSelectorBoxBox
 # 尚未完成
-from Matrix_Access.Matrix_Accesser import MatrixAccesser
-# 尚未完成
-from Matrix_Access.Controllers.Controller_Box import ControllerToolBox
+from Command_Access.DataPack_IO.Function_Writer import FunctionWriter
+# Layer 尚未完成
+from Command_Access.Command_Generator.Executes.Execute_Builder import ExecuteBuilder
+from Command_Access.Command_Generator.Executes.Execute_Layer_Box import ExecuteLayerBox
+# ok
+from Command_Access.Command_Generator.Entities.Entity_Box import EntityBox
+# ok
+from Command_Access.Command_Generator.Selector.Target_Selector_Box import TargetSelectorBox
+# ScoreBoardGenerator 尚未完成
+from Command_Access.Command_Generator.Score_Board.ScoreBoard_Box import ScoreBoardBox
+
+# ok, MatrixAccesser本身尚未完成
+from Matrix_Access.Matrix_Accesser_Box import MatrixAccessBox
+# ok
+from Matrix_Access.Controllers.Controller_Box import ControllerBox
+from Matrix_Access.Controllers.Controller_Applier import ControllerApplier
+# 尚未完成更细化的文件归类，但是能用
+from Matrix_Access.Matrix_Writer import MatrixWriter
 
 
 class PEFuncGenerator(object):
     """
-    新的粒子特效生成器。
+    单个粒子特效生成器。
+    包含矩阵读取，矩阵处理，
+    指令生成，实体创建，计时，计分板
+    指令转换 等一系列功能。
     """
-    def __init__(self, new_effect_name):
+    def __init__(self, datapack_address, new_effect_name):
+        """
+        初始化，把所有需要启动的模块都创建出来。
+        :param datapack_address: 数据包地址
+        :param new_effect_name: 新特效名字
+        """
         self.effect_name = new_effect_name
-        # 初始化实体盒子
+        # 初始化两种转换器
+        self.homo_convertor = HomoConverter()
+        self.color_convertor = ColorConvertor()
+        # 初始化函数书写器
+        self.function_writer = FunctionWriter(datapack_address, new_effect_name)
+
+        # 初始化实体盒子（用于储存之前创建的实体）
         self.entity_box = EntityBox()
-        # 初始化执行生成器
+        # 初始化选择器盒子（用于储存之前创建的选择器）
+        self.selector_box = TargetSelectorBox()
+        # 初始化执行生成器(类似ControllerApplier, 按照顺序储存并调用)
         self.execute_builder = ExecuteBuilder()
-        
+        # 初始化执行层盒子（用于储存之前创建的执行层）
+        self.execute_layer_box = ExecuteLayerBox()
+        # 初始化计分板盒子
+        self.scoreboard_box = ScoreBoardBox()
 
-    def 
+        # 初始化矩阵访问器盒子（用于储存之前创建的访问器）
+        self.matrix_access_box = MatrixAccessBox
+
+        # 初始化控制器盒子
+        self.controller_box = ControllerBox()
+        # 初始化控制器调用器
+        self.controller_applier = ControllerApplier()
+        # 初始化矩阵书写
+        self.matrix_writer = MatrixWriter()
 
 
-class ParticleEffectFuncGenerator(object):
+# ——————————————————————以下类弃用，用上面的————————————————————————
+class _ParticleEffectFuncGenerator(object):
     """
     粒子特效文件夹生成器。
     """

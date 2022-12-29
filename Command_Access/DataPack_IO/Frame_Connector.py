@@ -1,4 +1,4 @@
-from Command_Access.Execute_Generator.Execute import ExecuteBuilder
+from Command_Access.Command_Generator.Executes.Execute_Builder import ExecuteBuilder
 
 
 class FrameConnector(object):

@@ -1,7 +1,7 @@
-from Command_Access.Execute_Generator.Entities.Entity import EntityBuilder
+from Command_Access.Command_Generator.Entities.Entity import EntityBuilder
 from Command_Access.Const.Particles_Java import *
-from Command_Access.Execute_Generator.Entities.Entity_Const import AREA_EFFECT_CLOUD
-from Command_Access.Execute_Generator.Effects.Effect_Box import EffectBox
+from Command_Access.Command_Generator.Entities.Entity_Const import AREA_EFFECT_CLOUD
+from Command_Access.Command_Generator.Effects.Effect_Box import EffectBox
 
 
 class AreaEffectCloud(EntityBuilder):
@@ -9,7 +9,7 @@ class AreaEffectCloud(EntityBuilder):
     效果云实体的创建。
     """
 
-    def __init__(self, Tag=None, Age=None, Color=None, Duration=None, ReapplicationDelay=None,
+    def __init__(self,index_name, Tag=None, Age=None, Color=None, Duration=None, ReapplicationDelay=None,
                  WaitTime=None, DurationOnUse=None, Owner=None, Radius=None, RadiusOnUse=None,
                  RadiusPerTick=None, Particle=None, Potion=None, Effects=None):
         """
@@ -31,7 +31,7 @@ class AreaEffectCloud(EntityBuilder):
         """
         # 效果云实体，所以类型为AREA_EFFECT_CLOUD
 
-        super().__init__(Tags=Tag)
+        super().__init__(index_name=index_name, Tags=Tag)
         self.entity_type = AREA_EFFECT_CLOUD
         self.Age = Age
         self.Color = Color
@@ -45,7 +45,7 @@ class AreaEffectCloud(EntityBuilder):
         self.RadiusPerTick = RadiusPerTick
         self.Particle = Particle
         self.Potion = Potion
-        # TODO EffectBox类见: <Command_Access.Execute_Generator.Effects.Effect_Box>
+        # TODO EffectBox类见: <Command_Access.Command_Generator.Effects.Effect_Box>
         self.Effects = Effects
 
         self.update_value("Age", self.Age)
@@ -142,11 +142,11 @@ class CloudTimer(AreaEffectCloud):
     /summon minecraft:area_effect_cloud ~ -10 ~ {Tags:["try"], Duration:200, Age:0"}
     """
 
-    def __init__(self, Tag, Age, Duration, Radius=None, RadiusPerTick=None, Particle=None):
+    def __init__(self, index_name, Tag, Age, Duration, Radius=None, RadiusPerTick=None, Particle=None):
 
         # self.Age = Age
         # self.Duration = Duration
-        super().__init__(Tag=Tag, Age=Age, Duration=Duration, Radius=Radius,
+        super().__init__(index_name=index_name, Tag=Tag, Age=Age, Duration=Duration, Radius=Radius,
                          RadiusPerTick=RadiusPerTick, Particle=Particle)
         # 默认具体位置为0，0，0
         self.Pos = (0, 0, 0)

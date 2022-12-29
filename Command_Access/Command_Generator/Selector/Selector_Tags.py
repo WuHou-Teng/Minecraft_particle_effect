@@ -1,4 +1,4 @@
-from Command_Access.Execute_Generator.Selector.Selector_Const import *
+from Command_Access.Command_Generator.Selector.Selector_Const import *
 
 
 class Selectors(object):

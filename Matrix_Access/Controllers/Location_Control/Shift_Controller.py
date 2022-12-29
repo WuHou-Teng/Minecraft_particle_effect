@@ -5,8 +5,8 @@ class ShiftController(ControllerBase):
     """
     对粒子的坐标进行平移。
     """
-    def __init__(self, x_shift=0, y_shift=0, z_shift=0):
-        super(ShiftController, self).__init__()
+    def __init__(self, index_name=None, x_shift=0, y_shift=0, z_shift=0):
+        super(ShiftController, self).__init__(index_name)
         # 转换时，三个方向的偏移量。
         self.x_shift = x_shift
         self.y_shift = y_shift
@@ -61,7 +61,7 @@ class ShiftController(ControllerBase):
     def process(self, particle):
         """
         继承自 ControllerBase，输入完整粒子信息后，对其修改，并返回。
-        :param particle: [x, y, z, d_x, d_y, d_z, speed, count, force_normal, R, G, B, TR, TG, TB, type]
+        :param particle: [x, y, z, d_x, d_y, d_z, speed, count, force_normal, R, G, B, TR, TG, TB, type, delay]
         :return:
         """
         new_x, new_y, new_z = self.do_shift(particle[0], particle[1], particle[2])

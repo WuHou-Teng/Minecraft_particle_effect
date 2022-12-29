@@ -13,6 +13,9 @@ class MatrixAccesser(object):
         # 直接读取粒子矩阵文件
         self.mat_array = self.read_mat()
 
+    def get_name(self):
+        return self.mat_file
+
     def get_mat_array(self):
         # 注意，返回内容一定是deep copy
         return copy.deepcopy(self.mat_array)

@@ -1,5 +1,5 @@
-from Command_Access.Execute_Generator.Execute import ExecuteBuilder
-from Matrix_Access.Controllers.Controller_Box import ControllerToolBox
+from Command_Access.Command_Generator.Executes.Execute_Builder import ExecuteBuilder
+from Matrix_Access.Controllers.Controller_Applier import ControllerApplier
 from Matrix_Access.Matrix_Accesser import MatrixAccesser
 from Command_Access.Const.Convertor_consts import *
 
@@ -33,14 +33,13 @@ class Convertor(object):
         self.execute_header = ExecuteBuilder()
 
         # 关于延时。
-        self.use_delay = False      # 是否使用延时
-        self.timer_type = CLOUD     # 默认使用提及云计时。
+        # 考虑封装一个计时控制器。这个控制器可以自动将特效分成 start，和content两个函数。start负责创建云计时器，content负责自循环。
 
         # 变换: 添加控制器。可以自定义一系列对矩阵的修改。
         # 注意，控制器的特点是逐个对粒子进行变换，不关注整体。因此，其效果不如自定义函数那样强大，仅可以机械化的进行简单的变换。
         # 再次注意，ControllerToolBox不具有写入matrix的功能，
         # 在convertor中可以直接调用ControllerToolBox进行转换，但是此后，转换得到的粒子矩阵不会被保留。
-        self.controller = ControllerToolBox()
+        self.controller = ControllerApplier()
 
         # 矩阵读取器
         self.matrix_access = None

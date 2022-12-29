@@ -6,8 +6,11 @@ class ControllerBase(object):
     所有 Controller本质上都是在转换器将粒子矩阵转换前，对粒子信息的处理。
     因此，都是输入粒子信息，然后返回处理后的粒子信息，当然也可以返回 None, 意味着此后的处理链无需继续进行。跳过这个粒子。
     """
-    def __init__(self):
-        pass
+    def __init__(self, index_name=None):
+        self.index_name = index_name if index_name is not None else self.to_string_full()
+
+    def get_name(self):
+        return self.index_name
 
     def process(self, particle):
         """
