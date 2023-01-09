@@ -1,3 +1,5 @@
+import os.path
+
 from util.Box import Box
 from Matrix_Access.Matrix_Accesser import MatrixAccesser
 
@@ -42,6 +44,10 @@ class MatrixAccessBox(Box):
         return self.get_matrix_accesser(index_name)
 
     def new_matrix_accesser(self, matrix_file_name):
-        self.add_matrix_accesser(MatrixAccesser(matrix_file_name))
+        # if os.path.exists(matrix_file_name):
+        #     matrix_file_name = os.path.join()
+        new_matrix_accesser = MatrixAccesser(matrix_file_name)
+        self.add_matrix_accesser(new_matrix_accesser)
+        return new_matrix_accesser
 
 

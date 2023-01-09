@@ -56,7 +56,9 @@ class ControllerBox(Box):
         :return:
             新的 ScaleController
         """
-        self.add_controller(ScaleController(index_name, x_scale, y_scale, z_scale, scale_centre))
+        new_scale_controller = ScaleController(index_name, x_scale, y_scale, z_scale, scale_centre)
+        self.add_controller(new_scale_controller)
+        return new_scale_controller
 
     def new_shift_controller(self, index_name, x_shift=0, y_shift=0, z_shift=0):
         """
@@ -64,7 +66,9 @@ class ControllerBox(Box):
         :return:
             新的 ShiftController
         """
-        self.add_controller(ShiftController(index_name, x_shift, y_shift, z_shift))
+        new_shift_controller = ShiftController(index_name, x_shift, y_shift, z_shift)
+        self.add_controller(new_shift_controller)
+        return new_shift_controller
 
     def new_rotate_controller(self, index_name, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
         """
@@ -72,7 +76,9 @@ class ControllerBox(Box):
         :return:
             新的 RotateController
         """
-        self.add_controller(RotateController(index_name, x_angle, y_angle, z_angle, rotate_centre))
+        new_rotate_controller = RotateController(index_name, x_angle, y_angle, z_angle, rotate_centre)
+        self.add_controller(new_rotate_controller)
+        return new_rotate_controller
 
     def new_color_filter_amp_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
         """
@@ -80,7 +86,9 @@ class ControllerBox(Box):
         :return:
             新的 ColorFilterAmp
         """
-        self.add_controller(ColorFilterAmp(index_name, red_range, green_range, blue_range))
+        new_color_filter_amp = ColorFilterAmp(index_name, red_range, green_range, blue_range)
+        self.add_controller(new_color_filter_amp)
+        return new_color_filter_amp
 
     def new_color_white_list_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
         """
@@ -88,5 +96,7 @@ class ControllerBox(Box):
         :return:
             新的 ColorWhiteList
         """
-        self.add_controller(ColorWhiteList(index_name, red_range, green_range, blue_range))
+        new_color_white_list = ColorWhiteList(index_name, red_range, green_range, blue_range)
+        self.add_controller(new_color_white_list)
+        return new_color_white_list
 

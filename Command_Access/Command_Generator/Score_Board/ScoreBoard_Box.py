@@ -42,5 +42,7 @@ class ScoreBoardBox(Box):
         return self.get_scoreboard(index_name)
 
     def new_scoreboard(self, name, criterion, display_name):
-        self.add_scoreboard(ScoreBoardGenerator(name, criterion, display_name))
+        new_score_board = ScoreBoardGenerator(name, criterion, display_name)
+        self.add_scoreboard(new_score_board)
+        return new_score_board
 
