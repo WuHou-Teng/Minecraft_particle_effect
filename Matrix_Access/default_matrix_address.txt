@@ -1,0 +1,5 @@
+# 默认检索的矩阵文件夹。注意，只检索单层文件夹。
+./Matrix_Files
+../Matrix_Files
+./Matrix_Access/Matrix_Files
+../Matrix_Access/Matrix_Files
