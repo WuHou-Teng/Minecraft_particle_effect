@@ -9,7 +9,7 @@ class ControllerApplier(object):
     def __init__(self):
         self.controller_list = []
 
-    def controller_box_add(self, new_controller):
+    def add_controller_to_apply_list(self, new_controller) -> bool:
         """
         添加新的控制器到列表。
         :param new_controller: 新的控制器。
@@ -24,6 +24,15 @@ class ControllerApplier(object):
 
     def clear_controller_box(self):
         self.controller_list = []
+
+    def pop_controller(self, index):
+        """
+        将调用列表的其中一个删除并返回。
+        :param index:
+        :return:
+        """
+        if len(self.controller_list) > index:
+            return self.controller_list.pop(index)
 
     def get_controller_at(self, index):
         """

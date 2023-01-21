@@ -14,7 +14,7 @@ class ScoreBoardBox(Box):
         :param scoreboard: 添加新的scoreboard实例。Controller
         """
         self.scoreboard_dict[scoreboard.get_name()] = scoreboard
-        return scoreboard.get_name
+        return scoreboard.get_name()
 
     def get_scoreboard(self, index_name):
         """
@@ -43,6 +43,6 @@ class ScoreBoardBox(Box):
 
     def new_scoreboard(self, name, criterion, display_name):
         new_score_board = ScoreBoardGenerator(name, criterion, display_name)
-        self.add_scoreboard(new_score_board)
+        # self.add_scoreboard(new_score_board)
         return new_score_board
 

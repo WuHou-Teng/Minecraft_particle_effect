@@ -1,5 +1,5 @@
 
-JAVA = 1
+JAVA = 1    # TODO 这里指代 Java 版 1.18.2，其他版本的执行器尚未制作。
 BED_ROCK = 2
 
 BLACK = 0
@@ -41,8 +41,12 @@ BLUE_MAX = 1
 # 延时相关
 SCHEDULE = 0
 CLOUD = 1
+SCORE_BOARD = 2
 
-
+# 转换类型
+STATIC = 1
+COLOR = 2
+COLOR_TRANSFER = 3
 
 
 

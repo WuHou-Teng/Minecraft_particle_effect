@@ -63,7 +63,7 @@ class EntityBox(Box):
             输出云计时器的 index_name
         """
         new_could_timer = CloudTimer(index_name=index_name, Tag=tag, Age=age, Duration=duration)
-        self.add_entity(new_could_timer)
+        # self.add_entity(new_could_timer)
         return new_could_timer
 
     # TODO 以后别的实体的快速创建也在这里加上。

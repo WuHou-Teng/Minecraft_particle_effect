@@ -16,6 +16,9 @@ class ExecuteBuilder(object):
     def new_layer(self, modifier=AS, selector=None):
         return ExecuteLayer(modifier, selector)
 
+    def clear_layer(self):
+        self.layer = []
+
     def to_string(self):
         """
         将所有的execute层叠加为一整句指令。如果没有layer，则返回”“

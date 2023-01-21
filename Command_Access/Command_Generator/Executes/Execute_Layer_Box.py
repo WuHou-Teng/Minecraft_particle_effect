@@ -44,6 +44,6 @@ class ExecuteLayerBox(Box):
 
     def new_layer(self, index_name=None, modify=AS, selector=None):
         new_execute_layer = ExecuteLayer(index_name, modify, selector)
-        self.add_execute_layer(new_execute_layer)
+        # self.add_execute_layer(new_execute_layer)
         return new_execute_layer
 

@@ -1,3 +1,4 @@
+from Matrix_Access.Matrix_Const import ABSOLUTE, ADDITIONAL
 from util.Box import Box
 # 方位控制器
 from Matrix_Access.Controllers.Location_Control.Scale_Controller import ScaleController
@@ -6,6 +7,10 @@ from Matrix_Access.Controllers.Location_Control.Shift_Controller import ShiftCon
 # 颜色控制器
 from Matrix_Access.Controllers.Color_Control.Color_White_List import ColorWhiteList
 from Matrix_Access.Controllers.Color_Control.Color_Filter_Amp import ColorFilterAmp
+# 延时控制器
+from Matrix_Access.Controllers.Delay_Control.Delay_Scale_Controller import DelayScaleController
+from Matrix_Access.Controllers.Delay_Control.Delay_Linear_Controller import DelayLinearController
+from Matrix_Access.Controllers.Delay_Control.Delay_Type_Switch_Controller import DelayTypeSwitchController
 # 其余控制器还未完善，因此暂不添加。
 
 
@@ -43,6 +48,11 @@ class ControllerBox(Box):
         return self.get_controller_list()
 
     def add_object(self, new_object):
+        """
+        二次封装。用以规范
+        :param new_object:
+        :return:
+        """
         return self.add_controller(new_object)
 
     def get_object(self, index_name):
@@ -57,7 +67,7 @@ class ControllerBox(Box):
             新的 ScaleController
         """
         new_scale_controller = ScaleController(index_name, x_scale, y_scale, z_scale, scale_centre)
-        self.add_controller(new_scale_controller)
+        # self.add_controller(new_scale_controller)
         return new_scale_controller
 
     def new_shift_controller(self, index_name, x_shift=0, y_shift=0, z_shift=0):
@@ -67,7 +77,7 @@ class ControllerBox(Box):
             新的 ShiftController
         """
         new_shift_controller = ShiftController(index_name, x_shift, y_shift, z_shift)
-        self.add_controller(new_shift_controller)
+        # self.add_controller(new_shift_controller)
         return new_shift_controller
 
     def new_rotate_controller(self, index_name, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
@@ -77,7 +87,7 @@ class ControllerBox(Box):
             新的 RotateController
         """
         new_rotate_controller = RotateController(index_name, x_angle, y_angle, z_angle, rotate_centre)
-        self.add_controller(new_rotate_controller)
+        # self.add_controller(new_rotate_controller)
         return new_rotate_controller
 
     def new_color_filter_amp_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
@@ -87,7 +97,7 @@ class ControllerBox(Box):
             新的 ColorFilterAmp
         """
         new_color_filter_amp = ColorFilterAmp(index_name, red_range, green_range, blue_range)
-        self.add_controller(new_color_filter_amp)
+        # self.add_controller(new_color_filter_amp)
         return new_color_filter_amp
 
     def new_color_white_list_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
@@ -97,6 +107,34 @@ class ControllerBox(Box):
             新的 ColorWhiteList
         """
         new_color_white_list = ColorWhiteList(index_name, red_range, green_range, blue_range)
-        self.add_controller(new_color_white_list)
+        # self.add_controller(new_color_white_list)
         return new_color_white_list
+
+    def new_delay_linear_controller(self, delay_type=ABSOLUTE, tick_add=0):
+        """
+        创建新的延时增减控制器
+        :param delay_type: 延时类型
+        :param tick_add: 增加或减少的tick数。
+        :return:
+        """
+        new_delay_linear_controller = DelayLinearController(delay_type, tick_add)
+        return new_delay_linear_controller
+
+    def new_delay_scale_controller(self, delay_type=ABSOLUTE, scale_ratio=1):
+        """
+        创建新的延时缩放控制器
+        :param delay_type: 延时类型
+        :param scale_ratio: 缩放比例，必须大于0
+        :return:
+        """
+        return DelayScaleController(delay_type, scale_ratio)
+
+    def new_delay_type_switch_controller(self, delay_type=ADDITIONAL, type_switch_to=ABSOLUTE):
+        """
+        创建新的延时类型转换器。它将粒子延时在相对延时和绝对延时之间转换。
+        :param delay_type: 延时类型
+        :param type_switch_to: 目标类型
+        :return:
+        """
+        return DelayTypeSwitchController(delay_type, type_switch_to)
 

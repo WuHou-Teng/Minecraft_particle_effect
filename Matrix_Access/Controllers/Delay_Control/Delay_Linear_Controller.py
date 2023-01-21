@@ -13,16 +13,17 @@ class DelayLinearController(DelayBaseController):
 
     def process(self, particle):
         if self.delay_type is ADDITIONAL:
-            # 如果计时方式为累加，只需要
+            # 如果计时方式为累加，只需要在第一个数字上增减即可。
+            # 该过程是否会出现负数无关紧要，因为最终转换都会转换为绝对时间轴，如果出现负数，则直接设定为0
             if self.first_particle:
-                particle[16] += 1
+                particle[16] += self.tick_add
                 self.first_particle = False
                 return particle
             else:
                 return particle
         elif self.delay_type is ABSOLUTE:
-            # 绝对时间轴，则依次+1即可。
-            particle[16] += 1
+            # 绝对时间轴，则依次加上即可。
+            particle[16] += self.tick_add
+            if particle[16] < 0:
+                particle[16] = 0
             return particle
-
-

@@ -1,6 +1,7 @@
 import copy
 import os
 from Matrix_Access.Matrix_Const import *
+from Matrix_Access.Matrix_Writer import MatrixWriter
 import numpy as np
 
 
@@ -10,14 +11,16 @@ class MatrixAccesser(object):
     实例化此类，提供一个有效的粒子矩阵文件地址是强制性的。
     构造函数会在创建时尝试遍历整个粒子矩阵文件，并将相应的参数加载，备用。
     """
-    def __init__(self, matrix_file_name):
+
+    def __init__(self, matrix_file):
         self.cwd = os.getcwd()
-        # 粒子矩阵文件名称
-        self.mat_file = matrix_file_name
+        # 粒子矩阵文件名称或绝对地址。如果仅仅提供了名称，程序会自动前往默认文件夹寻找。
+        self.mat_file = matrix_file
         # 载入默认路径
         self.default_path = []
         self.load_matrix_file_path()
-        # 直接读取粒子矩阵文件
+        self.mat_file = self.matrix_file_found(self.mat_file)
+        # 直接读取粒子矩阵文件，如果文件不存在，则返回空列表。
         self.mat_list = self.read_mat()
 
         # 最大粒子数量
@@ -51,10 +54,20 @@ class MatrixAccesser(object):
                 if not lines.startswith("#"):
                     self.default_path.append(lines.strip())
 
+    def matrix_file_found(self, mat_file):
+        if os.path.exists(mat_file):
+            return mat_file
+        for path in self.default_path:
+            if os.path.exists(os.path.join(path, mat_file)):
+                return os.path.join(path, mat_file)
+            if os.path.exists(os.path.join(path, mat_file) + ".csv"):
+                return os.path.join(path, mat_file)
+        return None
+
     def get_name(self):
         return self.mat_file
 
-    def get_mat_array(self):
+    def get_mat_list(self):
         # 注意，返回内容一定是deep copy
         return copy.deepcopy(self.mat_list)
 
@@ -62,27 +75,44 @@ class MatrixAccesser(object):
         self.mat_file = matrix_file_name
         self.mat_list = self.read_mat()
 
-    def matrix_file_found(self, mat_file):
-        if os.path.exists(mat_file):
-            return mat_file
-        for path in self.default_path:
-            if os.path.exists(os.path.join(path, mat_file)):
-                return os.path.join(path, mat_file)
-        return None
+    def renew_mat_list(self, new_mat_list, update_original_file=False):
+        """
+        更新mat列表，一般是 mat列表交给控制器更改后，再重新放回对应的矩阵访问器。
+        :param new_mat_list: 经过更改的 mat列表
+        :param update_original_file: 是否将更新同步到对于的文件。
+        :return:
+        """
+        self.mat_list = new_mat_list
+        if update_original_file:
+            m_writer = MatrixWriter(self.mat_file)
+            m_writer.renew_matrix_file(self.mat_list)
+
+    def append_mat_list(self, new_mar_list, update_original_file=False):
+        """
+        更新mat列表，一般是 mat列表交给控制器更改后，再重新放回对应的矩阵访问器。
+        不同的是，这里是直接添加到原来的列表末尾的。
+        :param new_mar_list: 经过更改的 mat列表
+        :param update_original_file: 是否将更新同步到对于的文件。
+        :return:
+        """
+        self.mat_list = self.mat_file + new_mar_list
+        if update_original_file:
+            m_writer = MatrixWriter(self.mat_file)
+            m_writer.add_to_matrix_file(self.mat_list)
 
     def read_mat(self):
         """
-        从相应的文件读取位置矩阵
+        从相应的文件中读取矩阵数据。
         x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick)
         1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  0
         :return:
-            mat_array: 保存了整个矩阵的列表
+            mat_array: 保存了整个矩阵的列表. 如果文件不存在，则返回空列表。
         """
         mat_array = []
         # 首先检索一边默认的文件夹。
-        search_result = self.matrix_file_found(self.mat_file)
-        if search_result is not None:
-            with open(search_result, "r") as mat:
+        # search_result = self.matrix_file_found(self.mat_file)
+        if self.mat_file is not None:
+            with open(self.mat_file, "r") as mat:
                 mat_data = mat.readlines()
                 for particles in mat_data:
                     # print(particles)
@@ -90,7 +120,6 @@ class MatrixAccesser(object):
                         particles_info = particles.strip().split(',')
                         if len(particles_info) == 17:
                             for i in range(len(particles_info)):
-
                                 particles_info[i] = particles_info[i].strip()
                             # 将粒子信息的数据格式进行修改。
                             particles_info = self.alert_particle_format(particles_info)
@@ -115,9 +144,9 @@ class MatrixAccesser(object):
         particle[4] = float(particle[4])
         particle[5] = float(particle[5])
         particle[6] = float(particle[6])  # 速度
-        particle[7] = int(particle[7])    # 数量
+        particle[7] = int(particle[7])  # 数量
 
-        particle[9] = float(particle[9])    # R
+        particle[9] = float(particle[9])  # R
         particle[10] = float(particle[10])  # G
         particle[11] = float(particle[11])  # B
 
@@ -125,9 +154,9 @@ class MatrixAccesser(object):
         particle[13] = float(particle[13])  # TG
         particle[14] = float(particle[14])  # TB
 
-        particle[15] = int(particle[15])    # 粒子种类
+        particle[15] = int(particle[15])  # 粒子种类
 
-        particle[16] = int(particle[16])    # 延时tick数
+        particle[16] = int(particle[16])  # 延时tick数
 
         return particle
 
@@ -179,12 +208,11 @@ class MatrixAccesser(object):
         self.z_max = np.max(self.z_array)
         self.z_min = np.min(self.z_array)
 
-        self.geom_centre = [(self.x_max + self.x_min)/2,
-                            (self.y_max + self.y_min)/2,
-                            (self.z_max + self.z_min)/2]
+        self.geom_centre = [(self.x_max + self.x_min) / 2,
+                            (self.y_max + self.y_min) / 2,
+                            (self.z_max + self.z_min) / 2]
         self.mean_centre = [self.x_array.mean(),
                             self.y_array.mean(),
                             self.z_array.mean()]
 
         print("完成信息提取")
-

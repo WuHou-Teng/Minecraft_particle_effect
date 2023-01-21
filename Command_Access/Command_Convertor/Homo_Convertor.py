@@ -28,7 +28,7 @@ class HomoConverter(Convertor):
         # end_rod是27号粒子。
         # 双色转换器交给Color_dict_Convertor处理。
 
-    def coordinate_convertor(self, particle_data):
+    def particle_convertor(self, particle_data):
         """
         对单个粒子坐标转换.
         对于相对坐标 ~x ~y ~z
@@ -100,7 +100,7 @@ class HomoConverter(Convertor):
         """
         functions = []
         for data in matrix:
-            functions.append(self.coordinate_convertor(data))
+            functions.append(self.particle_convertor(data))
         return functions
 
     # 修改粒子类型
@@ -123,20 +123,20 @@ class Cube(object):
                     x_shift, y_shift, z_shift,
                     x_scale, y_scale, z_scale, scale_centre):
         # 添加旋转控制器。
-        self.convertor.controller.controller_box_add(
+        self.convertor.controller.add_controller_to_apply_list(
             self.convertor.controller.new_rotate_controller(x_angle, y_angle, z_angle, rotate_centre))
 
         # 添加缩放控制器
-        self.convertor.controller.controller_box_add(
+        self.convertor.controller.add_controller_to_apply_list(
             self.convertor.controller.new_scale_controller(x_scale, y_scale, z_scale, scale_centre)
         )
 
         # 添加位移控制器。
-        self.convertor.controller.controller_box_add(
+        self.convertor.controller.add_controller_to_apply_list(
             self.convertor.controller.new_shift_controller(x_shift, y_shift, z_shift)
         )
 
-        result = self.convertor.mat_convertor(self.convertor.matrix_access.get_mat_array())
+        result = self.convertor.mat_convertor(self.convertor.matrix_access.get_mat_list())
         self.convertor.controller.clear_controller_box()
         return result
 

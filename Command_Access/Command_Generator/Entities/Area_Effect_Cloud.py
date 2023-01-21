@@ -164,6 +164,15 @@ class CloudTimer(AreaEffectCloud):
         self.Age += round(second*20)
         self.tag_dict["Age"] = self.Age
 
+    def set_age_ticks(self, ticks):
+        """
+        直接设定Age的tick数量，因为考虑到某些matrix可能并非按照时间排序。
+        :param ticks:
+        :return:
+        """
+        self.Age = ticks
+        self.tag_dict["Age"] = self.Age
+
     def to_string_select_no_age(self):
         """
         这里唯一的区别就是，在选择器中不会添加 Age 标签，方便迭代指令更宽泛的锁定目标。
@@ -191,7 +200,7 @@ class CloudTimer(AreaEffectCloud):
 if __name__ == "__main__":
     # new_cloud = CloudTimer("wuhou", Age=0, Duration=200)
     # print(new_cloud.to_string_summon())
-    new_timer = CloudTimer("start1", 0, 200, Particle=end_rod, Radius=3)
+    new_timer = CloudTimer("start1", "start1", 0, 200, Particle=end_rod, Radius=3)
     print(new_timer.to_string_summon())
     for time in range(0, 200, 10):
         new_timer.ticks_past(50)

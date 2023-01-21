@@ -3,7 +3,9 @@ from Matrix_Access.Controllers.Controller_Interface import ControllerBase
 
 
 class ColorController(ControllerBase):
-
+    """
+    颜色控制器基类
+    """
     def __init__(self, index_name=None, red_range=None, green_range=None, blue_range=None):
         super(ColorController, self).__init__(index_name)
         self.red_range = red_range if red_range is not None else []

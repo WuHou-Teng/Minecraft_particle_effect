@@ -48,7 +48,7 @@ class Convertor(object):
         self.mat_file = new_mat_file
         self.matrix_access = MatrixAccesser(self.mat_file)
 
-    def coordinate_convertor(self, particle_data):
+    def particle_convertor(self, particle_data):
         """
         对单个粒子坐标转换.
         对于相对坐标 ~x ~y ~z

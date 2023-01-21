@@ -47,6 +47,8 @@ class TargetSelector(object):
             selector_string += self.entity.to_string_select()
         return selector_string + "]"
 
+    # ————————————以下是对选择器各种词条创建的封装函数。————————————
+
     def location(self, x=0, y=0, z=0,
                  x_coo_type=RELA_COORD, y_coo_type=RELA_COORD, z_coo_type=RELA_COORD):
         return Selector_Tags.Location(x, y, z, x_coo_type, y_coo_type, z_coo_type)

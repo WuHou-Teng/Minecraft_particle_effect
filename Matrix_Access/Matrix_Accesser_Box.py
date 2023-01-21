@@ -47,7 +47,7 @@ class MatrixAccessBox(Box):
         # if os.path.exists(matrix_file_name):
         #     matrix_file_name = os.path.join()
         new_matrix_accesser = MatrixAccesser(matrix_file_name)
-        self.add_matrix_accesser(new_matrix_accesser)
+        # self.add_matrix_accesser(new_matrix_accesser)
         return new_matrix_accesser
 
 
