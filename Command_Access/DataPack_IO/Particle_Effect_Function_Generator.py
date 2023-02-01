@@ -130,8 +130,11 @@ class PEFuncGenerator(object):
           d_x, d_y, d_z, speed, count, force_normal,
           0,   0,   0,   0,     1,     f/n,
         # 额外参数
-          Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick), 持续时间(tick), 粒子大小
-          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  0,         80，           1
+          Color(R, G, B),   color_transfer(R,G,B), particle_type, 粒子大小,
+          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  1,
+        # mod参数
+          持续时间(tick), 粒子透明度, 延时(tick)
+          80,           1,        0
 
         :param particle: 单个粒子的所有信息
         :return:

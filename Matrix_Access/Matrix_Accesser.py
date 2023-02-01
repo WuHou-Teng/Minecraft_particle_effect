@@ -10,16 +10,18 @@ def complete_particle_format(particle):
     :param particle: 粒子信息列表,
         ['x', 'y', 'z',
         'd_x', 'd_y', 'd_z', 'speed', 'count', 'force_normal',
-        'R', 'G', 'B', 'TR', 'TG', 'TB', 'type','size', 'delay', 'duration']
+        'R', 'G', 'B', 'TR', 'TG', 'TB', 'type','size',
+        'duration', 'transparency', 'delay']
     :return:
         particle: 经过修改的粒子信息列表: 将必要的数据修改为数字
         [x, y, z,
         d_x, d_y, d_z, speed, count, 'force_normal',
-        R, G, B, TR, TG, TB, type, size, delay, duration]
+        R, G, B, TR, TG, TB, type, size,
+        duration, transparency, delay]
     """
     # 检测粒子长度，并补全。
-    if len(particle) < 19:
-        for i in range(len(particle), 19):
+    if len(particle) < 20:
+        for i in range(len(particle), 20):
             particle.append(DEFAULT_INFO[i])
     particle[0] = float(particle[0])  # 坐标
     particle[1] = float(particle[1])
@@ -39,12 +41,10 @@ def complete_particle_format(particle):
     particle[14] = float(particle[14])  # TB
 
     particle[15] = int(particle[15])  # 粒子种类
-
     particle[16] = float(particle[16])  # 粒子大小
-
-    particle[17] = int(particle[17])  # 延时tick数
-
-    particle[18] = int(particle[18])  # 粒子持续时常tick数
+    particle[18] = int(particle[17])  # 粒子持续时常tick数
+    particle[19] = float(particle[18])  # 粒子透明度
+    particle[17] = int(particle[19])  # 延时tick数
 
     return particle
 
@@ -172,8 +172,11 @@ class MatrixAccesser(object):
           d_x, d_y, d_z, speed, count, force_normal,
           0,   0,   0,   0,     1,     f/n,
         # 额外参数
-          Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick), 持续时间(tick), 粒子大小
-          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  0,         80，           1
+          Color(R, G, B),   color_transfer(R,G,B), particle_type, 粒子大小,
+          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  1,
+        # mod参数
+          持续时间(tick), 粒子透明度, 延时(tick)
+          80,           1,        0
 
         :return:
             mat_array: 保存了整个矩阵的列表. 如果文件不存在，则返回空列表。
