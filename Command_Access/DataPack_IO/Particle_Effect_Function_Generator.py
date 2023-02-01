@@ -1,15 +1,17 @@
 import os
-# ok
+
+# TODO convertor都合并到这个文件里，不再单独出现。
 from Command_Access.Command_Convertor.Homo_Convertor import HomoConverter
-# TODO 尚未完成
 from Command_Access.Command_Convertor.Color_Convertor import ColorConvertor
+
 from Command_Access.Command_Generator.Executes.Execute_consts import *
 from Command_Access.Command_Generator.Selector.Selector_Const import *
 from Command_Access.Const import Particles_Java
+from Command_Access.Const import Particles_x_fabric
 from Command_Access.Const.Convertor_consts import *
-# TODO 尚未完成
+# ok
 from Command_Access.DataPack_IO.Function_Writer import FunctionWriter
-# TODO Layer 尚未完成
+# TODO Layer if, unless尚未完成
 from Command_Access.Command_Generator.Executes.Execute_Builder import ExecuteBuilder
 from Command_Access.Command_Generator.Executes.Execute_Layer_Box import ExecuteLayerBox
 # ok
@@ -21,7 +23,7 @@ from Command_Access.Command_Generator.Score_Board.ScoreBoard_Box import ScoreBoa
 
 # ok
 from Matrix_Access.Matrix_Accesser_Box import MatrixAccessBox
-from Matrix_Access.Matrix_Accesser import MatrixAccesser
+from Matrix_Access.Matrix_Accesser import *
 # ok
 from Matrix_Access.Controllers.Controller_Box import ControllerBox
 from Matrix_Access.Controllers.Controller_Applier import ControllerApplier
@@ -47,9 +49,7 @@ class PEFuncGenerator(object):
         :param new_effect_name: 新特效名字, 或者说新特效的命名空间
         """
         self.effect_name = new_effect_name
-        # TODO 初始化两种转换器, 考虑直接删除转换器。
-        self.homo_convertor = HomoConverter()
-        self.color_convertor = ColorConvertor()
+
         # 初始化函数书写器
         self.function_writer = FunctionWriter(datapack_address, new_effect_name)
 
@@ -116,14 +116,22 @@ class PEFuncGenerator(object):
         self.coo_type = [x_coo_type, y_coo_type, z_coo_type]
 
     def static_particle_convertor(self, particle):
+        # TODO 标准格式更新
         """
         将粒子信息转化为静态粒子指令，只考虑粒子类型、坐标与扩散坐标，不考虑颜色、颜色转变和延时。
         对于相对坐标 ~x ~y ~z
         其中~x 是东+西-，~y是上+下-， ~z是南+北-
         对于实体视角坐标 ^x ^y ^z
         其中^x 是左+右-，^y是上+下-，^z则是前+后-。
-        x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick)
-        1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined)   0
+        # 基本参数
+          x, y, z,
+          1, 1, 1,
+        # 附加参数
+          d_x, d_y, d_z, speed, count, force_normal,
+          0,   0,   0,   0,     1,     f/n,
+        # 额外参数
+          Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick), 持续时间(tick), 粒子大小
+          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  0,         80，           1
 
         :param particle: 单个粒子的所有信息
         :return:
@@ -156,7 +164,7 @@ class PEFuncGenerator(object):
             # 基岩版的暂时搁置
             pass
 
-    def color_particle_convertor(self, particle):
+    def dust_particle_convertor(self, particle):
         """
         将粒子信息转化为静态粒子指令，虑粒子类型、坐标、扩散坐标与颜色。不考虑颜色转变和延时。
         :param particle: 单个粒子的所有信息
@@ -165,7 +173,7 @@ class PEFuncGenerator(object):
         """
         pass
 
-    def color_transfer_particle_convertor(self, particle):
+    def dust_color_transfer_particle_convertor(self, particle):
         """
         将粒子信息转化为静态粒子指令，虑粒子类型、坐标、扩散坐标、颜色、颜色转变。不考虑延时。
         :param particle: 单个粒子的所有信息
@@ -174,42 +182,46 @@ class PEFuncGenerator(object):
         """
         pass
 
-    def mat_convertor(self, matrix_access, convertor_type=STATIC):
+    def mat_convertor(self, matrix_access, forced_convertor_type=None):
         """
         整个矩阵的转换器。可以调节粒子的转换类型。
         :param matrix_access: 矩阵访问器
-        :param convertor_type: 粒子转换类型
+        :param forced_convertor_type: 粒子转换类型
         :return:
             经过转换的指令列表。
         """
         functions = []
         mat_list = matrix_access.get_mat_list()
+        # TODO 根据粒子类型调用不同的函数
         for particles in mat_list:
-            if convertor_type is STATIC:
+            # if type_p_of(particles)
+            if forced_convertor_type is STATIC:
                 order = self.static_particle_convertor(particles)
                 functions.append(order)
-            elif convertor_type is COLOR:
-                order = self.color_particle_convertor(particles)
+            elif forced_convertor_type is COLOR:
+                order = self.dust_particle_convertor(particles)
                 functions.append(order)
-            elif convertor_type is COLOR_TRANSFER:
-                order = self.color_transfer_particle_convertor(particles)
+            elif forced_convertor_type is COLOR_TRANSFER:
+                order = self.dust_color_transfer_particle_convertor(particles)
                 functions.append(order)
         return functions
 
-    def generator(self, function_name, matrix_access, convertor_type=STATIC, timer_tag=None):
+    # def
+
+    def generator(self, function_name, matrix_access, forced_particle_type=None, timer_tag=None):
         """
         将一个矩阵转化为对应的 mc函数。
         该函数不会调用自定义的 Controller，所以任何需要对矩阵进行调整的过程，请调用另一个函数。
         该函数并没有提供设定 executeBuilder的途径，如果要自定义，请提前定义。
         :param function_name: 要保存到函数文件的文件名称，注意不要后缀，主要用于函数的循环。如果不循环，则用不到。
         :param matrix_access: 打开并保存了一个坐标矩阵的访问器
-        :param convertor_type: 目前有：静态，颜色，颜色转换 三种可选。
+        :param forced_particle_type: 强制使用粒子类型。为空则使用矩阵内提供的粒子。
         :param timer_tag: 自定义计时器tag
         :return:
 
         """
         # 将矩阵的基本指令转换好。
-        functions = self.mat_convertor(matrix_access, convertor_type)
+        functions = self.mat_convertor(matrix_access, forced_particle_type)
 
         mat_list = matrix_access.get_mat_list()
 
@@ -328,8 +340,6 @@ class PEFuncGenerator(object):
         if z is None:
             z = pos[2]
         return f'summon {entity_type} {x_sign}{x} {y_sign}{y} {z_sign}{z} {nbt}'
-
-
 
 
 # 测试

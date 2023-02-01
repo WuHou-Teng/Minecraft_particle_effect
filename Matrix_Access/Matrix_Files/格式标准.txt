@@ -7,9 +7,22 @@
 # 对于实体视角坐标 ^x ^y ^z
 # 其中^x 是左+右-，^y是上+下-，^z则是前+后-。
 
-#　通用★
-#  x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick)
-   1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  0
+# 通用★
+# x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type, 粒子大小, 延时(tick), 持续时间(tick)
+  1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  1,      0,         80，
+
+# 基本参数
+  x, y, z,
+  1, 1, 1,
+# 附加参数
+  d_x, d_y, d_z, speed, count, force_normal,
+  0,   0,   0,   0,     1,     f/n,
+# 额外参数
+  Color(R, G, B),   color_transfer(R,G,B), particle_type, 粒子大小,
+  0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  1,
+# mod参数
+  延时(tick), 持续时间(tick)
+  0,         80，
 
 # 生成的一组坐标矩阵应该被放置在相应的文件夹下：
 Matrix_Files

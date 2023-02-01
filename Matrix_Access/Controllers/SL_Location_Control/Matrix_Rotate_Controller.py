@@ -4,7 +4,7 @@ from Matrix_Access.Controllers.Controller_Interface import ControllerBase
 
 
 class MatrixRotateController(ControllerBase):
-
+    # TODO 尚未测试
     def __init__(self, index_name=None, angle=0, u=0, v=0, w=0, rotate_centre=None):
         """
         :param angle: 默认输入为角度。

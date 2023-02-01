@@ -9,6 +9,7 @@ BLACK = 0
 
 # 先将白色以外的像素变成全黑，然后再用sd将内部轮廓勾勒出来。
 
+
 class OutlineProcess(object):
     """
     用于尝试获取完整的图像轮廓线。

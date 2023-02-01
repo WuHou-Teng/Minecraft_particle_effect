@@ -3,7 +3,7 @@ import os
 import numpy as np
 from matplotlib import pyplot as plt
 
-image_name = "swinsuit.jpg"
+image_name = "1_org.png"
 address = "C:\\Wuhou\\study\\python_test\\Mc_Effect\\pics"
 # img = cv.imread(os.path.join(address, image_name), 0)
 
@@ -19,12 +19,6 @@ address = "C:\\Wuhou\\study\\python_test\\Mc_Effect\\pics"
 # plt.subplot(2, 2, 4), plt.imshow(sobely, cmap='gray')
 # plt.title('Sobel_Y'), plt.xticks([]), plt.yticks([])
 # plt.show()
-
-
-def stand_div(a, b, c):
-    average = int(a) + int(b) + int(c)
-    sd = ((int(a)-average)**2 + (int(b)-average)**2 + (int(c)-average)**2)**0.5
-    return sd
 
 
 # 读取原图
@@ -45,11 +39,19 @@ plt.show()
 
 sd_threshould = 300
 Src2 = Src
+
+
+def stand_div(a, b, c):
+    average = int(a) + int(b) + int(c)
+    sd = ((int(a)-average)**2 + (int(b)-average)**2 + (int(c)-average)**2)**0.5
+    return sd
+
+
 for row in Src2:
     for points in row:
         if stand_div(points[0], points[1], points[2]) > sd_threshould:
             # 考虑到三个颜色通道标准差太大，尝试降低标准差，然后转灰度，再寻找轮廓。
-            # 干脆标准差大的全tm给我整成白色
+            # 干脆标准差大的全给我整成白色
             points[0] = 255
             points[1] = 255
             points[2] = 255
