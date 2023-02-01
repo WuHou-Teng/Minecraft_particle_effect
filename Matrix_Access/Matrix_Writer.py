@@ -3,7 +3,7 @@ import os
 
 class MatrixWriter(object):
     """
-    该类用于新建矩阵文件，并写入。
+    该类用于新建矩阵文件，或者写入已有矩阵文件
     """
 
     def __init__(self, matrix_file):

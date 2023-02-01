@@ -2,3 +2,26 @@
 ADDITIONAL = 0  # 累加计时
 ABSOLUTE = 1    # 绝对时间轴
 
+
+# 补全粒子信息时用到的默认参数
+DX = 0
+DY = 0
+DZ = 0
+SPEED = 0
+COUNT = 0
+FORCE_NORMAL = 'f'
+COLOR_R = 0.01
+COLOR_G = 0
+COLOR_B = 0
+COLOR_TR = 0.01
+COLOR_TG = 0
+COLOR_TB = 0
+PARTICLE_TYPE = 27
+SIZE = 1
+DELAY = 0
+DURATION = 80
+
+DEFAULT_INFO = [0, 0, 0,
+                DX, DY, DZ, SPEED, COUNT, FORCE_NORMAL,
+                COLOR_R, COLOR_G, COLOR_B, COLOR_TR, COLOR_TG, COLOR_TB,
+                PARTICLE_TYPE, SIZE, DELAY, DURATION]

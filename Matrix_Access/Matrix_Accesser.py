@@ -5,6 +5,50 @@ from Matrix_Access.Matrix_Writer import MatrixWriter
 import numpy as np
 
 
+def complete_particle_format(particle):
+    """
+    :param particle: 粒子信息列表,
+        ['x', 'y', 'z',
+        'd_x', 'd_y', 'd_z', 'speed', 'count', 'force_normal',
+        'R', 'G', 'B', 'TR', 'TG', 'TB', 'type','size', 'delay', 'duration']
+    :return:
+        particle: 经过修改的粒子信息列表: 将必要的数据修改为数字
+        [x, y, z,
+        d_x, d_y, d_z, speed, count, 'force_normal',
+        R, G, B, TR, TG, TB, type, size, delay, duration]
+    """
+    # 检测粒子长度，并补全。
+    if len(particle) < 19:
+        for i in range(len(particle), 19):
+            particle.append(DEFAULT_INFO[i])
+    particle[0] = float(particle[0])  # 坐标
+    particle[1] = float(particle[1])
+    particle[2] = float(particle[2])
+    particle[3] = float(particle[3])  # 移动坐标
+    particle[4] = float(particle[4])
+    particle[5] = float(particle[5])
+    particle[6] = float(particle[6])  # 速度
+    particle[7] = int(particle[7])  # 数量
+
+    particle[9] = float(particle[9])  # R
+    particle[10] = float(particle[10])  # G
+    particle[11] = float(particle[11])  # B
+
+    particle[12] = float(particle[12])  # TR
+    particle[13] = float(particle[13])  # TG
+    particle[14] = float(particle[14])  # TB
+
+    particle[15] = int(particle[15])  # 粒子种类
+
+    particle[16] = float(particle[16])  # 粒子大小
+
+    particle[17] = int(particle[17])  # 延时tick数
+
+    particle[18] = int(particle[18])  # 粒子持续时常tick数
+
+    return particle
+
+
 class MatrixAccesser(object):
     """
     与 MatrixGenerator 对应，该类用于系统的访问一个粒子矩阵文件。
@@ -48,6 +92,10 @@ class MatrixAccesser(object):
         # self.get_extra_info() 默认不调用，因为可能比较耗时间。
 
     def load_matrix_file_path(self):
+        """
+        将默认路径加载到程序。方便在用户只提供matrix名字的时候，自动补全地址。
+        :return:
+        """
         with open("./default_matrix_address.txt", "r", encoding="UTF-8") as dm_address:
             new_addresses = dm_address.readlines()
             for lines in new_addresses:
@@ -55,6 +103,11 @@ class MatrixAccesser(object):
                     self.default_path.append(lines.strip())
 
     def matrix_file_found(self, mat_file):
+        """
+        检测在默认path中是否包含目标 matrix。如果包含直接返回。优先度顺序按照 default_matrix_address.txt中排列。
+        :param mat_file: 输入的 matrix文件名称
+        :return:
+        """
         if os.path.exists(mat_file):
             return mat_file
         for path in self.default_path:
@@ -68,10 +121,19 @@ class MatrixAccesser(object):
         return self.mat_file
 
     def get_mat_list(self):
+        """
+        获取已经读取的矩阵文件的内容的复制。
+        :return:
+        """
         # 注意，返回内容一定是deep copy
         return copy.deepcopy(self.mat_list)
 
     def set_mat_file(self, matrix_file_name):
+        """
+        将矩阵访问器的箭头指向新的矩阵文件。
+        :param matrix_file_name:
+        :return:
+        """
         self.mat_file = matrix_file_name
         self.mat_list = self.read_mat()
 
@@ -103,8 +165,16 @@ class MatrixAccesser(object):
     def read_mat(self):
         """
         从相应的文件中读取矩阵数据。
-        x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick)
-        1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  0
+        # 基本参数
+          x, y, z,
+          1, 1, 1,
+        # 附加参数
+          d_x, d_y, d_z, speed, count, force_normal,
+          0,   0,   0,   0,     1,     f/n,
+        # 额外参数
+          Color(R, G, B),   color_transfer(R,G,B), particle_type, 延时(tick), 持续时间(tick), 粒子大小
+          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  0,         80，           1
+
         :return:
             mat_array: 保存了整个矩阵的列表. 如果文件不存在，则返回空列表。
         """
@@ -118,47 +188,14 @@ class MatrixAccesser(object):
                     # print(particles)
                     if len(particles) > 0 and particles[0] != "#":
                         particles_info = particles.strip().split(',')
-                        if len(particles_info) == 17:
+                        if len(particles_info) >= 3:
                             for i in range(len(particles_info)):
                                 particles_info[i] = particles_info[i].strip()
                             # 将粒子信息的数据格式进行修改。
-                            particles_info = self.alert_particle_format(particles_info)
+                            particles_info = complete_particle_format(particles_info)
                             mat_array.append(particles_info)
                 mat.close()
         return mat_array
-
-    def alert_particle_format(self, particle):
-        """
-        修改粒子信息列表内元素的数据格式。
-        :param particle: 粒子信息列表,
-            ['x', 'y', 'z', 'd_x', 'd_y', 'd_z', 'speed', 'count',
-            'force_normal', 'R', 'G', 'B', 'TR', 'TG', 'TB', 'type', 'delay']
-        :return:
-            particle: 经过修改的粒子信息列表: 将必要的数据修改为数字
-            [x, y, z, d_x, d_y, d_z, speed, count, 'force_normal', R, G, B, TR, TG, TB, 'type', 'delay']
-        """
-        particle[0] = float(particle[0])  # 坐标
-        particle[1] = float(particle[1])
-        particle[2] = float(particle[2])
-        particle[3] = float(particle[3])  # 移动坐标
-        particle[4] = float(particle[4])
-        particle[5] = float(particle[5])
-        particle[6] = float(particle[6])  # 速度
-        particle[7] = int(particle[7])  # 数量
-
-        particle[9] = float(particle[9])  # R
-        particle[10] = float(particle[10])  # G
-        particle[11] = float(particle[11])  # B
-
-        particle[12] = float(particle[12])  # TR
-        particle[13] = float(particle[13])  # TG
-        particle[14] = float(particle[14])  # TB
-
-        particle[15] = int(particle[15])  # 粒子种类
-
-        particle[16] = int(particle[16])  # 延时tick数
-
-        return particle
 
     # 整个矩阵内所有点的数量。
     # 各方向极点坐标
@@ -216,3 +253,53 @@ class MatrixAccesser(object):
                             self.z_array.mean()]
 
         print("完成信息提取")
+
+
+# if __name__ == "__main__":
+#     particles = [1, 2, 3]
+#     print(complete_particle_format(particles))
+
+
+# 一些为了补救历史遗留问题写的函数。
+def coord_of(particle):
+    return particle[:3]
+
+
+def d_coord_of(particle):
+    return particle[3:6]
+
+
+def speed_of(particle):
+    return particle[6]
+
+
+def count_of(particle):
+    return particle[7]
+
+
+def f_n_of(particle):
+    return particle[8]
+
+
+def color_of(particle):
+    return particle[9:12]
+
+
+def color_t_of(particle):
+    return particle[12:15]
+
+
+def type_p_of(particle):
+    return particle[15]
+
+
+def size_p_of(particle):
+    return particle[16]
+
+
+def delay_of(particle):
+    return particle[17]
+
+
+def duration_of(particle):
+    return particle[18]
