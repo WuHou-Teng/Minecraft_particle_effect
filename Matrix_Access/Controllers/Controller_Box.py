@@ -5,8 +5,8 @@ from Matrix_Access.Controllers.Location_Control.Scale_Controller import ScaleCon
 from Matrix_Access.Controllers.Location_Control.Rotate_Controller import RotateController
 from Matrix_Access.Controllers.Location_Control.Shift_Controller import ShiftController
 # 颜色控制器
-from Matrix_Access.Controllers.Color_Control.Color_White_List import ColorWhiteList
-from Matrix_Access.Controllers.Color_Control.Color_Filter_Amp import ColorFilterAmp
+from Matrix_Access.Controllers.Color_Control.Color_White_List import ColorWhiteList, ColorTransWhiteList
+from Matrix_Access.Controllers.Color_Control.Color_Filter_Amp import ColorFilterAmp, ColorTransFilterAmp
 # 延时控制器
 from Matrix_Access.Controllers.Delay_Control.Delay_Scale_Controller import DelayScaleController
 from Matrix_Access.Controllers.Delay_Control.Delay_Linear_Controller import DelayLinearController
@@ -100,6 +100,16 @@ class ControllerBox(Box):
         # self.add_controller(new_color_filter_amp)
         return new_color_filter_amp
 
+    def new_color_trans_filter_amp_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
+        """
+        创建新的 ColorTransFilterAmp 控制器。不会添加到列表，而是直接返回。
+        :return:
+            新的 ColorTransFilterAmp
+        """
+        new_color_trans_filter_amp = ColorTransFilterAmp(index_name, red_range, green_range, blue_range)
+        # self.add_controller(new_color_filter_amp)
+        return new_color_trans_filter_amp
+
     def new_color_white_list_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
         """
         创建新的 ColorWhiteList 控制器。不会添加到列表，而是直接返回。
@@ -109,6 +119,16 @@ class ControllerBox(Box):
         new_color_white_list = ColorWhiteList(index_name, red_range, green_range, blue_range)
         # self.add_controller(new_color_white_list)
         return new_color_white_list
+
+    def new_color_trans_white_list_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
+        """
+        创建新的 ColorTransWhiteList 控制器。不会添加到列表，而是直接返回。
+        :return:
+            新的 ColorTransWhiteList
+        """
+        new_color_trans_white_list = ColorTransWhiteList(index_name, red_range, green_range, blue_range)
+        # self.add_controller(new_color_white_list)
+        return new_color_trans_white_list
 
     def new_delay_linear_controller(self, delay_type=ABSOLUTE, tick_add=0):
         """

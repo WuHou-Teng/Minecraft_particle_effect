@@ -1,5 +1,6 @@
 from Matrix_Access.Controllers.Controller_Interface import ControllerBase
 from Matrix_Access.Matrix_Const import *
+from Matrix_Access.Particles import MCParticle
 
 
 class DelayBaseController(ControllerBase):
@@ -33,15 +34,16 @@ class DelayBaseController(ControllerBase):
         """
         记录时间，将上次粒子的时间信息复制到 last_time.
         将此次粒子的时间信息记录到 current_time。
-        :param particle: 粒子信息。
+        :param particle:  MCParticle 类，包含所有可直接调用的数字参数。
         """
+        assert type(particle) is MCParticle
         self.last_time = self.current_time
         if self.delay_type is ADDITIONAL:
             # 累加时间轴下，总时刻就是所有粒子的延时的累加。
-            self.current_time += particle[16]
+            self.current_time += particle.delay
         elif self.delay_type is ABSOLUTE:
             # 绝对时间轴下，总时刻就是上一个粒子的时刻。
-            self.current_time = particle[16]
+            self.current_time = particle.delay
 
 
 

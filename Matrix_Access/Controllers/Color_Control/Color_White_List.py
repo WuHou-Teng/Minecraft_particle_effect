@@ -1,4 +1,5 @@
 from Matrix_Access.Controllers.Color_Control.Color_Controller import ColorController
+from Matrix_Access.Particles import MCParticle
 
 
 class ColorWhiteList(ColorController):
@@ -82,7 +83,7 @@ class ColorWhiteList(ColorController):
         而如果 flip==True, 则同样将结果翻转。
         :param color_list: 输入的三通道颜色
         :return:
-            True, if all color are in one or more ranges of each channels
+            True, if all color are in one or more ranges of each channel
             False, if any color are not in any ranges of its channel
         """
         if (self.red_range_include(color_list[0]) and
@@ -94,13 +95,14 @@ class ColorWhiteList(ColorController):
     def process(self, particle):
         """
         继承自 ControllerBase，输入完整粒子信息后，对其修改，并返回
-        :param particle: [x, y, z, d_x, d_y, d_z, speed, count, force_normal, R, G, B, TR, TG, TB, type]
+        :param particle: MCParticle 类，包含所有可直接调用的数字参数。
         :return:
             particle: 经过处理后的粒子数据。
                     （WhiteList不会对粒子数据进行修改，只会判断是否符合，）
                     （如果是，则返回原本的粒子。如果不是，则返回 None。）
         """
-        if self.accept_color([particle[9], particle[10], particle[11]]):
+        assert type(particle) is MCParticle
+        if self.accept_color([particle.r, particle.g, particle.b]):
             return particle
         else:
             return None
@@ -157,3 +159,27 @@ class ColorWhiteList(ColorController):
         else:
             return True
 
+
+class ColorTransWhiteList(ColorWhiteList):
+    """
+    颜色白名单。只有处于白名单区域内的颜色会被转换器考虑，并最终转换为mc指令。
+    注意，是三个通道的颜色全部位于白名单范围内，才会被认为是允许的颜色。
+    """
+
+    def __init__(self, index_name=None, red_range=None, green_range=None, blue_range=None):
+        super().__init__(index_name, red_range, green_range, blue_range)
+
+    def process(self, particle):
+        """
+        与ColorWhiteList类似，唯一不同的是该类的process对粒子的TransforColor起作用。
+        :param particle: MCParticle 类，包含所有可直接调用的数字参数。
+        :return:
+            particle: 经过处理后的粒子数据。
+                    （WhiteList不会对粒子数据进行修改，只会判断是否符合，）
+                    （如果是，则返回原本的粒子。如果不是，则返回 None。）
+        """
+        assert type(particle) is MCParticle
+        if self.accept_color([particle.rt, particle.gt, particle.bt]):
+            return particle
+        else:
+            return None

@@ -1,5 +1,6 @@
 from Matrix_Access.Controllers.Delay_Control.Delay_Base_Controller import DelayBaseController
 from Matrix_Access.Matrix_Const import *
+from Matrix_Access.Particles import MCParticle
 
 
 class DelayScaleController(DelayBaseController):
@@ -23,9 +24,10 @@ class DelayScaleController(DelayBaseController):
         """
         缩放延时。无论是累加计时，还是绝对计时，都是乘以缩放率即可。
         缩放率必须大于等于0. 如果缩放率为0, 则等效抹除所有的延时。
-        :param particle: 粒子信息
+        :param particle: MCParticle 类，包含所有可直接调用的数字参数。
         :return:
         """
-        particle[16] *= self.scale_ratio
+        assert type(particle) is MCParticle
+        particle.delay *= self.scale_ratio
         return particle
 

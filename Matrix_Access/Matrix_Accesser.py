@@ -2,6 +2,7 @@ import copy
 import os
 from Matrix_Access.Matrix_Const import *
 from Matrix_Access.Matrix_Writer import MatrixWriter
+from Matrix_Access.Particles import MCParticle
 import numpy as np
 
 
@@ -13,40 +14,33 @@ def complete_particle_format(particle):
         'R', 'G', 'B', 'TR', 'TG', 'TB', 'type','size',
         'duration', 'transparency', 'delay']
     :return:
-        particle: 经过修改的粒子信息列表: 将必要的数据修改为数字
-        [x, y, z,
-        d_x, d_y, d_z, speed, count, 'force_normal',
-        R, G, B, TR, TG, TB, type, size,
-        duration, transparency, delay]
+        new_particle: MCParticle 类，包含所有可直接调用的数字参数。
     """
     # 检测粒子长度，并补全。
     if len(particle) < 20:
         for i in range(len(particle), 20):
             particle.append(DEFAULT_INFO[i])
-    particle[0] = float(particle[0])  # 坐标
-    particle[1] = float(particle[1])
-    particle[2] = float(particle[2])
-    particle[3] = float(particle[3])  # 移动坐标
-    particle[4] = float(particle[4])
-    particle[5] = float(particle[5])
-    particle[6] = float(particle[6])  # 速度
-    particle[7] = int(particle[7])  # 数量
-
-    particle[9] = float(particle[9])  # R
-    particle[10] = float(particle[10])  # G
-    particle[11] = float(particle[11])  # B
-
-    particle[12] = float(particle[12])  # TR
-    particle[13] = float(particle[13])  # TG
-    particle[14] = float(particle[14])  # TB
-
-    particle[15] = int(particle[15])  # 粒子种类
-    particle[16] = float(particle[16])  # 粒子大小
-    particle[18] = int(particle[17])  # 粒子持续时常tick数
-    particle[19] = float(particle[18])  # 粒子透明度
-    particle[17] = int(particle[19])  # 延时tick数
-
-    return particle
+    new_particle = MCParticle(float(particle[0]),  # 坐标
+                              float(particle[1]),
+                              float(particle[2]),
+                              float(particle[3]),  # 移动坐标
+                              float(particle[4]),
+                              float(particle[5]),
+                              float(particle[6]),  # 速度
+                              int(particle[7]),  # 数量
+                              particle[8],  # force or normal
+                              float(particle[9]),  # R
+                              float(particle[10]),  # G
+                              float(particle[11]),  # B
+                              float(particle[12]),  # TR
+                              float(particle[13]),  # TG
+                              float(particle[14]),  # TB
+                              int(particle[15]),  # 粒子种类
+                              float(particle[16]),  # 粒子大小
+                              int(particle[17]),  # 粒子持续时常tick数
+                              float(particle[18]),  # 粒子透明度
+                              int(particle[19]))  # 延时tick数
+    return new_particle
 
 
 class MatrixAccesser(object):
@@ -70,9 +64,9 @@ class MatrixAccesser(object):
         # 最大粒子数量
         self.particle_num = 0
         # 个方向上的方位列表
-        self.x_array = None
-        self.y_array = None
-        self.z_array = None
+        self.x_array = []
+        self.y_array = []
+        self.z_array = []
         # 各方向上的极值
         self.x_max = 0
         self.x_min = 0
@@ -87,7 +81,7 @@ class MatrixAccesser(object):
         # 延时
         self.delay_type = ADDITIONAL
         self.max_delay = 0
-        self.delay_array = None
+        self.delay_array = []
 
         # self.get_extra_info() 默认不调用，因为可能比较耗时间。
 
@@ -181,6 +175,7 @@ class MatrixAccesser(object):
         :return:
             mat_array: 保存了整个矩阵的列表. 如果文件不存在，则返回空列表。
         """
+        print("正在读取matrix文件并载入粒子信息")
         mat_array = []
         # 首先检索一边默认的文件夹。
         # search_result = self.matrix_file_found(self.mat_file)
@@ -194,10 +189,11 @@ class MatrixAccesser(object):
                         if len(particles_info) >= 3:
                             for i in range(len(particles_info)):
                                 particles_info[i] = particles_info[i].strip()
-                            # 将粒子信息的数据格式进行修改。
+                            # 将粒子信息的数据格式进行修改。并生成新的粒子类。
                             particles_info = complete_particle_format(particles_info)
                             mat_array.append(particles_info)
                 mat.close()
+        print("完成粒子信息载入。")
         return mat_array
 
     # 整个矩阵内所有点的数量。
@@ -219,16 +215,17 @@ class MatrixAccesser(object):
         print("正在提取矩阵信息")
         self.particle_num = len(self.mat_list)
 
-        mat_array = np.array(self.mat_list)
-        self.x_array = mat_array[:, 0]
-        self.y_array = mat_array[:, 1]
-        self.z_array = mat_array[:, 2]
-        self.delay_array = mat_array[:, 16]
-        # for particle in self.mat_list:
-        #     self.x_list.append(particle[0])
-        #     self.y_list.append(particle[1])
-        #     self.z_list.append(particle[2])
-        #     self.delay_list.append(particle[16])
+        # mat_array = np.array(self.mat_list)
+        # self.x_array = mat_array[:, 0]
+        # self.y_array = mat_array[:, 1]
+        # self.z_array = mat_array[:, 2]
+        # self.delay_array = mat_array[:, 16]
+
+        for particle in self.mat_list:
+            self.x_array.append(particle.x)
+            self.y_array.append(particle.y)
+            self.z_array.append(particle.z)
+            self.delay_array.append(particle.delay)
 
         # x_array = np.array(self.x_list)
         # y_array = np.array(self.y_list)
@@ -251,58 +248,12 @@ class MatrixAccesser(object):
         self.geom_centre = [(self.x_max + self.x_min) / 2,
                             (self.y_max + self.y_min) / 2,
                             (self.z_max + self.z_min) / 2]
-        self.mean_centre = [self.x_array.mean(),
-                            self.y_array.mean(),
-                            self.z_array.mean()]
+        self.mean_centre = [np.mean(self.x_array),
+                            np.mean(self.y_array),
+                            np.mean(self.z_array)]
 
         print("完成信息提取")
-
 
 # if __name__ == "__main__":
 #     particles = [1, 2, 3]
 #     print(complete_particle_format(particles))
-
-
-# 一些为了补救历史遗留问题写的函数。
-def coord_of(particle):
-    return particle[:3]
-
-
-def d_coord_of(particle):
-    return particle[3:6]
-
-
-def speed_of(particle):
-    return particle[6]
-
-
-def count_of(particle):
-    return particle[7]
-
-
-def f_n_of(particle):
-    return particle[8]
-
-
-def color_of(particle):
-    return particle[9:12]
-
-
-def color_t_of(particle):
-    return particle[12:15]
-
-
-def type_p_of(particle):
-    return particle[15]
-
-
-def size_p_of(particle):
-    return particle[16]
-
-
-def delay_of(particle):
-    return particle[17]
-
-
-def duration_of(particle):
-    return particle[18]

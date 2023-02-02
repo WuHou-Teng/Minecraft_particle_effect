@@ -1,4 +1,5 @@
 from Matrix_Access.Controllers.Color_Control.Color_Controller import ColorController
+from Matrix_Access.Particles import MCParticle
 from util.Filter_Amp_Ratio_Exception import FilterAmpRatioException
 from Matrix_Access.Controllers.Color_Control.Color_Controller_Const import *
 
@@ -104,14 +105,30 @@ class ColorFilterAmp(ColorController):
     def process(self, particle):
         """
         继承自 ControllerBase，输入完整粒子信息后，对其修改，并返回。
-        :param particle: [x, y, z, d_x, d_y, d_z, speed, count, force_normal, R, G, B, TR, TG, TB, type]
+        :param particle: MCParticle 类，包含所有可直接调用的数字参数。
         :return:
             particle: 经过处理后的粒子数据。
         """
-        color_list = self.filter_amp_the_color([particle[9], particle[10], particle[11]])
-        particle[9] = color_list[0]
-        particle[10] = color_list[1]
-        particle[11] = color_list[2]
+        assert type(particle) is MCParticle
+        color_list = self.filter_amp_the_color([particle.r, particle.g, particle.b])
+        particle.r = color_list[0]
+        particle.g = color_list[1]
+        particle.b = color_list[2]
         return particle
 
+
+class ColorTransFilterAmp(ColorFilterAmp):
+    """
+    该类和上面基本一致，唯一的区别是，该类对转变颜色作处理。
+    """
+    def __init__(self, index_name, red_range=None, green_range=None, blue_range=None):
+        super(ColorFilterAmp).__init__(index_name, red_range, green_range, blue_range)
+
+    def process(self, particle):
+        assert type(particle) is MCParticle
+        color_list = self.filter_amp_the_color([particle.rt, particle.gt, particle.bt])
+        particle.rt = color_list[0]
+        particle.gt = color_list[1]
+        particle.bt = color_list[2]
+        return particle
 

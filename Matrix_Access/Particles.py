@@ -1,9 +1,12 @@
-class MCParticle(object):
+from Matrix_Const import *
 
+
+class MCParticle(object):
+    # 考虑添加__slot__来压缩体积。
     def __init__(self, x, y, z,
-                 dx, dy, dz, speed, count, force_normal,
-                 r, g, b, rt, gt, bt,
-                 particle_type, size, duration, transparency, delay):
+                 dx=DX, dy=DY, dz=DZ, speed=SPEED, count=COUNT, force_normal=FORCE_NORMAL,
+                 r=COLOR_R, g=COLOR_G, b=COLOR_B, rt=COLOR_TG, gt=COLOR_TG, bt=COLOR_TB,
+                 particle_type=PARTICLE_TYPE, size=SIZE, duration=DURATION, transparency=TRANS, delay=DELAY):
         """
         # 基本参数
           x, y, z,

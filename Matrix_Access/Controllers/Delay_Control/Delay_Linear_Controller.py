@@ -1,5 +1,6 @@
 from Matrix_Access.Controllers.Delay_Control.Delay_Base_Controller import DelayBaseController
 from Matrix_Access.Matrix_Const import *
+from Matrix_Access.Particles import MCParticle
 
 
 class DelayLinearController(DelayBaseController):
@@ -12,18 +13,24 @@ class DelayLinearController(DelayBaseController):
         self.first_particle = True
 
     def process(self, particle):
+        """
+        增加或减少粒子延时
+        :param particle:
+        :return:
+        """
+        assert type(particle) is MCParticle
         if self.delay_type is ADDITIONAL:
             # 如果计时方式为累加，只需要在第一个数字上增减即可。
             # 该过程是否会出现负数无关紧要，因为最终转换都会转换为绝对时间轴，如果出现负数，则直接设定为0
             if self.first_particle:
-                particle[16] += self.tick_add
+                particle.delay += self.tick_add
                 self.first_particle = False
                 return particle
             else:
                 return particle
         elif self.delay_type is ABSOLUTE:
             # 绝对时间轴，则依次加上即可。
-            particle[16] += self.tick_add
-            if particle[16] < 0:
-                particle[16] = 0
+            particle.delay += self.tick_add
+            if particle.delay < 0:
+                particle.delay = 0
             return particle

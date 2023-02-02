@@ -1,4 +1,5 @@
 from Matrix_Access.Controllers.Controller_Interface import ControllerBase
+from Matrix_Access.Particles import MCParticle
 
 
 class ShiftController(ControllerBase):
@@ -61,11 +62,12 @@ class ShiftController(ControllerBase):
     def process(self, particle):
         """
         继承自 ControllerBase，输入完整粒子信息后，对其修改，并返回。
-        :param particle: [x, y, z, d_x, d_y, d_z, speed, count, force_normal, R, G, B, TR, TG, TB, type, delay]
+        :param particle: MCParticle 类，包含所有可直接调用的数字参数。
         :return:
         """
-        new_x, new_y, new_z = self.do_shift(particle[0], particle[1], particle[2])
-        particle[0] = new_x
-        particle[1] = new_y
-        particle[2] = new_z
+        assert type(particle) is MCParticle
+        new_x, new_y, new_z = self.do_shift(particle.x, particle.y, particle.z)
+        particle.x = new_x
+        particle.y = new_y
+        particle.z = new_z
         return particle

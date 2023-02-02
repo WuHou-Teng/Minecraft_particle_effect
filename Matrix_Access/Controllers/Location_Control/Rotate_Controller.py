@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from Matrix_Access.Controllers.Controller_Interface import ControllerBase
+from Matrix_Access.Particles import MCParticle
 
 
 class RotateController(ControllerBase):
@@ -21,7 +22,6 @@ class RotateController(ControllerBase):
         self.y_angle = math.radians(y_angle)
         self.z_angle = math.radians(z_angle)
         # 旋转中心点
-        # TODO 这里同样需要：以后最好设计一个保留一个物体整体空间坐标的类，并且能正确反馈物体的各项属性，包括大小，边界外切立方体坐标。
         self.rotate_centre = rotate_centre if rotate_centre is not None else [0, 0, 0]
 
     def set_x_angle(self, x_angle):
@@ -182,23 +182,25 @@ class RotateController(ControllerBase):
     def process(self, particle):
         """
         继承自 ControllerBase，输入完整粒子信息后，对其修改，并返回。
-        :param particle: [x, y, z, d_x, d_y, d_z, speed, count, force_normal, R, G, B, TR, TG, TB, type]
+        :param particle: MCParticle 类，包含所有可直接调用的数字参数。
         :return:
             particle: 经过处理后的粒子数据。
         """
+        assert type(particle) is MCParticle
         # 由于旋转不对物体形状改变，所以xyz三个方向的旋转，施加顺序无需相同。
-        x_new = particle[0]
-        y_new = particle[1]
-        z_new = particle[2]
+        x_new = particle.x
+        y_new = particle.y
+        z_new = particle.z
         x_new, y_new, z_new = self.apply_rotate_x(x_new, y_new, z_new)
         x_new, y_new, z_new = self.apply_rotate_z(x_new, y_new, z_new)
         x_new, y_new, z_new = self.apply_rotate_y(x_new, y_new, z_new)
-        particle[0] = x_new
-        particle[1] = y_new
-        particle[2] = z_new
+        particle.x = x_new
+        particle.y = y_new
+        particle.z = z_new
         return particle
 
-    def rotate_matrix(self, u, v, w, angle, x, y, z):
+    # 这个函数的实现放到SL_Location_Control里了
+    def __rotate_matrix(self, u, v, w, angle, x, y, z):
         """
         旋转矩阵，直接计算物体按照uvw规定的轴旋转。
         :param u: x轴向量，调整向量长度，就可以调整旋转轴的角度。
