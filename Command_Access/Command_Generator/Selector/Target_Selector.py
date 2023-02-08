@@ -7,11 +7,11 @@ class TargetSelector(object):
     """
     参考 ControllerToolBox, 为所有Selectors编写添加函数。方便用户调用
     """
-    def __init__(self, index_name=None, entity_mark=NEAREST_PLAYER, entity=None):
-        self.index_name = index_name if index_name is not None else self.to_string()
+    def __init__(self, index_name=None, entity_mark=ALL_ENTITY, entity=None):
         self.entity_mark = entity_mark
         self.entity = entity
         self.selector_list = []
+        self.index_name = index_name if index_name is not None else self.to_string()
 
     def get_name(self):
         return self.index_name
@@ -19,6 +19,9 @@ class TargetSelector(object):
     def add_tag(self, selector):
         assert selector.__class__.__base__ == Selector_Tags
         self.selector_list.append(selector.to_string())
+
+    def get_selector_list(self):
+        return self.selector_list
 
     def set_entity(self, entity):
         """
@@ -29,6 +32,9 @@ class TargetSelector(object):
         # assert entity.__class__.__base__ == Entity
         self.entity = entity
         # self.selector_list.append(entity.to_string_select())
+
+    def get_entity(self):
+        return self.entity
 
     def to_string(self):
         """
@@ -49,55 +55,74 @@ class TargetSelector(object):
 
     # ————————————以下是对选择器各种词条创建的封装函数。————————————
 
-    def location(self, x=0, y=0, z=0,
+    @staticmethod
+    def location(x=0, y=0, z=0,
                  x_coo_type=RELA_COORD, y_coo_type=RELA_COORD, z_coo_type=RELA_COORD):
         return Selector_Tags.Location(x, y, z, x_coo_type, y_coo_type, z_coo_type)
 
-    def distance(self, max_distance=0, min_distance=0, use_range=True):
-        return Selector_Tags.Distance(max_distance, min_distance, use_range)
+    @staticmethod
+    def distance(max_distance=0, min_distance=0, use_range=True):
+        return Selector_Tags.DistanceTag(max_distance, min_distance, use_range)
 
-    def vol_space(self, dx=0, dy=0, dz=0):
-        return Selector_Tags.VolSpace(dx, dy, dz)
+    @staticmethod
+    def vol_space(dx=0, dy=0, dz=0):
+        return Selector_Tags.VolSpaceTag(dx, dy, dz)
 
-    def score(self, score_name=None, score_min_value=None, score_max_value=None, use_range=None):
-        score_select = Selector_Tags.Scores()
+    @staticmethod
+    def score(score_name=None, score_min_value=None, score_max_value=None, use_range=None):
+        score_select = Selector_Tags.ScoresTag()
         if score_name is not None and score_min_value is not None and score_max_value is not None:
             if use_range is None:
                 use_range = False
             score_select.add_score(score_name, score_min_value, score_max_value, use_range)
         return score_select
 
-    def tag(self, tag, flip=False):
-        return Selector_Tags.Tag(tag, flip)
+    def get_score_tag(self):
+        for tags in self.selector_list:
+            if type(tags) is Selector_Tags.ScoresTag:
+                return tags
+        return None
 
-    def team(self, team, flip=False):
-        return Selector_Tags.Team(team, flip)
+    @staticmethod
+    def tag(tag, flip=False):
+        return Selector_Tags.TagTag(tag, flip)
 
-    def name(self, name, flip=False):
-        return Selector_Tags.Name(name, flip)
+    @staticmethod
+    def team(team, flip=False):
+        return Selector_Tags.TeamTag(team, flip)
 
-    def entity_type(self, type_id=None, flip=None):
-        type_select = Selector_Tags.EntityType()
+    @staticmethod
+    def name(name, flip=False):
+        return Selector_Tags.NameTag(name, flip)
+
+    @staticmethod
+    def entity_type(type_id=None, flip=None):
+        type_select = Selector_Tags.EntityTypeTag()
         if type_id is not None:
             if flip is None:
                 flip = False
             type_select.add_type_judge(type_id, flip)
         return type_select
 
-    def family(self, family_type, flip=False):
-        return Selector_Tags.Family(family_type, flip)
+    @staticmethod
+    def family(family_type, flip=False):
+        return Selector_Tags.FamilyTag(family_type, flip)
 
-    def predicate(self, name_space_id, flip=False):
-        return Selector_Tags.Predicate(name_space_id, flip)
+    @staticmethod
+    def predicate(name_space_id, flip=False):
+        return Selector_Tags.PredicateTag(name_space_id, flip)
 
-    def x_rotation(self, small_angle=-90, big_angle=90, use_range=True):
-        return Selector_Tags.XRotation(small_angle, big_angle, use_range)
+    @staticmethod
+    def x_rotation(small_angle=-90, big_angle=90, use_range=True):
+        return Selector_Tags.XRotationTag(small_angle, big_angle, use_range)
 
-    def y_rotation(self, small_angle=-180, big_angle=180, use_range=True):
-        return Selector_Tags.YRotation(small_angle, big_angle, use_range)
+    @staticmethod
+    def y_rotation(small_angle=-180, big_angle=180, use_range=True):
+        return Selector_Tags.YRotationTag(small_angle, big_angle, use_range)
 
-    def limit_sort(self, limit=1, sort=NEAREST):
-        return Selector_Tags.LimitSort(limit, sort)
+    @staticmethod
+    def limit_sort(limit=1, sort=NEAREST):
+        return Selector_Tags.LimitSortTag(limit, sort)
 
 
 # ————————————————————以下类弃用，改用上面的。————————————————————————

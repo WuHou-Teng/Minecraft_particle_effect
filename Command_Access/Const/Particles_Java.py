@@ -19,7 +19,8 @@ dripping_honey            = 18    # 滴落的蜂蜜粒子
 dripping_lava             = 19    # 熔岩粒子
 dripping_obsidian_tear    = 20    # 滴落的黑曜石粒子
 dripping_water            = 21    # 水滴下拉溅射粒子
-dust                      = 22    # 红石线粉尘粒子
+dust                      = 101    # Dust 粒子
+dust_color_transition     = 102    # 渐变粒子
 effect                    = 23    # 法术溅射粒子
 electric_spark            = 24    # 电火花粒子
 enchant                   = 25    # 附魔台符号粒子
@@ -105,6 +106,7 @@ dripping_lava             : "minecraft:dripping_lava           ",    # 熔岩粒
 dripping_obsidian_tear    : "minecraft:dripping_obsidian_tear  ",    # 滴落的黑曜石粒子
 dripping_water            : "minecraft:dripping_water          ",    # 水滴下拉溅射粒子
 dust                      : "minecraft:dust                    ",    # 红石线粉尘粒子
+dust_color_transition     : "minecraft:dust_color_transition   ",
 effect                    : "minecraft:effect                  ",    # 法术溅射粒子
 electric_spark            : "minecraft:electric_spark          ",    # 电火花粒子
 enchant                   : "minecraft:enchant                 ",    # 附魔台符号粒子

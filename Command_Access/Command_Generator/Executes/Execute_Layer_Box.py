@@ -1,4 +1,4 @@
-from Command_Access.Command_Generator.Executes.Execute_Layer import ExecuteLayer
+from Command_Access.Command_Generator.Executes.Execute_Layer import ExecuteModifierLayer
 from Command_Access.Command_Generator.Executes.Execute_consts import AS
 from util.Box import Box
 
@@ -42,8 +42,9 @@ class ExecuteLayerBox(Box):
     def get_object(self, index_name):
         return self.get_execute_layer(index_name)
 
-    def new_layer(self, index_name=None, modify=AS, selector=None):
-        new_execute_layer = ExecuteLayer(index_name, modify, selector)
+    @staticmethod
+    def new_layer(index_name=None, modify=AS, selector=None):
+        new_execute_layer = ExecuteModifierLayer(index_name, modify, selector)
         # self.add_execute_layer(new_execute_layer)
         return new_execute_layer
 

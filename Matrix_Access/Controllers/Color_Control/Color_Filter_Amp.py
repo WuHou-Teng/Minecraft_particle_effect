@@ -9,7 +9,7 @@ class ColorFilterAmp(ColorController):
     颜色滤镜。用于对特定通道的颜色进行过滤 或者 增强
     """
     def __init__(self, index_name, red_range=None, green_range=None, blue_range=None):
-        super(ColorFilterAmp, self).__init__(index_name, red_range, green_range, blue_range)
+
         # self.red_range = []
         # self.green_range = []
         # self.blue_range = []
@@ -20,6 +20,7 @@ class ColorFilterAmp(ColorController):
         self.filter_amp_ratio_red = FULL  # FULL = -1, 即，在滤镜内的颜色值会直接乘上 (1+FULL)==0 ，降为最低值。
         self.filter_amp_ratio_green = FULL
         self.filter_amp_ratio_blue = FULL
+        super(ColorFilterAmp, self).__init__(index_name, red_range, green_range, blue_range)
 
     def set_filter_amp_ratio_red(self, ratio):
         """

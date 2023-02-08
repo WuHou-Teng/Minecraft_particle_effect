@@ -9,7 +9,8 @@ from Matrix_Access.Controllers.Color_Control.Color_White_List import ColorWhiteL
 from Matrix_Access.Controllers.Color_Control.Color_Filter_Amp import ColorFilterAmp, ColorTransFilterAmp
 # 延时控制器
 from Matrix_Access.Controllers.Delay_Control.Delay_Scale_Controller import DelayScaleController
-from Matrix_Access.Controllers.Delay_Control.Delay_Linear_Controller import DelayLinearController
+from Matrix_Access.Controllers.Delay_Control.Delay_Shift_Controller import (DelayShiftController,
+                                                                            DelayCountShiftController)
 from Matrix_Access.Controllers.Delay_Control.Delay_Type_Switch_Controller import DelayTypeSwitchController
 # 其余控制器还未完善，因此暂不添加。
 
@@ -60,7 +61,8 @@ class ControllerBox(Box):
 
     # ___________________________以下是方便程序设计，封装的控制器添加函数。————————————————————————————-
 
-    def new_scale_controller(self, index_name, x_scale=1, y_scale=1, z_scale=1, scale_centre=None):
+    @staticmethod
+    def new_scale_controller(index_name, x_scale=1, y_scale=1, z_scale=1, scale_centre=None):
         """
         创建新的 ScaleController 控制器。不会添加到列表，而是直接返回。
         :return:
@@ -70,7 +72,8 @@ class ControllerBox(Box):
         # self.add_controller(new_scale_controller)
         return new_scale_controller
 
-    def new_shift_controller(self, index_name, x_shift=0, y_shift=0, z_shift=0):
+    @staticmethod
+    def new_shift_controller(index_name, x_shift=0, y_shift=0, z_shift=0):
         """
         创建新的 ShiftController 控制器。不会添加到列表，而是直接返回。
         :return:
@@ -80,7 +83,8 @@ class ControllerBox(Box):
         # self.add_controller(new_shift_controller)
         return new_shift_controller
 
-    def new_rotate_controller(self, index_name, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
+    @staticmethod
+    def new_rotate_controller(index_name, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
         """
         创建新的 RotateController 控制器。不会添加到列表，而是直接返回。
         :return:
@@ -90,7 +94,8 @@ class ControllerBox(Box):
         # self.add_controller(new_rotate_controller)
         return new_rotate_controller
 
-    def new_color_filter_amp_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
+    @staticmethod
+    def new_color_filter_amp_controller(index_name, red_range=None, green_range=None, blue_range=None):
         """
         创建新的 ColorFilterAmp 控制器。不会添加到列表，而是直接返回。
         :return:
@@ -100,7 +105,8 @@ class ControllerBox(Box):
         # self.add_controller(new_color_filter_amp)
         return new_color_filter_amp
 
-    def new_color_trans_filter_amp_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
+    @staticmethod
+    def new_color_trans_filter_amp_controller(index_name, red_range=None, green_range=None, blue_range=None):
         """
         创建新的 ColorTransFilterAmp 控制器。不会添加到列表，而是直接返回。
         :return:
@@ -110,7 +116,8 @@ class ControllerBox(Box):
         # self.add_controller(new_color_filter_amp)
         return new_color_trans_filter_amp
 
-    def new_color_white_list_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
+    @staticmethod
+    def new_color_white_list_controller(index_name, red_range=None, green_range=None, blue_range=None):
         """
         创建新的 ColorWhiteList 控制器。不会添加到列表，而是直接返回。
         :return:
@@ -120,7 +127,8 @@ class ControllerBox(Box):
         # self.add_controller(new_color_white_list)
         return new_color_white_list
 
-    def new_color_trans_white_list_controller(self, index_name, red_range=None, green_range=None, blue_range=None):
+    @staticmethod
+    def new_color_trans_white_list_controller(index_name, red_range=None, green_range=None, blue_range=None):
         """
         创建新的 ColorTransWhiteList 控制器。不会添加到列表，而是直接返回。
         :return:
@@ -130,31 +138,50 @@ class ControllerBox(Box):
         # self.add_controller(new_color_white_list)
         return new_color_trans_white_list
 
-    def new_delay_linear_controller(self, delay_type=ABSOLUTE, tick_add=0):
+    @staticmethod
+    def new_delay_shift_controller(index_name, delay_type=ABSOLUTE, tick_add=0):
         """
         创建新的延时增减控制器
+        :param index_name:
         :param delay_type: 延时类型
         :param tick_add: 增加或减少的tick数。
         :return:
         """
-        new_delay_linear_controller = DelayLinearController(delay_type, tick_add)
-        return new_delay_linear_controller
+        new_delay_shift_controller = DelayShiftController(index_name, delay_type, tick_add)
+        return new_delay_shift_controller
 
-    def new_delay_scale_controller(self, delay_type=ABSOLUTE, scale_ratio=1):
+    @staticmethod
+    def new_delay_count_shift_controller(index_name, delay_type=ABSOLUTE, tick_add=0, particle_count_step=1):
+        """
+        创建新的延时增减控制器
+        :param index_name:
+        :param delay_type: 延时类型
+        :param tick_add: 增加或减少的tick数。
+        :param particle_count_step: 每次增加延时时，跨过的粒子数
+        :return:
+        """
+        new_delay_shift_controller = DelayCountShiftController(index_name, delay_type, tick_add, particle_count_step)
+        return new_delay_shift_controller
+
+    @staticmethod
+    def new_delay_scale_controller(index_name, delay_type=ABSOLUTE, scale_ratio=1):
         """
         创建新的延时缩放控制器
+        :param index_name:
         :param delay_type: 延时类型
         :param scale_ratio: 缩放比例，必须大于0
         :return:
         """
-        return DelayScaleController(delay_type, scale_ratio)
+        return DelayScaleController(index_name, delay_type, scale_ratio)
 
-    def new_delay_type_switch_controller(self, delay_type=ADDITIONAL, type_switch_to=ABSOLUTE):
+    @staticmethod
+    def new_delay_type_switch_controller(index_name, delay_type=ADDITIONAL, type_switch_to=ABSOLUTE):
         """
         创建新的延时类型转换器。它将粒子延时在相对延时和绝对延时之间转换。
+        :param index_name:
         :param delay_type: 延时类型
         :param type_switch_to: 目标类型
         :return:
         """
-        return DelayTypeSwitchController(delay_type, type_switch_to)
+        return DelayTypeSwitchController(index_name, delay_type, type_switch_to)
 

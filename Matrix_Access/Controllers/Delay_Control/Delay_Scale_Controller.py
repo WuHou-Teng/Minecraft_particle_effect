@@ -7,12 +7,12 @@ class DelayScaleController(DelayBaseController):
     """
     按照比例缩放所有粒子的延时
     """
-    def __init__(self, delay_type=ABSOLUTE, scale_ratio=1):
-        super().__init__(delay_type)
+    def __init__(self, index_name, delay_type=ABSOLUTE, scale_ratio=1):
         self.scale_ratio = scale_ratio
         if self.scale_ratio < 0:
             print("缩放率不和规定，已被调节至0")
             self.scale_ratio = 0
+        super().__init__(index_name, delay_type)
 
     def set_scale_ratio(self, new_scale_ratio):
         self.scale_ratio = new_scale_ratio

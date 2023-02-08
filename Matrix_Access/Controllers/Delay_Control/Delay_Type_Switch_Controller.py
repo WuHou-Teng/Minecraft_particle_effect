@@ -7,9 +7,9 @@ class DelayTypeSwitchController(DelayBaseController):
     """
     将输入粒子的延时格式从 ADDITIONAL 和 ABSOLUTE之间相互转换。
     """
-    def __init__(self, delay_type=ADDITIONAL, type_switch_to=ABSOLUTE):
-        super().__init__(delay_type)
+    def __init__(self, index_name, delay_type=ADDITIONAL, type_switch_to=ABSOLUTE):
         self.type_switch_to = type_switch_to
+        super().__init__(index_name, delay_type)
 
     def set_delay_type_switch_to(self, delay_type):
         self.type_switch_to = delay_type
@@ -40,6 +40,12 @@ class DelayTypeSwitchController(DelayBaseController):
                     particle.delay = 0
             return particle
 
+    def process_matrix(self, matrix_accesser):
+        pass
+
+    def clear_record(self):
+        self.current_time = 0
+        self.last_time = 0
 
 
 

@@ -19,7 +19,7 @@ class MatrixWriter(object):
         self.mat_file = self.matrix_file_found(new_mat_file)
 
     def load_matrix_file_path(self):
-        with open("./default_matrix_address.txt", "r", encoding="UTF-8") as dm_address:
+        with open(os.path.join(self.cwd, "Configs\\default_matrix_address.txt"), "r", encoding='utf-8') as dm_address:
             new_addresses = dm_address.readlines()
             for lines in new_addresses:
                 if not lines.startswith("#"):
@@ -27,16 +27,27 @@ class MatrixWriter(object):
 
     def matrix_file_found(self, mat_file):
         # 如果输入的地址本就是正确的，则直接返回。
-        if os.path.exists(mat_file):
-            return mat_file
-        for path in self.default_path:
-            if os.path.exists(os.path.join(path, mat_file)):
-                return os.path.join(path, mat_file)
-            if os.path.exists(os.path.join(path, mat_file) + ".csv"):
-                return os.path.join(path, mat_file)
-        return None
+        if mat_file is not None:
+            if os.path.exists(mat_file):
+                return mat_file
+            for path in self.default_path:
+                if os.path.exists(os.path.join(path, mat_file)):
+                    return os.path.join(path, mat_file)
+                if os.path.exists(os.path.join(path, mat_file) + ".csv"):
+                    return os.path.join(path, mat_file)
+            # 完成遍历后都找不到对应的矩阵文件，那么就重新建立一个。
+            if not os.path.splitext(mat_file)[-1] == ".csv" or os.path.splitext(mat_file)[-1] == ".txt":
+                mat_file = mat_file + ".csv"
+            mat_file = os.path.join(os.path.join(self.cwd, self.default_path[0]), mat_file)
+            self.new_matrix_file(mat_file)
+        return mat_file
 
-    def new_matrix_file(self, matrix_content, matrix_file=None, mode="w+"):
+    @staticmethod
+    def new_matrix_file(mat_file_address):
+        new_mat = open(mat_file_address, "w", encoding='utf-8')
+        new_mat.close()
+
+    def write_matrix_file(self, matrix_content, matrix_file=None, mode="w+"):
         """
         根据提供的矩阵内容，和文件地址，将矩阵内容写入到相应的文件中去
         :param matrix_content: 粒子矩阵内容，是多维列表的形式
@@ -47,20 +58,21 @@ class MatrixWriter(object):
         if matrix_file is not None:
             if matrix_file != self.mat_file:
                 self.mat_file = self.matrix_file_found(matrix_file)
-        with open(matrix_file, mode, encoding="utf-8") as mf:
+        with open(self.mat_file, mode, encoding="utf-8") as mf:
             for particles in matrix_content:
                 part_str = ""
-                for info in particles:
+                for info in particles.data:
                     part_str += str(info).strip()
                     part_str += ","
-                print(part_str.strip(","))
+                # print(part_str.strip(","))
                 mf.write(part_str.strip(",") + "\n")
+        return self.mat_file
 
     def renew_matrix_file(self,  matrix_content, matrix_file=None):
-        self.new_matrix_file(matrix_content, matrix_file)
+        return self.write_matrix_file(matrix_content, matrix_file)
 
     def add_to_matrix_file(self, matrix_content, matrix_file=None):
-        self.new_matrix_file(matrix_content, matrix_file, "a")
+        return self.write_matrix_file(matrix_content, matrix_file, "a")
 
 
 # 测试文件写入

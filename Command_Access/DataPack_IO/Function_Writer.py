@@ -12,16 +12,28 @@ class FunctionWriter(object):
 
     def __init__(self, data_pack_address, name_space):
         self.data_pack_address = data_pack_address
+        # self.new_data_pack()
         self.name_space = self.DATA_FOLDER + name_space + self.FUNC_FOLDER
         self.full_address = self.data_pack_address + self.name_space
+        self.new_effect_folder()
 
     def change_data_pack_to(self, data_pack_address):
         self.data_pack_address = data_pack_address
         self.full_address = self.data_pack_address + self.name_space
+        self.new_effect_folder()
 
     def change_name_space_to(self, name_space):
         self.name_space = self.DATA_FOLDER + name_space + self.FUNC_FOLDER
         self.full_address = self.data_pack_address + self.name_space
+        self.new_effect_folder()
+
+    def new_data_pack(self):
+        if not os.path.exists(self.data_pack_address):
+            os.mkdir(self.data_pack_address)
+
+    def new_effect_folder(self):
+        if not os.path.exists(self.full_address):
+            os.makedirs(self.full_address)
 
     def func_address(self, func_name):
         """
@@ -71,6 +83,7 @@ class FunctionWriter(object):
             func_file.close()
 
 
-
-
-
+if __name__ == "__main__":
+    new_datapack_address = "C:\\Wuhou\\play\\minecraft\\1.18.2\\1.18.2Particle\\.minecraft\\saves\\Particle_Test\\datapacks\\testtest"
+    new_effect_name = "effect_test"
+    f_writer = FunctionWriter(new_datapack_address, new_effect_name)

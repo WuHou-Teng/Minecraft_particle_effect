@@ -6,12 +6,14 @@ class ShiftController(ControllerBase):
     """
     对粒子的坐标进行平移。
     """
-    def __init__(self, index_name=None, x_shift=0, y_shift=0, z_shift=0):
-        super(ShiftController, self).__init__(index_name)
+    def __init__(self, index_name, x_shift=0, y_shift=0, z_shift=0):
+
         # 转换时，三个方向的偏移量。
         self.x_shift = x_shift
         self.y_shift = y_shift
         self.z_shift = z_shift
+
+        super(ShiftController, self).__init__(index_name)
 
     def set_x_shift(self, new_x):
         """

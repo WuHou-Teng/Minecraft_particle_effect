@@ -1,4 +1,4 @@
-from Command_Access.Command_Generator.Score_Board.ScoreBoard import ScoreBoardGenerator
+from Command_Access.Command_Generator.Score_Board.ScoreBoard_Generator import ScoreBoard
 from util.Box import Box
 
 
@@ -41,8 +41,9 @@ class ScoreBoardBox(Box):
     def get_object(self, index_name):
         return self.get_scoreboard(index_name)
 
-    def new_scoreboard(self, name, criterion, display_name):
-        new_score_board = ScoreBoardGenerator(name, criterion, display_name)
+    @staticmethod
+    def new_scoreboard(name, criterion='dummy', display_name=None):
+        new_score_board = ScoreBoard(name, criterion, display_name)
         # self.add_scoreboard(new_score_board)
         return new_score_board
 

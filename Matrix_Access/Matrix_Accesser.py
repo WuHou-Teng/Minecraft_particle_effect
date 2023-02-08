@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import copy
 import os
 from Matrix_Access.Matrix_Const import *
@@ -32,9 +33,9 @@ def complete_particle_format(particle):
                               float(particle[9]),  # R
                               float(particle[10]),  # G
                               float(particle[11]),  # B
-                              float(particle[12]),  # TR
-                              float(particle[13]),  # TG
-                              float(particle[14]),  # TB
+                              float(particle[12]),  # RT
+                              float(particle[13]),  # GT
+                              float(particle[14]),  # BT
                               int(particle[15]),  # 粒子种类
                               float(particle[16]),  # 粒子大小
                               int(particle[17]),  # 粒子持续时常tick数
@@ -53,11 +54,14 @@ class MatrixAccesser(object):
     def __init__(self, matrix_file):
         self.cwd = os.getcwd()
         # 粒子矩阵文件名称或绝对地址。如果仅仅提供了名称，程序会自动前往默认文件夹寻找。
-        self.mat_file = matrix_file
+        # self.mat_file = matrix_file
+        self.mat_name = matrix_file
         # 载入默认路径
         self.default_path = []
         self.load_matrix_file_path()
-        self.mat_file = self.matrix_file_found(self.mat_file)
+        self.mat_file = self.matrix_file_found(self.mat_name)
+        if self.mat_file is None:
+            raise FileNotFoundError(f"矩阵文件不存在: {self.mat_name}")
         # 直接读取粒子矩阵文件，如果文件不存在，则返回空列表。
         self.mat_list = self.read_mat()
 
@@ -79,18 +83,18 @@ class MatrixAccesser(object):
         # 个方向上坐标的平均值组成的中心点
         self.mean_centre = [0, 0, 0]
         # 延时
-        self.delay_type = ADDITIONAL
+        self.delay_type = ABSOLUTE
         self.max_delay = 0
         self.delay_array = []
 
-        # self.get_extra_info() 默认不调用，因为可能比较耗时间。
+        self.get_extra_info()  # 可能比较耗时间。
 
     def load_matrix_file_path(self):
         """
         将默认路径加载到程序。方便在用户只提供matrix名字的时候，自动补全地址。
         :return:
         """
-        with open("./default_matrix_address.txt", "r", encoding="UTF-8") as dm_address:
+        with open(os.path.join(self.cwd, "Configs/default_matrix_address.txt"), "r", encoding="utf-8") as dm_address:
             new_addresses = dm_address.readlines()
             for lines in new_addresses:
                 if not lines.startswith("#"):
@@ -112,7 +116,7 @@ class MatrixAccesser(object):
         return None
 
     def get_name(self):
-        return self.mat_file
+        return os.path.basename(self.mat_name)
 
     def get_mat_list(self):
         """
@@ -131,6 +135,14 @@ class MatrixAccesser(object):
         self.mat_file = matrix_file_name
         self.mat_list = self.read_mat()
 
+    def reload_mat_list(self):
+        """
+        重新读取指向的矩阵文件，一般是 mat列表交给控制器更改后，再重新读取数据
+        :return:
+        """
+        self.mat_list = self.read_mat()
+        self.get_extra_info()
+
     def renew_mat_list(self, new_mat_list, update_original_file=False):
         """
         更新mat列表，一般是 mat列表交给控制器更改后，再重新放回对应的矩阵访问器。
@@ -139,6 +151,7 @@ class MatrixAccesser(object):
         :return:
         """
         self.mat_list = new_mat_list
+        self.get_extra_info()
         if update_original_file:
             m_writer = MatrixWriter(self.mat_file)
             m_writer.renew_matrix_file(self.mat_list)
@@ -152,6 +165,7 @@ class MatrixAccesser(object):
         :return:
         """
         self.mat_list = self.mat_file + new_mar_list
+        self.get_extra_info()
         if update_original_file:
             m_writer = MatrixWriter(self.mat_file)
             m_writer.add_to_matrix_file(self.mat_list)
@@ -160,14 +174,14 @@ class MatrixAccesser(object):
         """
         从相应的文件中读取矩阵数据。
         # 基本参数
-          x, y, z,
-          1, 1, 1,
+          x, y, z, particle_type,
+          1, 1, 1, 0(Undefined),
         # 附加参数
           d_x, d_y, d_z, speed, count, force_normal,
           0,   0,   0,   0,     1,     f/n,
         # 额外参数
-          Color(R, G, B),   color_transfer(R,G,B), particle_type, 粒子大小,
-          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),  1,
+          Color(R, G, B),   color_transfer(R,G), particle_type, 粒子大小,
+          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,    0(Undefined),  1,
         # mod参数
           持续时间(tick), 粒子透明度, 延时(tick)
           80,           1,        0
@@ -180,7 +194,7 @@ class MatrixAccesser(object):
         # 首先检索一边默认的文件夹。
         # search_result = self.matrix_file_found(self.mat_file)
         if self.mat_file is not None:
-            with open(self.mat_file, "r") as mat:
+            with open(self.mat_file, "r", encoding='utf-8') as mat:
                 mat_data = mat.readlines()
                 for particles in mat_data:
                     # print(particles)

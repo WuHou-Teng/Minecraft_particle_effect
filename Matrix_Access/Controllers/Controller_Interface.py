@@ -16,10 +16,30 @@ class ControllerBase(object):
         """
         对所有 Controller最终功能的封装。概述为：输入粒子，修改粒子参数，然后输出粒子。
         :param particle: 粒子信息，标准格式为：
-        x, y, z, d_x, d_y, d_z, speed, count, force_normal, Color(R, G, B),   color_transfer(R,G,B), particle_type
-        1, 1, 1, 0,   0,   0,   0,     1,     f/n,          0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined)
+
+        x, y, z,
+        1, 1, 1,
+
+        d_x, d_y, d_z, speed, count, force_normal,
+        0,   0,   0,   0,     1,     f/n,
+
+        Color(R, G, B),   color_transfer(R,G,B), particle_type,
+        0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,      0(Undefined),
+
+        粒子大小, 持续时间(tick), 粒子透明度, 延时(tick)
+        1,      80,            1,        0
+
         :return:
             particle: 经过处理后的粒子信息
+        """
+        pass
+
+    def process_matrix(self, matrix_accesser):
+        """
+        从矩阵整体的视角调用控制器。
+        :param matrix_accesser: <MatrixAccesser> 类实例
+        :return:
+            matrix_accesser: 经过处理后的矩阵访问器。
         """
         pass
 

@@ -15,3 +15,6 @@ ARBITRARY = "arbitrary"  # 将目标按生成时间由远到近排序。（@a和
 ABS_COORD = 0
 RELA_COORD = 1
 FACE_COORD = 2
+
+COO_DICT = {RELA_COORD: "~", FACE_COORD: "^", ABS_COORD: ""}
+

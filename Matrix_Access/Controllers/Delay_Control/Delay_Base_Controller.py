@@ -7,8 +7,7 @@ class DelayBaseController(ControllerBase):
     """
     延时控制器基类
     """
-    def __init__(self, delay_type=ABSOLUTE):
-        super().__init__()
+    def __init__(self, index_name, delay_type=ABSOLUTE):
         # 延时类型，默认为ADDITIONAL
         self.delay_type = delay_type
         # 时刻
@@ -16,6 +15,7 @@ class DelayBaseController(ControllerBase):
         # 如果是绝对计时，则是之前粒子中延时最大的那个。
         self.current_time = 0
         self.last_time = 0
+        super().__init__(index_name)
 
     def switch_delay_type(self, delay_type=None):
         if delay_type is None:
@@ -44,6 +44,13 @@ class DelayBaseController(ControllerBase):
         elif self.delay_type is ABSOLUTE:
             # 绝对时间轴下，总时刻就是上一个粒子的时刻。
             self.current_time = particle.delay
+
+    def clear_record(self):
+        """
+        用于清理每轮 Process留下的记录数据。对每一个不同的 延时控制器可能都不一样。
+        :return:
+        """
+        pass
 
 
 

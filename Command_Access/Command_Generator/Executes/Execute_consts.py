@@ -2,8 +2,8 @@
 # 修饰子命令
 AT = "at"
 AS = "as"
-FACING = "facing"
-FACING_ENTITY = "facing entity"
+FACING = "facing"  # <eyes/feet>
+FACING_ENTITY = "facing entity"  # <eyes/feet>
 ALIGN = "align"
 ANCHORED = "anchored"  # <eyes/feet>
 IN = 'in'  # 维度

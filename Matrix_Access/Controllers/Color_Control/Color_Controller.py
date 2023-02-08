@@ -6,11 +6,11 @@ class ColorController(ControllerBase):
     """
     颜色控制器基类
     """
-    def __init__(self, index_name=None, red_range=None, green_range=None, blue_range=None):
-        super(ColorController, self).__init__(index_name)
+    def __init__(self, index_name, red_range=None, green_range=None, blue_range=None):
         self.red_range = red_range if red_range is not None else []
         self.green_range = green_range if green_range is not None else []
         self.blue_range = blue_range if blue_range is not None else []
+        super(ColorController, self).__init__(index_name)
 
         # 翻转已添加的range
         self.flip = False

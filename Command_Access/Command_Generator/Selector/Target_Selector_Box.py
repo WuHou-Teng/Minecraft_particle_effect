@@ -45,7 +45,8 @@ class TargetSelectorBox(Box):
     def get_object(self, index_name):
         return self.get_target_selector(index_name)
 
-    def new_target_selector(self, index_name=None, entity_mark=NEAREST_PLAYER, entity=None):
+    @staticmethod
+    def new_target_selector(index_name=None, entity_mark=NEAREST_PLAYER, entity=None):
         new_target_selector = TargetSelector(index_name, entity_mark, entity)
         # self.add_target_selector(new_target_selector)
         return new_target_selector

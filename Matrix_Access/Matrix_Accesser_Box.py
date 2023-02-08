@@ -18,7 +18,7 @@ class MatrixAccessBox(Box):
         self.matrix_dict[matrix_accesser.get_name()] = matrix_accesser
         return matrix_accesser.get_name()
 
-    def get_matrix_accesser(self, index_name):
+    def get_matrix_accesser(self, index_name) -> MatrixAccesser:
         """
         返回矩阵访问器中保存的矩阵文件名称。
         :param index_name: 矩阵访问器中保存的矩阵文件名称。
@@ -43,7 +43,8 @@ class MatrixAccessBox(Box):
     def get_object(self, index_name):
         return self.get_matrix_accesser(index_name)
 
-    def new_matrix_accesser(self, matrix_file_name):
+    @staticmethod
+    def new_matrix_accesser(matrix_file_name):
         # if os.path.exists(matrix_file_name):
         #     matrix_file_name = os.path.join()
         new_matrix_accesser = MatrixAccesser(matrix_file_name)

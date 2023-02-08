@@ -6,8 +6,8 @@ class ScaleController(ControllerBase):
     """
     缩放控制器
     """
-    def __init__(self, index_name=None, x_scale=1, y_scale=1, z_scale=1, scale_centre=None):
-        super(ScaleController, self).__init__(index_name)
+    def __init__(self, index_name, x_scale=1, y_scale=1, z_scale=1, scale_centre=None):
+
         # 转换时，坐标间隔缩放倍率
         self.x_scale = x_scale
         self.y_scale = y_scale
@@ -15,6 +15,7 @@ class ScaleController(ControllerBase):
         # 缩放中心点，[x, y, z]
         # 如果是二维图片，推荐将旋转中心点设在图片的二维平面上。
         self.scale_centre = scale_centre if scale_centre is not None else [0, 0, 0]
+        super(ScaleController, self).__init__(index_name)
 
     def set_x_scale(self, new_x_scale):
         self.x_scale = new_x_scale

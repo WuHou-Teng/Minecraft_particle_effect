@@ -48,7 +48,7 @@ class Location(Selectors):
                 f'z={self.coo_dict.get(self.coo_type[2])}{self.z},')
 
 
-class Distance(Selectors):
+class DistanceTag(Selectors):
     """
     distance 标签类，确定目标个测量中心的距离
     """
@@ -60,7 +60,7 @@ class Distance(Selectors):
                             而如果use_range==False, 则视最小距离为最大距离。
         :param use_range: 是否使用区间，否，则代表固定距离。
         """
-        super(Distance, self).__init__()
+        super(DistanceTag, self).__init__()
         self.use_range = use_range
 
         self.max_distance = max_distance
@@ -83,7 +83,7 @@ class Distance(Selectors):
             return f'distance={self.max_distance},'
 
 
-class VolSpace(Selectors):
+class VolSpaceTag(Selectors):
     """
     体积尺寸标签类。和 location配合使用，框出一篇区域。
     选择所有位于一定长方体区域内部的目标。
@@ -107,36 +107,41 @@ class VolSpace(Selectors):
                 f'dz={self.dz},')
 
 
-class Scores(Selectors):
+class ScoresTag(Selectors):
     """
     计分板标签类。因为该类可以具有多重数值，故设定为需要额外手动添加。
     """
 
     def __init__(self):
         super().__init__()
-        self.score_list = []
+        self.score_info_list = []
 
     def add_score(self, score_name, score_min_value=0, score_max_value=0, use_range=False):
+        self.score_info_list.append([score_name, score_min_value, score_max_value, use_range])
+        return self
+
+    @staticmethod
+    def info_to_string(score_name, score_min_value, score_max_value, use_range):
         if not use_range:
-            self.score_list.append(f'{score_name}={score_max_value},')
+            return f'{score_name}={score_max_value},'
         else:
             if score_min_value == score_max_value:
-                self.score_list.append(f'{score_name}={score_max_value},')
+                return f'{score_name}={score_max_value},'
             elif score_min_value < score_max_value:
-                self.score_list.append(f'{score_name}={score_min_value}..{score_max_value},')
+                return f'{score_name}={score_min_value}..{score_max_value},'
             elif score_min_value > score_max_value:
-                self.score_list.append(f'{score_name}={score_min_value}..,')
+                return f'{score_name}={score_min_value}..,'
 
     def to_string(self):
-        if len(self.score_list) == 0:
+        if len(self.score_info_list) == 0:
             return None
         string = "score={"
-        for scores in self.score_list:
-            string += scores
+        for scores in self.score_info_list:
+            string += self.info_to_string(scores[0], scores[1], scores[2], scores[3])
         return string + "},"
 
 
-class Tag(Selectors):
+class TagTag(Selectors):
     """
     Tag 标签类
     """
@@ -152,7 +157,7 @@ class Tag(Selectors):
             return f'tag=!{self.tag},'
 
 
-class Team(Selectors):
+class TeamTag(Selectors):
     """
     Team 标签类
     """
@@ -172,7 +177,7 @@ class Team(Selectors):
             return f'team=!{self.team},'
 
 
-class Name(Selectors):
+class NameTag(Selectors):
     """
     Name 标签类
     """
@@ -196,7 +201,7 @@ class Name(Selectors):
             return f'name=!{self.name},'
 
 
-class EntityType(Selectors):
+class EntityTypeTag(Selectors):
     """
     type 标签类，因为该类可以具有多重数值，故设定为需要额外手动添加。
     """
@@ -217,7 +222,7 @@ class EntityType(Selectors):
         return string
 
 
-class Family(Selectors):
+class FamilyTag(Selectors):
     """
     Family 标签类
     """
@@ -237,7 +242,7 @@ class Family(Selectors):
             return f'family=!{self.family},'
 
 
-class Predicate(Selectors):
+class PredicateTag(Selectors):
     """
     Predicate 标签类
     """
@@ -257,7 +262,7 @@ class Predicate(Selectors):
             return f'predicate=!{self.name_space_id},'
 
 
-class XRotation(Selectors):
+class XRotationTag(Selectors):
     """
     x_rotation 标签类。
     """
@@ -287,7 +292,7 @@ class XRotation(Selectors):
             return f'x_rotation={self.big_angle},'
 
 
-class YRotation(Selectors):
+class YRotationTag(Selectors):
     """
     y_rotation 标签类。
     """
@@ -318,7 +323,7 @@ class YRotation(Selectors):
             return f'y_rotation={self.big_angle},'
 
 
-class LimitSort(Selectors):
+class LimitSortTag(Selectors):
     """
     limit_sort 标签类, 限制数量，同时指定技术方向。
     """
@@ -331,7 +336,7 @@ class LimitSort(Selectors):
         return f"limit={self.limit},sort={self.sort},"
 
 
-class NewClass(LimitSort, XRotation, YRotation, Predicate):
+class NewClass(LimitSortTag, XRotationTag, YRotationTag, PredicateTag):
     
     def __init__(self):
         super().__init__()

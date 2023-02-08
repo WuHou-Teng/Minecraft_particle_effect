@@ -1,10 +1,10 @@
-from Matrix_Const import *
+from Matrix_Access.Matrix_Const import *
 
 
 class MCParticle(object):
     # 考虑添加__slot__来压缩体积。
     def __init__(self, x, y, z,
-                 dx=DX, dy=DY, dz=DZ, speed=SPEED, count=COUNT, force_normal=FORCE_NORMAL,
+                 dx=DX, dy=DY, dz=DZ, time_on_moving=SPEED, count=COUNT, force_normal=FORCE_NORMAL,
                  r=COLOR_R, g=COLOR_G, b=COLOR_B, rt=COLOR_TG, gt=COLOR_TG, bt=COLOR_TB,
                  particle_type=PARTICLE_TYPE, size=SIZE, duration=DURATION, transparency=TRANS, delay=DELAY):
         """
@@ -27,7 +27,7 @@ class MCParticle(object):
         self.dx = dx
         self.dy = dy
         self.dz = dz
-        self.speed = speed
+        self.speed = time_on_moving if time_on_moving > 0 else 0.01
         self.count = count
         self.f_n = force_normal
         self.r = r
@@ -39,7 +39,7 @@ class MCParticle(object):
         self.particle_type = particle_type
         self.size = size
         self.duration = duration
-        self.transparency = transparency
+        self.transparency = transparency if transparency >= 0.11 else 0.11
         self.delay = delay
 
     @property
@@ -48,6 +48,6 @@ class MCParticle(object):
                 self.dx, self.dy, self.dz,
                 self.speed, self.count, self.f_n,
                 self.r, self.g, self.b, self.rt, self.gt, self.bt,
-                self.particle_type, self.size,
+                self.particle_type, self.size, self.duration,
                 self.transparency, self.delay]
 

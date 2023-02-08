@@ -129,11 +129,6 @@ class AreaEffectCloud(EntityBuilder):
             self.Pos = (0, 0, 0)
         return self.to_string_nbt(), self.entity_type, self.Pos
 
-    def to_string_summon(self):
-        if self.Pos is None:
-            self.Pos = (0, 0, 0)
-        return f'summon {self.entity_type} ~{self.Pos[0]} ~{self.Pos[1]} ~{self.Pos[2]} {self.to_string_nbt()}'
-
 
 class CloudTimer(AreaEffectCloud):
     """
@@ -173,35 +168,35 @@ class CloudTimer(AreaEffectCloud):
         self.Age = ticks
         self.tag_dict["Age"] = self.Age
 
-    def to_string_select_no_age(self):
-        """
-        这里唯一的区别就是，在选择器中不会添加 Age 标签，方便迭代指令更宽泛的锁定目标。
-        :return:
-        """
-        nbt_str = "{"
-        for keys in list(self.tag_dict.keys()):
-            if self.tag_dict.get(keys) is not None:
-                if keys == "Tags":
-                    new_tag = f'{keys}:[\"{self.tag_dict.get(keys)}\"]'
-                else:
-                    new_tag = f'{keys}:{self.tag_dict.get(keys)}'
-                if keys == "Radius" or keys == "RadiusOnUse" or keys == "RadiusPerTick":
-                    new_tag += 'f'
-                if keys == "Pos" or keys == "Age":
-                    continue
-                if keys == "Particle":
-                    new_tag = f'{keys}:\"{particle_dict.get(self.tag_dict.get(keys)).strip()}\"'
-                nbt_str += new_tag
-                nbt_str += ","
-        nbt_str += '}'
-        return f'type={self.entity_type},nbt={nbt_str},'
+    # def to_string_select_no_age(self):
+    #     """
+    #     这里唯一的区别就是，在选择器中不会添加 Age 标签，方便迭代指令更宽泛的锁定目标。
+    #     :return:
+    #     """
+    #     nbt_str = "{"
+    #     for keys in list(self.tag_dict.keys()):
+    #         if self.tag_dict.get(keys) is not None:
+    #             if keys == "Tags":
+    #                 new_tag = f'{keys}:[\"{self.tag_dict.get(keys)}\"]'
+    #             else:
+    #                 new_tag = f'{keys}:{self.tag_dict.get(keys)}'
+    #             if keys == "Radius" or keys == "RadiusOnUse" or keys == "RadiusPerTick":
+    #                 new_tag += 'f'
+    #             if keys == "Pos" or keys == "Age":
+    #                 continue
+    #             if keys == "Particle":
+    #                 new_tag = f'{keys}:\"{particle_dict.get(self.tag_dict.get(keys)).strip()}\"'
+    #             nbt_str += new_tag
+    #             nbt_str += ","
+    #     nbt_str += '}'
+    #     return f'type={self.entity_type},nbt={nbt_str},'
 
 
 if __name__ == "__main__":
     # new_cloud = CloudTimer("wuhou", Age=0, Duration=200)
     # print(new_cloud.to_string_summon())
     new_timer = CloudTimer("start1", "start1", 0, 200, Particle=end_rod, Radius=3)
-    print(new_timer.to_string_summon())
+    print(new_timer.summon_self())
     for time in range(0, 200, 10):
         new_timer.ticks_past(50)
         print(new_timer.to_string_select())

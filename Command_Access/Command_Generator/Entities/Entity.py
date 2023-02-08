@@ -1,3 +1,4 @@
+from Command_Access.Command_Generator.Selector.Selector_Const import *
 
 
 class EntityBuilder(object):
@@ -43,8 +44,6 @@ class EntityBuilder(object):
         :param TicksFrozen: 实体的冷冻时间，不小于0。当实体在细雪中时每刻增加1，离开细雪则每刻减少2。可能不存在。
         :param UUID: 实体的UUID，用4个32位整数表示，按从高位到低位的顺序存储。
         """
-        # 程序内允许额外自定义一个实体名字，和mc指令无关。方便用户查找
-        self.index_name = index_name if index_name is not None else self.to_string_select()
         # 实体自身种类设定为None。因为该类是基类。
         self.entity_type = None
 
@@ -91,6 +90,8 @@ class EntityBuilder(object):
         self.update_value("Tags", self.Tags)
         self.update_value("TicksFrozen", self.TicksFrozen)
         self.update_value("UUID", self.UUID)
+        # 程序内允许额外自定义一个实体名字，和mc指令无关。方便用户查找
+        self.index_name = index_name if index_name is not None else self.to_string_select()
 
     def update_self_value(self):
         self.update_value("Air", self.Air)
@@ -180,10 +181,28 @@ class EntityBuilder(object):
         """直接将自身转化为方便summon指令调用的形式。"""
         pass
 
-    def to_string_summon(self):
+    def summon_self(self, x=None, y=None, z=None, x_coo_type=RELA_COORD, y_coo_type=None, z_coo_type=None):
         """
-        直接转换为summon指令
+        创建 summon 指令，在游戏中生成此实体。
+        :param x: x方向位置
+        :param y: y方向位置
+        :param z: z方向位置
+        :param x_coo_type: x轴坐标模式
+        :param y_coo_type: y轴坐标模式
+        :param z_coo_type: z轴坐标模式
         :return:
         """
-        pass
-
+        if y_coo_type is None:
+            y_coo_type = x_coo_type
+        if z_coo_type is None:
+            z_coo_type = x_coo_type
+        x_sign = COO_DICT.get(x_coo_type)
+        y_sign = COO_DICT.get(y_coo_type)
+        z_sign = COO_DICT.get(z_coo_type)
+        if x is None:
+            x = self.Pos[0]
+        if y is None:
+            y = self.Pos[1]
+        if z is None:
+            z = self.Pos[2]
+        return f'summon {self.entity_type} {x_sign}{x} {y_sign}{y} {z_sign}{z} {self.to_string_nbt()}\n'

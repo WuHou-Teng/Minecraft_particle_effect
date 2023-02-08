@@ -41,7 +41,7 @@ BLUE_MAX = 1
 # 延时相关
 SCHEDULE = 0
 CLOUD = 1
-SCORE_BOARD = 2
+SCOREBOARD = 2
 
 # 转换类型
 STATIC = 1

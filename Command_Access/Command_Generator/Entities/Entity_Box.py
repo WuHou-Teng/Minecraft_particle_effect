@@ -52,7 +52,8 @@ class EntityBox(Box):
     def get_object(self, index_name):
         return self.get_entity(index_name)
 
-    def new_cloud_timer(self, index_name, tag, age, duration):
+    @staticmethod
+    def new_cloud_timer(index_name, tag, age, duration):
         """
         创建新的云计时器
         :param index_name:

@@ -9,20 +9,19 @@ class RotateController(ControllerBase):
     对粒子的坐标进行旋转变化
     """
 
-    def __init__(self, index_name=None, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
+    def __init__(self, index_name, x_angle=0, y_angle=0, z_angle=0, rotate_centre=None):
         """
         :param x_angle: x轴旋转角度，默认单位采用度数。
         :param y_angle: y轴旋转角度
         :param z_angle: z轴旋转角度
         :param rotate_centre: 旋转中心
         """
-        super(RotateController, self).__init__(index_name)
-
         self.x_angle = math.radians(x_angle)
         self.y_angle = math.radians(y_angle)
         self.z_angle = math.radians(z_angle)
         # 旋转中心点
         self.rotate_centre = rotate_centre if rotate_centre is not None else [0, 0, 0]
+        super(RotateController, self).__init__(index_name)
 
     def set_x_angle(self, x_angle):
         self.x_angle = math.radians(x_angle)
@@ -36,9 +35,9 @@ class RotateController(ControllerBase):
     def set_rotate_angle(self, x_angle, y_angle, z_angle):
         """
         设定不同方向上的旋转角度，数字为正则【逆时针旋转】，数字为负则【顺时针旋转】
-        :param x_angle: 以x轴为旋转轴，旋转的角度，采用弧度单位
-        :param y_angle: 以y轴为旋转轴，旋转的角度，采用弧度单位
-        :param z_angle: 以z轴为旋转轴，旋转的角度，采用弧度单位
+        :param x_angle: 以x轴为旋转轴，旋转的角度，采用360度单位
+        :param y_angle: 以y轴为旋转轴，旋转的角度，采用360度单位
+        :param z_angle: 以z轴为旋转轴，旋转的角度，采用360度单位
         :return:
         """
         self.x_angle = math.radians(x_angle)
