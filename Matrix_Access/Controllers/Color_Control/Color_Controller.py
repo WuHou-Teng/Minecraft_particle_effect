@@ -1,3 +1,5 @@
+from Matrix_Access.Matrix_Accesser import MatrixAccesser
+from Matrix_Access.Particles import MCParticle
 from util.Color_Range_Exception import ColorRangeException
 from Matrix_Access.Controllers.Controller_Interface import ControllerBase
 
@@ -17,14 +19,14 @@ class ColorController(ControllerBase):
 
     def flip_to_blacklist(self):
         """
-        切换到黑名单模式
+        切换到黑名单模式，及只有当颜色不处于指定范围内时，控制器生效
         :return:
         """
         self.flip = True
 
     def flip_to_whitelist(self):
         """
-        切换到白名单模式
+        切换到白名单模式，及只有当颜色处于指定范围内时，控制器生效。
         :return:
         """
         self.flip = False
@@ -219,4 +221,24 @@ class ColorController(ControllerBase):
     def get_self_name(self):
         return str(type(self)).split('.')[1][:-3]
 
+    def process(self, particle) -> MCParticle:
+        """
+        格式化的 process方法。
+        :param particle:
+        :return:
+        """
+        return particle
+
+    def process_matrix(self, matrix_accesser) -> MatrixAccesser:
+        """
+        对于大部分颜色控制器来说，是不需要从矩阵整体去处理粒子的。所以这里可以统一写到 Base类中。
+        ColorWhiteList 稍有特殊，功能是过滤不需要的颜色，所以需要重新定义。
+        :param matrix_accesser: 要处理的目标
+        :return:
+        """
+        assert type(matrix_accesser) is MatrixAccesser
+        for particle in matrix_accesser.mat_list:
+            self.process(particle)
+
+        return matrix_accesser
 

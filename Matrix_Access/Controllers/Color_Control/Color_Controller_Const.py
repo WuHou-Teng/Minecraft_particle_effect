@@ -12,3 +12,6 @@ SINGLE = 1  # 即为增强1倍，但最大不超过1
 DOUBLE = 2
 TRIPLE = 3
 QUADRUPLE = 4
+
+# 默认Range
+FULL_RANGE = [(0.001, 1)]

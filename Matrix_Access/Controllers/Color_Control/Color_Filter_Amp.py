@@ -8,7 +8,8 @@ class ColorFilterAmp(ColorController):
     """
     颜色滤镜。用于对特定通道的颜色进行过滤 或者 增强
     """
-    def __init__(self, index_name, red_range=None, green_range=None, blue_range=None):
+    def __init__(self, index_name, red_range=None, green_range=None, blue_range=None,
+                 filter_amp_ratio_red=FULL, filter_amp_ratio_green=FULL, filter_amp_ratio_blue=FULL):
 
         # self.red_range = []
         # self.green_range = []
@@ -17,9 +18,9 @@ class ColorFilterAmp(ColorController):
         # 如果值小于0，则对相应通道相应范围内的值进行过滤。
         # 如果值大于1，则对相应通道相应范围内的值进行过增幅。
         # 公式统一为 value * (1 + filter)
-        self.filter_amp_ratio_red = FULL  # FULL = -1, 即，在滤镜内的颜色值会直接乘上 (1+FULL)==0 ，降为最低值。
-        self.filter_amp_ratio_green = FULL
-        self.filter_amp_ratio_blue = FULL
+        self.filter_amp_ratio_red = filter_amp_ratio_red  # FULL = -1, 即，在滤镜内的颜色值会直接乘上 (1+FULL)==0 ，降为最低值。
+        self.filter_amp_ratio_green = filter_amp_ratio_green
+        self.filter_amp_ratio_blue = filter_amp_ratio_blue
         super(ColorFilterAmp, self).__init__(index_name, red_range, green_range, blue_range)
 
     def set_filter_amp_ratio_red(self, ratio):
@@ -103,7 +104,7 @@ class ColorFilterAmp(ColorController):
         #             color_list[2] = 1
         return color_list
 
-    def process(self, particle):
+    def process(self, particle) -> MCParticle:
         """
         继承自 ControllerBase，输入完整粒子信息后，对其修改，并返回。
         :param particle: MCParticle 类，包含所有可直接调用的数字参数。
@@ -117,13 +118,21 @@ class ColorFilterAmp(ColorController):
         particle.b = color_list[2]
         return particle
 
+    def process_matrix(self, matrix_accesser):
+        pass
+
 
 class ColorTransFilterAmp(ColorFilterAmp):
     """
     该类和上面基本一致，唯一的区别是，该类对转变颜色作处理。
     """
-    def __init__(self, index_name, red_range=None, green_range=None, blue_range=None):
-        super(ColorFilterAmp).__init__(index_name, red_range, green_range, blue_range)
+    def __init__(self, index_name, red_range=None, green_range=None, blue_range=None,
+                 filter_amp_ratio_red=FULL, filter_amp_ratio_green=FULL, filter_amp_ratio_blue=FULL):
+
+        super(ColorFilterAmp).__init__(index_name, red_range, green_range, blue_range,
+                                       filter_amp_ratio_red,
+                                       filter_amp_ratio_green,
+                                       filter_amp_ratio_blue)
 
     def process(self, particle):
         assert type(particle) is MCParticle

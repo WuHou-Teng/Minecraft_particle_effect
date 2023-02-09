@@ -66,11 +66,11 @@ class ControllerApplier(object):
             # 这里只是声明一次控制器的类型。方便程序调用。
             if issubclass(type(controllers), ControllerBase):
                 # 将粒子信息丢给控制器的 process 函数，获得经过修改的粒子信息。
-                particle = controllers.process(particle)
+                particle_result = controllers.process(particle)
                 # 如果返回为空，意味着改粒子在经过白名单筛选时没有通过。
-                if particle is None:
-                    # 终止for循环，直接返回空。
-                    return None
+                if particle_result is None:
+                    return particle_result
+
         # 返回经过修改的粒子信息。
         return particle
 

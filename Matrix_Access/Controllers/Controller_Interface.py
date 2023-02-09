@@ -1,3 +1,5 @@
+from Matrix_Access.Matrix_Accesser import MatrixAccesser
+from Matrix_Access.Particles import MCParticle
 
 
 class ControllerBase(object):
@@ -12,7 +14,7 @@ class ControllerBase(object):
     def get_name(self):
         return self.index_name
 
-    def process(self, particle):
+    def process(self, particle) -> MCParticle:
         """
         对所有 Controller最终功能的封装。概述为：输入粒子，修改粒子参数，然后输出粒子。
         :param particle: 粒子信息，标准格式为：
@@ -34,7 +36,7 @@ class ControllerBase(object):
         """
         pass
 
-    def process_matrix(self, matrix_accesser):
+    def process_matrix(self, matrix_accesser) -> MatrixAccesser:
         """
         从矩阵整体的视角调用控制器。
         :param matrix_accesser: <MatrixAccesser> 类实例

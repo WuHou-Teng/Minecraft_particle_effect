@@ -1,4 +1,5 @@
 from Matrix_Access.Controllers.Color_Control.Color_Controller import ColorController
+from Matrix_Access.Matrix_Accesser import MatrixAccesser
 from Matrix_Access.Particles import MCParticle
 
 
@@ -107,57 +108,71 @@ class ColorWhiteList(ColorController):
         else:
             return None
 
+    def process_matrix(self, matrix_accesser) -> MatrixAccesser:
+        # 复制一个list
+        mat_list_copy = matrix_accesser.get_mat_list()
+        # 创建一个空矩阵
+        matrix = []
+        for particle in mat_list_copy:
+            result = self.process(particle)
+            # 如果反馈的部位none，说明没有被过滤掉，添加到矩阵
+            if result is not None:
+                matrix.append(result)
+        # 用新矩阵替换掉原访问器的矩阵。
+        matrix_accesser.renew_mat_list(matrix)
+        return matrix_accesser
+
     # 以下是先前写的一个function，逻辑比较混乱，不确定是否有bug，先放在这里。
     # 收到一个颜色后，判定是否在 白名单内 / 黑名单外
-    def __accept_color(self, color_list):
-        # 一个颜色，只有三个通道全部处于白名单内，才能被接受
-        # 红色通道
-        count = 0
-        for ranges in self.red_range:
-            # 白名单模式
-            if not self.flip:
-                # 只要颜色在任意白名单区域内，则分数加一。
-                if ranges[0] < color_list[0] < ranges[1]:
-                    count += 1
-                    break
-            # 黑名单模式
-            else:
-                # 只要颜色在任意黑名单区域内，则直接返回False
-                if ranges[0] < color_list[0] < ranges[1]:
-                    return False
-
-        # 绿色通道
-        for ranges in self.green_range:
-            # 白名单模式
-            if not self.flip:
-                # 只要颜色在任意白名单区域内，则分数加一。
-                if ranges[0] < color_list[1] < ranges[1]:
-                    count += 1
-                    break
-            # 黑名单模式
-            else:
-                # 只要颜色在任意黑名单区域内，则直接返回False
-                if ranges[0] < color_list[1] < ranges[1]:
-                    return False
-
-        # 蓝色通道
-        for ranges in self.blue_range:
-            # 白名单模式
-            if not self.flip:
-                # 只要颜色在任意白名单区域内，则分数加一。
-                if ranges[0] < color_list[2] < ranges[1]:
-                    count += 1
-                    break
-            # 黑名单模式
-            else:
-                # 只要颜色在任意黑名单区域内，则直接返回False
-                if ranges[0] < color_list[2] < ranges[1]:
-                    return False
-
-        if not self.flip:
-            return True if count == 3 else False
-        else:
-            return True
+    # def __accept_color(self, color_list):
+    #     # 一个颜色，只有三个通道全部处于白名单内，才能被接受
+    #     # 红色通道
+    #     count = 0
+    #     for ranges in self.red_range:
+    #         # 白名单模式
+    #         if not self.flip:
+    #             # 只要颜色在任意白名单区域内，则分数加一。
+    #             if ranges[0] < color_list[0] < ranges[1]:
+    #                 count += 1
+    #                 break
+    #         # 黑名单模式
+    #         else:
+    #             # 只要颜色在任意黑名单区域内，则直接返回False
+    #             if ranges[0] < color_list[0] < ranges[1]:
+    #                 return False
+    #
+    #     # 绿色通道
+    #     for ranges in self.green_range:
+    #         # 白名单模式
+    #         if not self.flip:
+    #             # 只要颜色在任意白名单区域内，则分数加一。
+    #             if ranges[0] < color_list[1] < ranges[1]:
+    #                 count += 1
+    #                 break
+    #         # 黑名单模式
+    #         else:
+    #             # 只要颜色在任意黑名单区域内，则直接返回False
+    #             if ranges[0] < color_list[1] < ranges[1]:
+    #                 return False
+    #
+    #     # 蓝色通道
+    #     for ranges in self.blue_range:
+    #         # 白名单模式
+    #         if not self.flip:
+    #             # 只要颜色在任意白名单区域内，则分数加一。
+    #             if ranges[0] < color_list[2] < ranges[1]:
+    #                 count += 1
+    #                 break
+    #         # 黑名单模式
+    #         else:
+    #             # 只要颜色在任意黑名单区域内，则直接返回False
+    #             if ranges[0] < color_list[2] < ranges[1]:
+    #                 return False
+    #
+    #     if not self.flip:
+    #         return True if count == 3 else False
+    #     else:
+    #         return True
 
 
 class ColorTransWhiteList(ColorWhiteList):
