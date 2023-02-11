@@ -137,7 +137,7 @@ class Cube(object):
         )
 
         result = self.convertor.mat_convertor(self.convertor.matrix_access.get_mat_list())
-        self.convertor.controller.clear_controller_box()
+        self.convertor.controller.clear_controller_list()
         return result
 
 
