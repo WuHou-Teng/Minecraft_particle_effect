@@ -1,3 +1,4 @@
+import copy
 import os
 from Command_Access.Command_Generator.Entities.Area_Effect_Cloud import CloudTimer
 
@@ -136,6 +137,19 @@ class PEFuncGenerator(object):
         """
         self.use_execute = t_f
 
+    def transfer_matrix_delay_to_absolute(self, matrix_accesser):
+        assert type(matrix_accesser) is MatrixAccesser
+        if matrix_accesser.delay_type == ABSOLUTE:
+            pass
+        else:
+            temp_applier = ControllerApplier()
+            temp_applier.add_controller_to_apply_list(
+                self.controller_box.new_delay_type_switch_controller(
+                    index_name="delay_temp",
+                )
+            )
+            temp_applier.apply_whole_matrix(matrix_accesser)
+
     def normal_particle_convertor(self, particle):
         # TODO 标准格式更新
         """
@@ -179,11 +193,11 @@ class PEFuncGenerator(object):
         if self.edition is JAVA:
             # TODO viewer 选择器暂时默认为 @a
             return (f'particle {particle_type} '
-                    f'{COO_DICT.get(self.coo_type[0])}{str(round(particle.x, 4))} '
-                    f'{COO_DICT.get(self.coo_type[1])}{str(round(particle.y, 4))} '
-                    f'{COO_DICT.get(self.coo_type[2])}{str(round(particle.z, 4))} '
-                    f'{str(round(particle.dx, 4))} {str(round(particle.dy, 4))} {str(round(particle.dz, 4))} '
-                    f'{str(round(particle.speed, 4))} {str(particle.count)} {f_n} @a\n')
+                    f'{COO_DICT.get(self.coo_type[0])}{round(particle.x, 4)} '
+                    f'{COO_DICT.get(self.coo_type[1])}{round(particle.y, 4)} '
+                    f'{COO_DICT.get(self.coo_type[2])}{round(particle.z, 4)} '
+                    f'{round(particle.dx, 4)} {round(particle.dy, 4)} {round(particle.dz, 4)} '
+                    f'{round(particle.speed, 4)} {particle.count} {f_n} @a\n')
 
         else:
             # 基岩版的暂时搁置
@@ -225,15 +239,15 @@ class PEFuncGenerator(object):
             # TODO viewer 选择器暂时默认为 @a
             return (
                 f'particle {particle_type} '
-                f'{str(round(particle.r, 3))} {str(round(particle.g, 3))} {str(round(particle.b, 3))} '
-                f'{str(round(particle.size, 3))} '
-                f'{COO_DICT.get(self.coo_type[0])}{str(round(particle.x, 4))} '
-                f'{COO_DICT.get(self.coo_type[1])}{str(round(particle.y, 4))} '
-                f'{COO_DICT.get(self.coo_type[2])}{str(round(particle.z, 4))} '
-                f'{str(round(particle.dx, 4))} '
-                f'{str(round(particle.dy, 4))} '
-                f'{str(round(particle.dz, 4))} '
-                f'{str(round(particle.speed, 4))} {str(particle.count)} {f_n} @a\n')
+                f'{round(particle.r, 3)} {round(particle.g, 3)} {round(particle.b, 3)} '
+                f'{round(particle.size, 3)} '
+                f'{COO_DICT.get(self.coo_type[0])}{round(particle.x, 4)} '
+                f'{COO_DICT.get(self.coo_type[1])}{round(particle.y, 4)} '
+                f'{COO_DICT.get(self.coo_type[2])}{round(particle.z, 4)} '
+                f'{round(particle.dx, 4)} '
+                f'{round(particle.dy, 4)} '
+                f'{round(particle.dz, 4)} '
+                f'{round(particle.speed, 4)} {particle.count} {f_n} @a\n')
 
         else:
             # 基岩版的暂时搁置
@@ -274,26 +288,26 @@ class PEFuncGenerator(object):
             # TODO viewer 选择器暂时默认为 @a
             return (
                 f'particle {particle_type} '
-                f'{str(round(particle.r, 3))} '
-                f'{str(round(particle.g, 3))} '
-                f'{str(round(particle.b, 3))} '
-                f'{str(round(particle.size, 4))} '
-                f'{str(round(particle.rt, 3))} '
-                f'{str(round(particle.gt, 3))} '
-                f'{str(round(particle.bt, 3))} '
-                f'{COO_DICT.get(self.coo_type[0])}{str(round(particle.x, 4))} '
-                f'{COO_DICT.get(self.coo_type[1])}{str(round(particle.y, 4))} '
-                f'{COO_DICT.get(self.coo_type[2])}{str(round(particle.z, 4))} '
-                f'{str(round(particle.dx, 4))} '
-                f'{str(round(particle.dy, 4))} '
-                f'{str(round(particle.dz, 4))} '
-                f'{str(round(particle.speed, 4))} {str(particle.count)} {f_n} @a\n')
+                f'{round(particle.r, 3)} '
+                f'{round(particle.g, 3)} '
+                f'{round(particle.b, 3)} '
+                f'{round(particle.size, 4)} '
+                f'{round(particle.rt, 3)} '
+                f'{round(particle.gt, 3)} '
+                f'{round(particle.bt, 3)} '
+                f'{COO_DICT.get(self.coo_type[0])}{round(particle.x, 4)} '
+                f'{COO_DICT.get(self.coo_type[1])}{round(particle.y, 4)} '
+                f'{COO_DICT.get(self.coo_type[2])}{round(particle.z, 4)} '
+                f'{round(particle.dx, 4)} '
+                f'{round(particle.dy, 4)} '
+                f'{round(particle.dz, 4)} '
+                f'{round(particle.speed, 4)} {particle.count} {f_n} @a\n')
 
         else:
             # 基岩版的暂时搁置
             pass
 
-    def particlex_convertor(self, particle):
+    def particlex_convertor(self, particle, treat_as_normal=False):
         """
         将粒子信息转化为静态粒子指令，除了延时外，考虑所有参数。
 
@@ -310,7 +324,8 @@ class PEFuncGenerator(object):
           持续时间(tick), 粒子透明度, 延时(tick)
           80,           1,        0
 
-        :param particle:
+        :param treat_as_normal: 是否将mod粒子视作普通粒子来处理延时。
+        :param particle: MCParticle 实例
         :return:
         """
         assert type(particle) is MCParticle
@@ -355,30 +370,53 @@ class PEFuncGenerator(object):
             # <坐标> <向量> <行完全程所需时间> <数量> Force/Normal
             # <存在时间> <透明度> <大小缩放> <可以看到粒子效果的玩家>
             # TODO viewer 选择器暂时默认为 @a
-            return (
-                f'particlex {particle_type} '
-                f'{str(round(particle.r, 3))} '
-                f'{str(round(particle.g, 3))} '
-                f'{str(round(particle.b, 3))} '
-                f'{str(round(particle.rt, 3))} '
-                f'{str(round(particle.gt, 3))} '
-                f'{str(round(particle.bt, 3))} '
-                f'{COO_DICT.get(self.coo_type[0])}{str(round(particle.x, 4))} '
-                f'{COO_DICT.get(self.coo_type[1])}{str(round(particle.y, 4))} '
-                f'{COO_DICT.get(self.coo_type[2])}{str(round(particle.z, 4))} '
-                f'{str(round(particle.dx, 4))} '
-                f'{str(round(particle.dy, 4))} '
-                f'{str(round(particle.dz, 4))} '
-                f'{str(round(particle.speed, 4))} {str(particle.count)} {f_n} '
-                f'{str(particle.duration)} {str(round(particle.transparency, 3))} {str(round(particle.size, 4))} @a\n')
+            if not treat_as_normal:
+                return (
+                    f'particlex {particle_type} '
+                    f'{round(particle.r, 3)} '
+                    f'{round(particle.g, 3)} '
+                    f'{round(particle.b, 3)} '
+                    f'{round(particle.rt, 3)} '
+                    f'{round(particle.gt, 3)} '
+                    f'{round(particle.bt, 3)} '
+                    f'{COO_DICT.get(self.coo_type[0])}{round(particle.x, 4)} '
+                    f'{COO_DICT.get(self.coo_type[1])}{round(particle.y, 4)} '
+                    f'{COO_DICT.get(self.coo_type[2])}{round(particle.z, 4)} '
+                    f'{round(particle.dx, 4)} '
+                    f'{round(particle.dy, 4)} '
+                    f'{round(particle.dz, 4)} '
+                    f'{round(particle.speed, 4)} {particle.count} {f_n} '
+                    f'{particle.duration} {round(particle.transparency, 3)} {round(particle.size, 4)} @a '
+                    f'{particle.delay} {particle.color_delay}\n')
+            else:
+                return (
+                    f'particlex {particle_type} '
+                    f'{round(particle.r, 3)} '
+                    f'{round(particle.g, 3)} '
+                    f'{round(particle.b, 3)} '
+                    f'{round(particle.rt, 3)} '
+                    f'{round(particle.gt, 3)} '
+                    f'{round(particle.bt, 3)} '
+                    f'{COO_DICT.get(self.coo_type[0])}{round(particle.x, 4)} '
+                    f'{COO_DICT.get(self.coo_type[1])}{round(particle.y, 4)} '
+                    f'{COO_DICT.get(self.coo_type[2])}{round(particle.z, 4)} '
+                    f'{round(particle.dx, 4)} '
+                    f'{round(particle.dy, 4)} '
+                    f'{round(particle.dz, 4)} '
+                    f'{round(particle.speed, 4)} {particle.count} {f_n} '
+                    f'{particle.duration} {round(particle.transparency, 3)} {round(particle.size, 4)} @a '
+                    f'0 {particle.color_delay}\n')
+
         else:
             # 基岩版的暂时搁置
             pass
 
-    def mat_convertor(self, matrix_access):
+    def mat_convertor(self, matrix_access, treat_mod_particle_as_normal=False):
         """
         整个矩阵的转换器。可以调节粒子的转换类型。
         :param matrix_access: 矩阵访问器
+        :param treat_mod_particle_as_normal: 是否将mod粒子视为普通粒子处理，此项主要关乎后期的延时方式。
+            mod粒子自带延时功能，而普通粒子并没有。因此mod粒子不需要要构建延时模块结构，使用mod粒子自带的延时功能会有更好的性能。
         :return:
             经过转换的指令列表。
         """
@@ -411,13 +449,17 @@ class PEFuncGenerator(object):
             # /particlex <Particle_Name> <Color> *<Target_Color> <Pos> <Delta_Pos> <Speed> <Count> Force/Normal
             # <Time> <Alpha> <Scale> <Viewers>
             elif particle_type > 1000:
-                order = self.particlex_convertor(particles)
+                if treat_mod_particle_as_normal:
+
+                    order = self.particlex_convertor(particles, treat_mod_particle_as_normal)
+                else:
+                    order = self.particlex_convertor(particles)
                 mc_functions.append(order)
         return mc_functions
 
-    def generator(self, function_name, matrix_access, function_override=False, customer_execute_command='',
+    def generator(self, function_name, matrix_access, function_override=False, customer_execute_command=None,
                   timer_execute_layer=None, timer_selector=None,  timer_entity=None,
-                  timer_tag=None, delay_type=ABSOLUTE):
+                  timer_tag=None):
         """
         将一个矩阵转化为对应的 mc函数文件。
         * 用户可以自己带入自己创建的 ExecuteLayer timer_execute_layer 用来生成相应的 计时execute语句。
@@ -443,12 +485,13 @@ class PEFuncGenerator(object):
         :param timer_selector: 必须为包含了 timer_entity 的 Selector。如果该参数不为None，则不再考虑后两个参数。
         :param timer_entity: 必须为计时器实体。如果该参数不为None，则不再考虑 timer_tag参数。
         :param timer_tag: 自定义计时器tag，只有当前面三个参数全部为 None时采用。
-        :param delay_type: 延时类型，可以是ABSOLUTE，也可以是ADDITIONAL, 决定了代码会如何看待粒子矩阵中记录的延时数据。默认为ABSOLUTE
 
         :return:
 
         """
         # 将矩阵的基本指令转换好。
+        if self.force_particle > 1000:
+            print("<Warn> 使用mod粒子推荐使用generator_mod_particle以获得更好的性能")
         functions = self.mat_convertor(matrix_access)
 
         mat_list = matrix_access.get_mat_list()
@@ -462,9 +505,7 @@ class PEFuncGenerator(object):
             # 再创建一个score_tag
             score_tag = None
             # 如果输入的矩阵采用相对计时，则先转化为绝对计时
-            controller_applier = ControllerApplier().add_controller_to_apply_list(
-                self.controller_box.new_delay_type_switch_controller(delay_type)
-            )
+            self.transfer_matrix_delay_to_absolute(matrix_access)
 
             if timer_execute_layer is not None or timer_selector is not None:
                 # 任意一个不为None时，考虑从中提取timer_entity，而非创建新的。
@@ -491,7 +532,8 @@ class PEFuncGenerator(object):
                                 index_name="default_timer_" + str(self.timer_count),
                                 tag=timer_tag,
                                 age=0,
-                                duration=matrix_access.max_delay
+                                # 记得计时器实际延时是粒子延时记录的1/5
+                                duration=int(matrix_access.max_delay/5)
                             )
                             timer_selector.set_entity(timer_entity)
                         elif self.timer_type == SCOREBOARD:
@@ -544,7 +586,8 @@ class PEFuncGenerator(object):
                         index_name="default_timer_" + str(self.timer_count),
                         tag=timer_tag,
                         age=0,
-                        duration=matrix_access.max_delay
+                        # 记得计时器实际延时是粒子延时记录的1/5
+                        duration=int(matrix_access.max_delay / 5)
                     )
                     # 创建selector_target
                     timer_selector = self.selector_box.new_target_selector(
@@ -591,9 +634,10 @@ class PEFuncGenerator(object):
             # 首先区分Cloud 和 scoreboard
             if type(timer_entity) is ScoreBoard:
                 for particle_index in range(len(mat_list)):
-                    particle = controller_applier.apply_processing(mat_list[particle_index])
+                    particle = mat_list[particle_index]
                     # 将粒子对应的延时更新到计分板的score_tag
-                    score_tag.score_info_list[0][2] = particle.delay
+                    # 记得计时器实际延时是粒子延时记录的1/5
+                    score_tag.score_info_list[0][2] = int(particle.delay/5)
                     # 将计时器execute添加到function的前面。
                     functions[particle_index] = self.execute_builder.to_string() + functions[particle_index]
                 # 添加结构性循环语句让函数只需一次调用就可以完成延时循环。
@@ -603,11 +647,9 @@ class PEFuncGenerator(object):
 
                 for particle_index in range(len(mat_list)):
                     particle = mat_list[particle_index]
-                    if delay_type is ADDITIONAL:
-                        # 首先将粒子延时数据转化为绝对时间轴
-                        particle = controller_applier.apply_processing(particle)
                     # 修改计时器时刻
-                    timer_entity.set_age_ticks(particle.delay)
+                    # 记得计时器实际延时是粒子延时记录的1/5
+                    timer_entity.set_age_ticks(int(particle.delay/5))
                     # 将计时器execute添加到function的前面。
                     functions[particle_index] = self.execute_builder.to_string() + functions[particle_index]
 
@@ -625,9 +667,9 @@ class PEFuncGenerator(object):
                 timer_entity.Age = 0
                 timer_entity.update_self_value()
 
-        # 但使用execute
+        # 不使用计时器但使用execute
         if self.use_execute and not self.use_timer:
-            if len(customer_execute_command) > 0:
+            if customer_execute_command is not None and type(customer_execute_command) is str:
                 execute_part = customer_execute_command.strip() + " "
             else:
                 # 如果使用execute，但是忘记加目标，则自动添加以最近玩家身份发动的execute
@@ -669,14 +711,67 @@ class PEFuncGenerator(object):
         functions = [timer.summon_self(), f'function {self.effect_name}:{function_name}\n']
         self.function_writer.write_func(launcher_function_name, functions)
 
+    def generator_mod_particle(self, function_name, matrix_access, function_override=False,
+                               customer_execute_command=None):
+        """
+        与 generator 函数类似，但是该函数专门为mod粒子提供更高性能的指令形式。
+
+        :param function_name: 要保存到函数文件的文件名称，注意不要后缀，主要用于函数的循环。如果不循环，则用不到。
+        :param matrix_access: 打开并保存了一个坐标矩阵的访问器
+        :param function_override: 是否覆盖原有的函数。
+        :param customer_execute_command: 用户自定义的 execute 指令。例如："execute as @p run", 程序会将其自动加到所有指令的开头。
+                                         该参数只有当self.execute 为True时才会被采用
+
+        :return:
+
+        """
+        # 将矩阵的基本指令转换好。
+        functions = self.mat_convertor(matrix_access)
+
+        mat_list = matrix_access.get_mat_list()
+
+        # mod 粒子无需构建计时器结构。
+
+        # 不使用计时器但使用execute
+        if self.use_execute and not self.use_timer:
+            if customer_execute_command is not None and type(customer_execute_command) is str:
+                execute_part = customer_execute_command.strip() + " "
+            else:
+                # 如果使用execute，但是忘记加目标，则自动添加以最近玩家身份发动的execute
+                if len(self.execute_builder.layer) == 0:
+                    self.execute_builder.add_layer(
+                        self.execute_layer_box.new_layer(
+                            selector=self.selector_box.new_target_selector(
+                                entity_mark=NEAREST_PLAYER
+                            )
+                        )
+                    )
+                execute_part = self.execute_builder.to_string()
+            for i in range(len(mat_list)):
+                # timer.set_age_ticks(mat_list[i][16])
+                # execute_part = self.execute_builder.to_string()
+                functions[i] = execute_part + functions[i]
+
+        # 在使用过execute_builder后，记得清空
+        self.execute_builder.clear_layer()
+        # execute也不用的话，就是原模原样的 functions
+
+        # TODO 接下来是创建文件并写入。
+        if function_override:
+            self.function_writer.write_func(function_name, functions)
+        else:
+            self.function_writer.add_func(function_name, functions)
+
     def apply_controller_processing_and_save(self, matrix_access, new_mat_file_address=None,
-                                             override=False, override_original=False) -> str:
+                                             override=False, override_original_accesser=False) -> str:
         """
         调用控制器过程，并保存到新的矩阵文件。
+        注意，该方法返回的是新矩阵文件的绝对路径地址而非新的矩阵访问器实例。
+
         :param matrix_access: 包含要处理的矩阵的矩阵访问器
         :param new_mat_file_address: 完成处理后的矩阵的文件保存目标，如果不提供则将新数据加到原矩阵文件末尾。
         :param override: 是否覆盖目标文件，默认不覆盖，会依次往后写。
-        :param override_original: 是否同时用新的数据替换原本的矩阵访问器中保存的数据
+        :param override_original_accesser: 是否同时用新的数据替换原本的矩阵访问器中保存的数据，注意，无论True or False，都不会对原有的矩阵文件本身改动。
         :return:
             完成处理后的矩阵的文件保存目标地址
         """
@@ -685,24 +780,75 @@ class PEFuncGenerator(object):
             # 如果未提供新的矩阵名称，则直接采用原有的矩阵文件。
             new_mat_file_address = matrix_access.mat_file
             # 本就是自己写给自己，就没必要重新写一遍了。
-            override_original = False
+            # override_original_accesser = False
         if self.controller_applier.has_controllers():
             for particles in matrix_access.get_mat_list():
-                matrix.append(self.controller_applier.apply_processing(particles))
-            if not override:
-                new_mat_file_address = self.matrix_writer.add_to_matrix_file(matrix, new_mat_file_address)
-            else:
-                new_mat_file_address = self.matrix_writer.renew_matrix_file(matrix, new_mat_file_address)
-            if override_original:
+                result = self.controller_applier.apply_processing(particles)
+                if result is not None:
+                    matrix.append(result)
+            if new_mat_file_address != matrix_access.mat_file:
+                if not override:
+                    new_mat_file_address = self.matrix_writer.add_to_matrix_file(matrix, new_mat_file_address)
+                else:
+                    new_mat_file_address = self.matrix_writer.renew_matrix_file(matrix, new_mat_file_address)
+            if override_original_accesser:
                 matrix_access.renew_mat_list(matrix, False)
         return new_mat_file_address
 
+    def apply_controller_processing_matrix_and_save(self, matrix_access, new_mat_file_address=None,
+                                                    override=False, override_original_accesser=False) -> str:
+        """
+        与 apply_controller_processing_and_save 类似，不同的是，该方法调用控制器会要求部分控制器自动更新某些因矩阵变化产生的参数变化。
+        :param matrix_access: 包含要处理的矩阵的矩阵访问器
+        :param new_mat_file_address: 完成处理后的矩阵的文件保存目标，如果不提供则将新数据加到原矩阵文件末尾。
+        :param override: 是否覆盖目标文件，默认不覆盖，会依次往后写。如果未提供 new_mat_file_address，则会向原矩阵文件修改，或添加新的粒子信息。
+        :param override_original_accesser: 是否同时用新的数据替换原本的矩阵访问器中保存的数据，注意，此参数无论True or False，都不会对原有的矩阵文件本身改动。
+        :return:
+            完成处理后的矩阵的文件保存目标地址
+        """
+
+        if new_mat_file_address is None:
+            # 如果未提供新的矩阵名称，则直接采用原有的矩阵文件。
+            new_mat_file_address = matrix_access.mat_file
+
+        if self.controller_applier.has_controllers():
+            new_matrix = self.controller_applier.apply_whole_matrix(copy.deepcopy(matrix_access))
+            if new_mat_file_address != matrix_access.mat_file:
+                if not override:
+                    new_mat_file_address = self.matrix_writer.add_to_matrix_file(new_matrix.mat_list, new_mat_file_address)
+                else:
+                    new_mat_file_address = self.matrix_writer.renew_matrix_file(new_matrix.mat_list, new_mat_file_address)
+            if override_original_accesser:
+                matrix_access.renew_mat_list(new_matrix.mat_list, False)
+        return new_mat_file_address
+
     def apply_controller_processing(self, matrix_access) -> list:
+        """
+        直接将控制器对矩阵访问器数据的修改结果返回。
+        :param matrix_access: MatrixAccesser 实例
+        :return:
+            matrix: 装有经过控制器修该的粒子的列表。
+        """
         matrix = []
         if self.controller_applier.has_controllers():
-            for particles in matrix_access.get_mat_list:
-                matrix.append(self.controller_applier.apply_processing(particles))
+            for particles in matrix_access.get_mat_list():
+                result = self.controller_applier.apply_processing(particles)
+                if result is not None:
+                    matrix.append(result)
         return matrix
+
+    def apply_controller_processing_matrix(self, matrix_access) -> MatrixAccesser:
+        """
+        与 apply_controller_processing 类似，不同的是，该方法调用控制器会要求部分控制器自动更新某些因矩阵变化产生的参数变化。
+        例如，旋转算法所需要的旋转中心坐标。
+        :param matrix_access: MatrixAccesser 实例
+        :return:
+            matrix: 装有经过控制器修该的粒子的列表。
+        """
+        new_matrix_accesser = None
+        if self.controller_applier.has_controllers():
+            new_matrix_accesser = self.controller_applier.apply_whole_matrix(copy.deepcopy(matrix_access))
+        return new_matrix_accesser
 
     def open_new_matrix(self, matrix_file_address) -> MatrixAccesser:
         """

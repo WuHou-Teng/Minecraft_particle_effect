@@ -6,7 +6,8 @@ class MCParticle(object):
     def __init__(self, x, y, z,
                  dx=DX, dy=DY, dz=DZ, time_on_moving=SPEED, count=COUNT, force_normal=FORCE_NORMAL,
                  r=COLOR_R, g=COLOR_G, b=COLOR_B, rt=COLOR_TG, gt=COLOR_TG, bt=COLOR_TB,
-                 particle_type=PARTICLE_TYPE, size=SIZE, duration=DURATION, transparency=TRANS, delay=DELAY):
+                 particle_type=PARTICLE_TYPE, size=SIZE, duration=DURATION, transparency=TRANS, delay=DELAY,
+                 color_delay=COLOR_DELAY):
         """
         # 基本参数
           x, y, z,
@@ -41,6 +42,7 @@ class MCParticle(object):
         self.duration = duration
         self.transparency = transparency if transparency >= 0.11 else 0.11
         self.delay = delay
+        self.color_delay = color_delay
 
     @property
     def data(self):
@@ -49,5 +51,5 @@ class MCParticle(object):
                 self.speed, self.count, self.f_n,
                 self.r, self.g, self.b, self.rt, self.gt, self.bt,
                 self.particle_type, self.size, self.duration,
-                self.transparency, self.delay]
+                self.transparency, self.delay, self.color_delay]
 

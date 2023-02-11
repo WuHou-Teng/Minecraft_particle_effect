@@ -38,9 +38,9 @@ def complete_particle_format(particle):
                               float(particle[14]),  # BT
                               int(particle[15]),  # 粒子种类
                               float(particle[16]),  # 粒子大小
-                              int(particle[17]),  # 粒子持续时常tick数
+                              int(particle[17]),  # 粒子持续时常x_tick数
                               float(particle[18]),  # 粒子透明度
-                              int(particle[19]))  # 延时tick数
+                              int(particle[19]))  # 延时x_tick数
     return new_particle
 
 
@@ -51,7 +51,7 @@ class MatrixAccesser(object):
     构造函数会在创建时尝试遍历整个粒子矩阵文件，并将相应的参数加载，备用。
     """
 
-    def __init__(self, matrix_file):
+    def __init__(self, matrix_file, delay_type=ABSOLUTE):
         self.cwd = os.getcwd()
         # 粒子矩阵文件名称或绝对地址。如果仅仅提供了名称，程序会自动前往默认文件夹寻找。
         # self.mat_file = matrix_file
@@ -83,7 +83,7 @@ class MatrixAccesser(object):
         # 个方向上坐标的平均值组成的中心点
         self.mean_centre = [0, 0, 0]
         # 延时
-        self.delay_type = ABSOLUTE
+        self.delay_type = delay_type
         self.max_delay = 0
         self.delay_array = []
 
@@ -183,8 +183,8 @@ class MatrixAccesser(object):
           Color(R, G, B),   color_transfer(R,G), particle_type, 粒子大小,
           0.05-1, 0-1, 0-1, 0.05-1, 0-1, 0-1,    0(Undefined),  1,
         # mod参数
-          持续时间(tick), 粒子透明度, 延时(tick)
-          80,           1,        0
+          持续时间(x_tick=tick/5), 粒子透明度, 延时(x_tick=tick/5), 颜色渐变延时(x_tick=tick/5)
+          80,                    1,        0,                   0
 
         :return:
             mat_array: 保存了整个矩阵的列表. 如果文件不存在，则返回空列表。
