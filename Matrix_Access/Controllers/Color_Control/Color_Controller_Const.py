@@ -14,4 +14,4 @@ TRIPLE = 3
 QUADRUPLE = 4
 
 # 默认Range
-FULL_RANGE = [(0.001, 1)]
+FULL_RANGE = [(0, 1)]

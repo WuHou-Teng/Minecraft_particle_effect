@@ -82,6 +82,3 @@ class DelayCountShiftController(DelayShiftController):
     def process_matrix(self, matrix_accesser):
         pass
 
-    def clear_record(self):
-        self.history_particle_index = 0
-        self.current_particle_index = 0

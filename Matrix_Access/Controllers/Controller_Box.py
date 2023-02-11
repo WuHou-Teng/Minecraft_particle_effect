@@ -1,3 +1,5 @@
+from Matrix_Access.Controllers.Color_Control import Color_Controller_Const
+from Matrix_Access.Controllers.Color_Control.Color_Paint_Erasure import ColorPaintErasure, ColorTransPaintErasure
 from Matrix_Access.Matrix_Const import ABSOLUTE, ADDITIONAL
 from util.Box import Box
 # 方位控制器
@@ -95,26 +97,72 @@ class ControllerBox(Box):
         return new_rotate_controller
 
     @staticmethod
-    def new_color_filter_amp_controller(index_name, red_range=None, green_range=None, blue_range=None):
+    def new_color_filter_amp_controller(index_name, red_range=None, green_range=None, blue_range=None,
+                                        filter_amp_ratio_red=Color_Controller_Const.FULL,
+                                        filter_amp_ratio_green=Color_Controller_Const.FULL,
+                                        filter_amp_ratio_blue=Color_Controller_Const.FULL):
         """
         创建新的 ColorFilterAmp 控制器。不会添加到列表，而是直接返回。
         :return:
             新的 ColorFilterAmp
         """
-        new_color_filter_amp = ColorFilterAmp(index_name, red_range, green_range, blue_range)
+        new_color_filter_amp = ColorFilterAmp(index_name, red_range, green_range, blue_range,
+                                              filter_amp_ratio_red,
+                                              filter_amp_ratio_green,
+                                              filter_amp_ratio_blue)
         # self.add_controller(new_color_filter_amp)
         return new_color_filter_amp
 
     @staticmethod
-    def new_color_trans_filter_amp_controller(index_name, red_range=None, green_range=None, blue_range=None):
+    def new_color_trans_filter_amp_controller(index_name, red_range=None, green_range=None, blue_range=None,
+                                              filter_amp_ratio_red=Color_Controller_Const.FULL,
+                                              filter_amp_ratio_green=Color_Controller_Const.FULL,
+                                              filter_amp_ratio_blue=Color_Controller_Const.FULL):
         """
         创建新的 ColorTransFilterAmp 控制器。不会添加到列表，而是直接返回。
         :return:
             新的 ColorTransFilterAmp
         """
-        new_color_trans_filter_amp = ColorTransFilterAmp(index_name, red_range, green_range, blue_range)
+        new_color_trans_filter_amp = ColorTransFilterAmp(index_name, red_range, green_range, blue_range,
+                                                         filter_amp_ratio_red,
+                                                         filter_amp_ratio_green,
+                                                         filter_amp_ratio_blue)
         # self.add_controller(new_color_filter_amp)
         return new_color_trans_filter_amp
+
+    @staticmethod
+    def new_color_paint_erasure_controller(index_name, red_range=None, green_range=None, blue_range=None,
+                                           red_paint=0,
+                                           green_paint=0,
+                                           blue_paint=0):
+        """
+        创建新的 ColorTransFilterAmp 控制器。不会添加到列表，而是直接返回。
+        :return:
+            新的 ColorTransFilterAmp
+        """
+        new_color_paint_erasure = ColorPaintErasure(index_name, red_range, green_range, blue_range,
+                                                         red_paint,
+                                                         green_paint,
+                                                         blue_paint)
+        # self.add_controller(new_color_filter_amp)
+        return new_color_paint_erasure
+
+    @staticmethod
+    def new_color_trans_paint_erasure_controller(index_name, red_range=None, green_range=None, blue_range=None,
+                                                 red_paint=0,
+                                                 green_paint=0,
+                                                 blue_paint=0):
+        """
+        创建新的 ColorTransFilterAmp 控制器。不会添加到列表，而是直接返回。
+        :return:
+            新的 ColorTransFilterAmp
+        """
+        new_color_trans_paint_erasure = ColorTransPaintErasure(index_name, red_range, green_range, blue_range,
+                                                    red_paint,
+                                                    green_paint,
+                                                    blue_paint)
+        # self.add_controller(new_color_filter_amp)
+        return new_color_trans_paint_erasure
 
     @staticmethod
     def new_color_white_list_controller(index_name, red_range=None, green_range=None, blue_range=None):

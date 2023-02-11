@@ -1,4 +1,5 @@
 from Matrix_Access.Controllers.Controller_Interface import ControllerBase
+from Matrix_Access.Matrix_Accesser import MatrixAccesser
 from Matrix_Access.Matrix_Const import *
 from Matrix_Access.Particles import MCParticle
 
@@ -45,13 +46,14 @@ class DelayBaseController(ControllerBase):
             # 绝对时间轴下，总时刻就是上一个粒子的时刻。
             self.current_time = particle.delay
 
-    def clear_record(self):
+    def update_dependency(self, matrix_accesser):
         """
-        用于清理每轮 Process留下的记录数据。对每一个不同的 延时控制器可能都不一样。
+        从矩阵中获取粒子数量
+        :param matrix_accesser:
         :return:
         """
-        pass
-
+        assert type(matrix_accesser) is MatrixAccesser
+        self.particle_num = matrix_accesser
 
 
 

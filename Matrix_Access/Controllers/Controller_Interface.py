@@ -34,14 +34,24 @@ class ControllerBase(object):
         :return:
             particle: 经过处理后的粒子信息
         """
-        pass
+        return particle
 
     def process_matrix(self, matrix_accesser) -> MatrixAccesser:
         """
-        从矩阵整体的视角调用控制器。
+        从矩阵整体的视角调用控制器。优点是稳定，易用，且可以自动从matrix_accesser中更新计算需要的数据。
         :param matrix_accesser: <MatrixAccesser> 类实例
         :return:
             matrix_accesser: 经过处理后的矩阵访问器。
+        """
+        assert type(matrix_accesser) is MatrixAccesser
+        for particle in matrix_accesser.mat_list:
+            self.process(particle)
+        return matrix_accesser
+
+    def update_dependency(self, matrix_accesser):
+        """
+        手动从 matrix_accesser 中跟新计算需要的数据。
+        :param matrix_accesser: <MatrixAccesser> 类实例
         """
         pass
 

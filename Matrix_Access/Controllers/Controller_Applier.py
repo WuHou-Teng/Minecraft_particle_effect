@@ -1,6 +1,7 @@
 from Matrix_Access.Controllers.Controller_Interface import ControllerBase
 from Matrix_Access.Matrix_Accesser import MatrixAccesser
 from Matrix_Access.Particles import MCParticle
+import copy
 
 
 class ControllerApplier(object):
@@ -27,7 +28,7 @@ class ControllerApplier(object):
         # else:
         #     return False
 
-    def clear_controller_box(self):
+    def clear_controller_list(self):
         self.controller_list = []
 
     def get_controller_list(self):
@@ -61,15 +62,16 @@ class ControllerApplier(object):
         :return:
             经过修改的粒子。
         """
+        # particle_result = copy.deepcopy(particle)
         # 遍历所有的控制器。
         for controllers in self.controller_list:
             # 这里只是声明一次控制器的类型。方便程序调用。
             if issubclass(type(controllers), ControllerBase):
                 # 将粒子信息丢给控制器的 process 函数，获得经过修改的粒子信息。
-                particle_result = controllers.process(particle)
+                particle = controllers.process(particle)
                 # 如果返回为空，意味着改粒子在经过白名单筛选时没有通过。
-                if particle_result is None:
-                    return particle_result
+                if particle is None:
+                    return particle
 
         # 返回经过修改的粒子信息。
         return particle

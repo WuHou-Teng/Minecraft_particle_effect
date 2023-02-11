@@ -1,4 +1,5 @@
 from Matrix_Access.Controllers.Delay_Control.Delay_Base_Controller import DelayBaseController
+from Matrix_Access.Matrix_Accesser import MatrixAccesser
 from Matrix_Access.Matrix_Const import *
 from Matrix_Access.Particles import MCParticle
 
@@ -30,4 +31,5 @@ class DelayScaleController(DelayBaseController):
         assert type(particle) is MCParticle
         particle.delay *= self.scale_ratio
         return particle
+
 

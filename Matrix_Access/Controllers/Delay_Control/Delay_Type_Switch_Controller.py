@@ -1,4 +1,5 @@
 from Matrix_Access.Controllers.Delay_Control.Delay_Base_Controller import DelayBaseController
+from Matrix_Access.Matrix_Accesser import MatrixAccesser
 from Matrix_Access.Matrix_Const import *
 from Matrix_Access.Particles import MCParticle
 
@@ -24,7 +25,7 @@ class DelayTypeSwitchController(DelayBaseController):
         # 如果转换类型一样，则维持不变直接输出。
         if self.type_switch_to == self.delay_type:
             return particle
-        # 否则考虑从累加时间轴到绝对时间轴
+        # 否则考虑转换时间轴
         else:
             self.record_time(particle)  # 首先记录时刻
             if self.type_switch_to is ADDITIONAL:
@@ -41,11 +42,19 @@ class DelayTypeSwitchController(DelayBaseController):
             return particle
 
     def process_matrix(self, matrix_accesser):
-        pass
+        """
+        从矩阵的宏观角度去修改delay_type, 会默认自动调用 update_dependency
+        :param matrix_accesser:
+        :return:
+        """
+        self.update_dependency(matrix_accesser)
+        assert type(matrix_accesser) is MatrixAccesser
+        for particle in matrix_accesser.mat_list:
+            self.process(particle)
+        matrix_accesser.delay_type = self.type_switch_to
+        return matrix_accesser
 
-    def clear_record(self):
+    def update_dependency(self, matrix_accesser):
         self.current_time = 0
         self.last_time = 0
-
-
-
+        self.delay_type = matrix_accesser.delay_type
